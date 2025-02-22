@@ -1,0 +1,3 @@
+/home/daniel/Documents/Uni/Project/build/CMakeFiles/Test.out.dir
+/home/daniel/Documents/Uni/Project/build/CMakeFiles/edit_cache.dir
+/home/daniel/Documents/Uni/Project/build/CMakeFiles/rebuild_cache.dir

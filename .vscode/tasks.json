@@ -1,0 +1,23 @@
+{
+    "tasks": [
+        {
+            "label": "compile",
+            "type": "shell",
+            "command": "bash compile.sh",
+            "args": [
+            ],
+            "group":  {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "reveal":"always"
+            },
+            "problemMatcher": "$msCompile"
+        }
+    ],
+    "version": "2.0.0"
+}
