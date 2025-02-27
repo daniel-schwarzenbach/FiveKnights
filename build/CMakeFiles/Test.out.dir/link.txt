@@ -1,1 +1,0 @@
-/usr/bin/c++ -g CMakeFiles/Test.out.dir/tests/test.cpp.o -o Test.out  lib/libgtest_main.a lib/libgtest.a Senpai/libSenpai.a -lSDL3 
