@@ -2,26 +2,25 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Build and debug active file",
-      "showDisplayString": true,
+      "name": "Linux",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/Test.out",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/build/Game",
+      "program": "${workspaceFolder}/build/Game/FiveKnights",
       "args": [],
-      "stopAtEntry": false,
-      "cwd": "${fileDirname}",
-      "environment": [],
-      "externalConsole": false,
-      "MIMode": "gdb",
-      "setupCommands": [
-        {
-          "description": "Enable pretty-printing for gdb",
-          "text": "-enable-pretty-printing",
-          "ignoreFailures": true
-        }
-      ],
-      "preLaunchTask": "compile",
+      "preLaunchTask": "build-Linux",
       "miDebuggerPath": "/usr/bin/gdb"
-    }
+    },
+    {
+        "name": "Windows",
+        "type": "cppvsdbg",
+        "request": "launch",
+        "console": "integratedTerminal",
+        "cwd": "${workspaceFolder}/build/bin/Debug",
+        "program": "${workspaceFolder}/build/bin/Debug/game",
+        "args": [],
+        "preLaunchTask": "build-Windows"
+      }
   ]
 }

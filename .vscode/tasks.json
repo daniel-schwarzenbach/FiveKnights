@@ -1,9 +1,9 @@
 {
     "tasks": [
         {
-            "label": "compile",
+            "label": "build-Linux",
             "type": "shell",
-            "command": "bash compile.sh",
+            "command": "bash build-linux.sh",
             "args": [
             ],
             "group":  {

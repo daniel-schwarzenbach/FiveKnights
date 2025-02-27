@@ -1,1 +1,1 @@
-/usr/bin/c++ -g CMakeFiles/Test.out.dir/tests/test.cpp.o -o /home/daniel/Documents/Uni/Project/Test.out  /usr/lib/x86_64-linux-gnu/libgtest_main.a /usr/lib/x86_64-linux-gnu/libgtest.a 
+/usr/bin/c++ -g CMakeFiles/Test.out.dir/tests/test.cpp.o -o Test.out  lib/libgtest_main.a lib/libgtest.a Senpai/libSenpai.a -lSDL3 

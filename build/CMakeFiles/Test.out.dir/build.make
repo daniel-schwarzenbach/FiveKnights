@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/daniel/Documents/Uni/Project
+CMAKE_SOURCE_DIR = /home/daniel/Documents/Uni/FiveKnights
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/daniel/Documents/Uni/Project/build
+CMAKE_BINARY_DIR = /home/daniel/Documents/Uni/FiveKnights/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/Test.out.dir/depend.make
@@ -69,19 +69,36 @@ include CMakeFiles/Test.out.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/Test.out.dir/flags.make
 
+CMakeFiles/Test.out.dir/cmake_pch.hxx.gch: CMakeFiles/Test.out.dir/flags.make
+CMakeFiles/Test.out.dir/cmake_pch.hxx.gch: CMakeFiles/Test.out.dir/cmake_pch.hxx.cxx
+CMakeFiles/Test.out.dir/cmake_pch.hxx.gch: CMakeFiles/Test.out.dir/cmake_pch.hxx
+CMakeFiles/Test.out.dir/cmake_pch.hxx.gch: CMakeFiles/Test.out.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/daniel/Documents/Uni/FiveKnights/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Test.out.dir/cmake_pch.hxx.gch"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -Winvalid-pch -x c++-header -include /home/daniel/Documents/Uni/FiveKnights/build/CMakeFiles/Test.out.dir/cmake_pch.hxx -MD -MT CMakeFiles/Test.out.dir/cmake_pch.hxx.gch -MF CMakeFiles/Test.out.dir/cmake_pch.hxx.gch.d -o CMakeFiles/Test.out.dir/cmake_pch.hxx.gch -c /home/daniel/Documents/Uni/FiveKnights/build/CMakeFiles/Test.out.dir/cmake_pch.hxx.cxx
+
+CMakeFiles/Test.out.dir/cmake_pch.hxx.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Test.out.dir/cmake_pch.hxx.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -Winvalid-pch -x c++-header -include /home/daniel/Documents/Uni/FiveKnights/build/CMakeFiles/Test.out.dir/cmake_pch.hxx -E /home/daniel/Documents/Uni/FiveKnights/build/CMakeFiles/Test.out.dir/cmake_pch.hxx.cxx > CMakeFiles/Test.out.dir/cmake_pch.hxx.i
+
+CMakeFiles/Test.out.dir/cmake_pch.hxx.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Test.out.dir/cmake_pch.hxx.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -Winvalid-pch -x c++-header -include /home/daniel/Documents/Uni/FiveKnights/build/CMakeFiles/Test.out.dir/cmake_pch.hxx -S /home/daniel/Documents/Uni/FiveKnights/build/CMakeFiles/Test.out.dir/cmake_pch.hxx.cxx -o CMakeFiles/Test.out.dir/cmake_pch.hxx.s
+
 CMakeFiles/Test.out.dir/tests/test.cpp.o: CMakeFiles/Test.out.dir/flags.make
-CMakeFiles/Test.out.dir/tests/test.cpp.o: /home/daniel/Documents/Uni/Project/tests/test.cpp
+CMakeFiles/Test.out.dir/tests/test.cpp.o: /home/daniel/Documents/Uni/FiveKnights/tests/test.cpp
+CMakeFiles/Test.out.dir/tests/test.cpp.o: CMakeFiles/Test.out.dir/cmake_pch.hxx
+CMakeFiles/Test.out.dir/tests/test.cpp.o: CMakeFiles/Test.out.dir/cmake_pch.hxx.gch
 CMakeFiles/Test.out.dir/tests/test.cpp.o: CMakeFiles/Test.out.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/daniel/Documents/Uni/Project/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Test.out.dir/tests/test.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Test.out.dir/tests/test.cpp.o -MF CMakeFiles/Test.out.dir/tests/test.cpp.o.d -o CMakeFiles/Test.out.dir/tests/test.cpp.o -c /home/daniel/Documents/Uni/Project/tests/test.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/daniel/Documents/Uni/FiveKnights/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Test.out.dir/tests/test.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -Winvalid-pch -include /home/daniel/Documents/Uni/FiveKnights/build/CMakeFiles/Test.out.dir/cmake_pch.hxx -MD -MT CMakeFiles/Test.out.dir/tests/test.cpp.o -MF CMakeFiles/Test.out.dir/tests/test.cpp.o.d -o CMakeFiles/Test.out.dir/tests/test.cpp.o -c /home/daniel/Documents/Uni/FiveKnights/tests/test.cpp
 
 CMakeFiles/Test.out.dir/tests/test.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Test.out.dir/tests/test.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/daniel/Documents/Uni/Project/tests/test.cpp > CMakeFiles/Test.out.dir/tests/test.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -Winvalid-pch -include /home/daniel/Documents/Uni/FiveKnights/build/CMakeFiles/Test.out.dir/cmake_pch.hxx -E /home/daniel/Documents/Uni/FiveKnights/tests/test.cpp > CMakeFiles/Test.out.dir/tests/test.cpp.i
 
 CMakeFiles/Test.out.dir/tests/test.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Test.out.dir/tests/test.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/daniel/Documents/Uni/Project/tests/test.cpp -o CMakeFiles/Test.out.dir/tests/test.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -Winvalid-pch -include /home/daniel/Documents/Uni/FiveKnights/build/CMakeFiles/Test.out.dir/cmake_pch.hxx -S /home/daniel/Documents/Uni/FiveKnights/tests/test.cpp -o CMakeFiles/Test.out.dir/tests/test.cpp.s
 
 # Object files for target Test.out
 Test_out_OBJECTS = \
@@ -90,17 +107,18 @@ Test_out_OBJECTS = \
 # External object files for target Test.out
 Test_out_EXTERNAL_OBJECTS =
 
-/home/daniel/Documents/Uni/Project/Test.out: CMakeFiles/Test.out.dir/tests/test.cpp.o
-/home/daniel/Documents/Uni/Project/Test.out: CMakeFiles/Test.out.dir/build.make
-/home/daniel/Documents/Uni/Project/Test.out: /usr/lib/x86_64-linux-gnu/libgtest_main.a
-/home/daniel/Documents/Uni/Project/Test.out: /usr/lib/x86_64-linux-gnu/libgtest.a
-/home/daniel/Documents/Uni/Project/Test.out: CMakeFiles/Test.out.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/daniel/Documents/Uni/Project/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable /home/daniel/Documents/Uni/Project/Test.out"
+Test.out: CMakeFiles/Test.out.dir/cmake_pch.hxx.gch
+Test.out: CMakeFiles/Test.out.dir/tests/test.cpp.o
+Test.out: CMakeFiles/Test.out.dir/build.make
+Test.out: lib/libgtest_main.a
+Test.out: lib/libgtest.a
+Test.out: Senpai/libSenpai.a
+Test.out: CMakeFiles/Test.out.dir/link.txt
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/daniel/Documents/Uni/FiveKnights/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable Test.out"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/Test.out.dir/link.txt --verbose=$(VERBOSE)
-	/usr/bin/cmake -D TEST_TARGET=Test.out -D TEST_EXECUTABLE=/home/daniel/Documents/Uni/Project/Test.out -D TEST_EXECUTOR= -D TEST_WORKING_DIR=/home/daniel/Documents/Uni/Project/build -D TEST_EXTRA_ARGS= -D TEST_PROPERTIES= -D TEST_PREFIX= -D TEST_SUFFIX= -D TEST_FILTER= -D NO_PRETTY_TYPES=FALSE -D NO_PRETTY_VALUES=FALSE -D TEST_LIST=Test.out_TESTS -D CTEST_FILE=/home/daniel/Documents/Uni/Project/build/Test.out[1]_tests.cmake -D TEST_DISCOVERY_TIMEOUT=5 -D TEST_XML_OUTPUT_DIR= -P /usr/share/cmake-3.28/Modules/GoogleTestAddTests.cmake
 
 # Rule to build all files generated by this target.
-CMakeFiles/Test.out.dir/build: /home/daniel/Documents/Uni/Project/Test.out
+CMakeFiles/Test.out.dir/build: Test.out
 .PHONY : CMakeFiles/Test.out.dir/build
 
 CMakeFiles/Test.out.dir/clean:
@@ -108,6 +126,6 @@ CMakeFiles/Test.out.dir/clean:
 .PHONY : CMakeFiles/Test.out.dir/clean
 
 CMakeFiles/Test.out.dir/depend:
-	cd /home/daniel/Documents/Uni/Project/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/daniel/Documents/Uni/Project /home/daniel/Documents/Uni/Project /home/daniel/Documents/Uni/Project/build /home/daniel/Documents/Uni/Project/build /home/daniel/Documents/Uni/Project/build/CMakeFiles/Test.out.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/daniel/Documents/Uni/FiveKnights/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/daniel/Documents/Uni/FiveKnights /home/daniel/Documents/Uni/FiveKnights /home/daniel/Documents/Uni/FiveKnights/build /home/daniel/Documents/Uni/FiveKnights/build /home/daniel/Documents/Uni/FiveKnights/build/CMakeFiles/Test.out.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/Test.out.dir/depend
 

@@ -57,13 +57,23 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/daniel/Documents/Uni/Project
+CMAKE_SOURCE_DIR = /home/daniel/Documents/Uni/FiveKnights
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/daniel/Documents/Uni/Project/build
+CMAKE_BINARY_DIR = /home/daniel/Documents/Uni/FiveKnights/build
 
 #=============================================================================
 # Targets provided globally by CMake.
+
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running tests..."
+	/usr/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
 
 # Special rule for the target edit_cache
 edit_cache:
@@ -85,11 +95,56 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/daniel/Documents/Uni/Project/build/CMakeFiles /home/daniel/Documents/Uni/Project/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/daniel/Documents/Uni/FiveKnights/build/CMakeFiles /home/daniel/Documents/Uni/FiveKnights/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/daniel/Documents/Uni/Project/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/daniel/Documents/Uni/FiveKnights/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -117,41 +172,173 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named Test.out
+# Target rules for targets named Tests
 
 # Build rule for target.
-Test.out: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Test.out
-.PHONY : Test.out
+Tests: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Tests
+.PHONY : Tests
 
 # fast build rule for target.
-Test.out/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Test.out.dir/build.make CMakeFiles/Test.out.dir/build
-.PHONY : Test.out/fast
+Tests/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/build
+.PHONY : Tests/fast
 
-tests/test.o: tests/test.cpp.o
-.PHONY : tests/test.o
+#=============================================================================
+# Target rules for targets named Senpai
+
+# Build rule for target.
+Senpai: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Senpai
+.PHONY : Senpai
+
+# fast build rule for target.
+Senpai/fast:
+	$(MAKE) $(MAKESILENT) -f Senpai/CMakeFiles/Senpai.dir/build.make Senpai/CMakeFiles/Senpai.dir/build
+.PHONY : Senpai/fast
+
+#=============================================================================
+# Target rules for targets named SDL3-shared
+
+# Build rule for target.
+SDL3-shared: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SDL3-shared
+.PHONY : SDL3-shared
+
+# fast build rule for target.
+SDL3-shared/fast:
+	$(MAKE) $(MAKESILENT) -f Senpai/SDL/CMakeFiles/SDL3-shared.dir/build.make Senpai/SDL/CMakeFiles/SDL3-shared.dir/build
+.PHONY : SDL3-shared/fast
+
+#=============================================================================
+# Target rules for targets named SDL3_test
+
+# Build rule for target.
+SDL3_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SDL3_test
+.PHONY : SDL3_test
+
+# fast build rule for target.
+SDL3_test/fast:
+	$(MAKE) $(MAKESILENT) -f Senpai/SDL/CMakeFiles/SDL3_test.dir/build.make Senpai/SDL/CMakeFiles/SDL3_test.dir/build
+.PHONY : SDL3_test/fast
+
+#=============================================================================
+# Target rules for targets named SDL_uclibc
+
+# Build rule for target.
+SDL_uclibc: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SDL_uclibc
+.PHONY : SDL_uclibc
+
+# fast build rule for target.
+SDL_uclibc/fast:
+	$(MAKE) $(MAKESILENT) -f Senpai/SDL/CMakeFiles/SDL_uclibc.dir/build.make Senpai/SDL/CMakeFiles/SDL_uclibc.dir/build
+.PHONY : SDL_uclibc/fast
+
+#=============================================================================
+# Target rules for targets named FiveKnights
+
+# Build rule for target.
+FiveKnights: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 FiveKnights
+.PHONY : FiveKnights
+
+# fast build rule for target.
+FiveKnights/fast:
+	$(MAKE) $(MAKESILENT) -f Game/CMakeFiles/FiveKnights.dir/build.make Game/CMakeFiles/FiveKnights.dir/build
+.PHONY : FiveKnights/fast
+
+#=============================================================================
+# Target rules for targets named gmock
+
+# Build rule for target.
+gmock: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gmock
+.PHONY : gmock
+
+# fast build rule for target.
+gmock/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googlemock/CMakeFiles/gmock.dir/build.make _deps/googletest-build/googlemock/CMakeFiles/gmock.dir/build
+.PHONY : gmock/fast
+
+#=============================================================================
+# Target rules for targets named gmock_main
+
+# Build rule for target.
+gmock_main: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gmock_main
+.PHONY : gmock_main
+
+# fast build rule for target.
+gmock_main/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googlemock/CMakeFiles/gmock_main.dir/build.make _deps/googletest-build/googlemock/CMakeFiles/gmock_main.dir/build
+.PHONY : gmock_main/fast
+
+#=============================================================================
+# Target rules for targets named gtest
+
+# Build rule for target.
+gtest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gtest
+.PHONY : gtest
+
+# fast build rule for target.
+gtest/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googletest/CMakeFiles/gtest.dir/build.make _deps/googletest-build/googletest/CMakeFiles/gtest.dir/build
+.PHONY : gtest/fast
+
+#=============================================================================
+# Target rules for targets named gtest_main
+
+# Build rule for target.
+gtest_main: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gtest_main
+.PHONY : gtest_main
+
+# fast build rule for target.
+gtest_main/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/build.make _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/build
+.PHONY : gtest_main/fast
 
 # target to build an object file
-tests/test.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Test.out.dir/build.make CMakeFiles/Test.out.dir/tests/test.cpp.o
-.PHONY : tests/test.cpp.o
-
-tests/test.i: tests/test.cpp.i
-.PHONY : tests/test.i
+cmake_pch.hxx.gch:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/cmake_pch.hxx.gch
+.PHONY : cmake_pch.hxx.gch
 
 # target to preprocess a source file
-tests/test.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Test.out.dir/build.make CMakeFiles/Test.out.dir/tests/test.cpp.i
-.PHONY : tests/test.cpp.i
-
-tests/test.s: tests/test.cpp.s
-.PHONY : tests/test.s
+cmake_pch.hxx.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/cmake_pch.hxx.i
+.PHONY : cmake_pch.hxx.i
 
 # target to generate assembly for a file
-tests/test.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Test.out.dir/build.make CMakeFiles/Test.out.dir/tests/test.cpp.s
-.PHONY : tests/test.cpp.s
+cmake_pch.hxx.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/cmake_pch.hxx.s
+.PHONY : cmake_pch.hxx.s
+
+tests/tests.o: tests/tests.cpp.o
+.PHONY : tests/tests.o
+
+# target to build an object file
+tests/tests.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/tests/tests.cpp.o
+.PHONY : tests/tests.cpp.o
+
+tests/tests.i: tests/tests.cpp.i
+.PHONY : tests/tests.i
+
+# target to preprocess a source file
+tests/tests.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/tests/tests.cpp.i
+.PHONY : tests/tests.cpp.i
+
+tests/tests.s: tests/tests.cpp.s
+.PHONY : tests/tests.s
+
+# target to generate assembly for a file
+tests/tests.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/tests/tests.cpp.s
+.PHONY : tests/tests.cpp.s
 
 # Help Target
 help:
@@ -160,11 +347,28 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... install"
+	@echo "... install/local"
+	@echo "... install/strip"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
-	@echo "... Test.out"
-	@echo "... tests/test.o"
-	@echo "... tests/test.i"
-	@echo "... tests/test.s"
+	@echo "... test"
+	@echo "... FiveKnights"
+	@echo "... SDL3-shared"
+	@echo "... SDL3_test"
+	@echo "... SDL_uclibc"
+	@echo "... Senpai"
+	@echo "... Tests"
+	@echo "... gmock"
+	@echo "... gmock_main"
+	@echo "... gtest"
+	@echo "... gtest_main"
+	@echo "... cmake_pch.hxx.gch"
+	@echo "... cmake_pch.hxx.i"
+	@echo "... cmake_pch.hxx.s"
+	@echo "... tests/tests.o"
+	@echo "... tests/tests.i"
+	@echo "... tests/tests.s"
 .PHONY : help
 
 

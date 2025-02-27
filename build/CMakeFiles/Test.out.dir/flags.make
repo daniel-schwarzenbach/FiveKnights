@@ -4,7 +4,11 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = 
+CXX_INCLUDES = -I/home/daniel/Documents/Uni/FiveKnights/Senpai/SDL/include -I/home/daniel/Documents/Uni/FiveKnights/Senpai/include -isystem /home/daniel/Documents/Uni/FiveKnights/build/_deps/googletest-src/googletest/include -isystem /home/daniel/Documents/Uni/FiveKnights/build/_deps/googletest-src/googletest
 
-CXX_FLAGS = -g -std=gnu++23 -DGTEST_HAS_PTHREAD=1
+CXX_FLAGS = -g -std=gnu++23
+
+# PCH options: CMakeFiles/Test.out.dir/cmake_pch.hxx.gch_OPTIONS = -Winvalid-pch;-x;c++-header;-include;/home/daniel/Documents/Uni/FiveKnights/build/CMakeFiles/Test.out.dir/cmake_pch.hxx
+
+# PCH options: CMakeFiles/Test.out.dir/tests/test.cpp.o_OPTIONS = -Winvalid-pch;-include;/home/daniel/Documents/Uni/FiveKnights/build/CMakeFiles/Test.out.dir/cmake_pch.hxx
 
