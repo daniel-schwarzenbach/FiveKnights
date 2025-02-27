@@ -1,2 +1,5 @@
-library/
-build/
+# Ignore everything inside the library folder
+library/**
+
+# Ignore everything inside the build folder
+build/**
