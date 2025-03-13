@@ -1,4 +1,4 @@
-#include <core/Container/Range.h++>
+#include <core/container/Range.h++>
 
 // Definitions of Range member functions
 Range::iterator Range::begin() const {
@@ -22,7 +22,12 @@ UInt Range::size() {
 }
 
 // Definition of the operator<< for Range
-OS& operator<<(OS& os, Range $ range) {
+OS& operator<<(OS& os, Range const& range) {
     os << "Range{" << range.a << ", " << range.b << "}";
     return os;
+}
+
+IS& operator>>(IS& is, Range& range) {
+   is >> "Range{" >> range.a >> ", " >> range.b >> "}";
+   return is;
 }

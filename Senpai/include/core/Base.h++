@@ -4,29 +4,27 @@
 #include <numeric>
 #include <stdint.h>
 
-#define let(...) template<typename __VA_ARGS__>
-#define $ const&
-
 template<typename T>
-concept Any = true;
+concept AnyType = true;
 
 template <typename T, typename U>
 concept Convertible = requires(U&& u) {
   static_cast<T>(std::forward<U>(u));
 };
 
+
 // Functions
 template<typename T>
-concept Function = std::is_function_v<T>;
+concept FunctionType = std::is_function_v<T>;
 
 // Numbers
-let(T)
-concept Reel = std::is_integral_v<T> || std::is_floating_point_v<T>;
+template<typename T>
+concept ReelType = std::is_integral_v<T> || std::is_floating_point_v<T>;
 
 
 // Integer
 template<typename T>
-concept Integer = std::is_integral_v<T>;
+concept IntType = std::is_integral_v<T>;
 
 
 using Int = signed long;
@@ -49,6 +47,11 @@ concept Float = std::is_floating_point_v<T>;
 using f32 = float;
 using f64 = double;
 
+#include <functional>
+
+template<typename T>
+using Function = std::function<T>;
+
 
 
 // Pointers
@@ -56,21 +59,33 @@ using f64 = double;
 
 using std::move;
 
-let(T)
+template<typename T>
 using Ptr = T*;
 
-let(T)
+using GenricPtr = void*;
+
+template<typename T>
 using UniquePtr = std::unique_ptr<T>;
 
-let(T)
+template<typename T>
 using SharedPtr = std::shared_ptr<T>;
+
+using std::make_shared;
+using std::make_unique;
+using std::move;
+using std::swap;
 
 #include <iostream>
 using IS = std::istream;
 using OS = std::ostream;
 using std::cout;
+using std::cerr;
 using std::cin;
 using std::endl;
+
+//IS& operator>>(IS& is, Ptr<const char>);
+IS& operator>>(IS& is, const char toRead[]);
+IS& operator>>(IS& is, const char* toRead);
 
 #include <string>
 using String = std::string;
@@ -122,6 +137,16 @@ constexpr T max(const T& first, const Args&... args) {
 #include <exception>
 using Exception = std::exception;
 
+class SenpaiException : public Exception {
+   private:
+      String message;
+   public:
+      inline SenpaiException(String const& message) : Exception(), message(message) {}
+      inline const char* what() const noexcept override {
+         return message.c_str();
+      }
+};
+
 //#define NDEBUG
 #ifndef NDEBUG
 // on Debugging
@@ -137,7 +162,7 @@ using Exception = std::exception;
 #endif
 
 // assert that doesnt depend on Debug mode
-constexpr void always_assert(bool expression, String $ errormessage = "") {
+constexpr void always_assert(bool expression, String const& errormessage = "") {
     if(!expression){
         throw errormessage;
     }
@@ -158,3 +183,36 @@ void fill(C& toFill, typename C::value_type const& constant){
         element = constant;
     }
 }
+
+#include <vector>
+
+template<typename T>
+using Array = std::vector<T>;
+
+#include <set>
+
+template<typename T>
+using Set = std::set<T>;
+
+#include <unordered_map>
+
+template<typename T, typename U>
+using Map = std::unordered_map<T, U>;
+
+#include <bitset>
+
+template<UInt N>
+using Bitset = std::bitset<N>;
+
+template<typename T>
+constexpr u32 get_subtype_id(){
+   static u32 id = 0u;
+   return id++;
+}
+
+static constexpr f32 ε = 1e-5;
+static constexpr f32 π = 3.14159265358979323846;
+static constexpr f32 inf = std::numeric_limits<f32>::infinity();
+using std::abs;
+using std::sin;
+using std::cos;

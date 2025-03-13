@@ -3,7 +3,7 @@
         {
             "label": "build-Linux",
             "type": "shell",
-            "command": "bash build-linux.sh",
+            "command": "bash build-unix.sh",
             "args": [
             ],
             "group":  {

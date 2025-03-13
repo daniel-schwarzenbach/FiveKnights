@@ -1,6 +1,15 @@
 #include <core/Time.h++>
 #include <thread>
 
+TimePoint get_TimePoint() {
+   return std::chrono::system_clock::now();
+}
+
+double get_time_diff(TimePoint start, TimePoint end){
+   return std::chrono::duration_cast<
+      std::chrono::duration<double>>(end - start).count();
+}
+
 // Start measuring time
 void Stopwatch::start() {
     endTime     = std::chrono::system_clock::now();
@@ -8,7 +17,7 @@ void Stopwatch::start() {
 }
 
 double Stopwatch::time() {
-    Time currentTime;
+    TimePoint currentTime;
     // If the stopwatch hasn't been stopped, we use the current system time
     // Otherwise, use the recorded `endTime`.
     if (endTime <= startTime) { // This handles uninitialized or improperly reset `endTime`
@@ -24,7 +33,6 @@ double Stopwatch::time() {
 // Stop measuring time and print the total elapsed time
 void Stopwatch::stop() {
     endTime = std::chrono::system_clock::now();
-    auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(endTime - startTime).count();
 }
 
 // Sleep for x seconds

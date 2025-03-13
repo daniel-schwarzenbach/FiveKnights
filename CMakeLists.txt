@@ -34,11 +34,11 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 # Create a test executable (replace YOUR_TESTS with your actual test files)
-add_executable(Tests ./tests/tests.cpp)
+add_executable(Tests ./tests/Tests.c++)
 
 # Link GTest libraries
 target_link_libraries(Tests PRIVATE gtest_main gtest Senpai)
 
 # Discover and register tests
 include(GoogleTest)
-gtest_discover_tests(Tests)
+#gtest_discover_tests(Tests)

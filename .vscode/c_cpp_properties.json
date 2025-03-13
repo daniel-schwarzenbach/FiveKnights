@@ -3,12 +3,16 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**",
-                "${workspaceFolder}/Senpai/include"
+               "${workspaceFolder}/**",
+               "${workspaceFolder}/Senpai/include",
+               "${workspaceFolder}/Senpai/lib/SDL/include",
+               "${workspaceFolder}/Senpai/lib/SDL_image/include",
+               "${workspaceFolder}/Senpai/lib/SDL_ttf/include",
+               "${workspaceFolder}/Senpai/lib/SDL_mixer/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
-            "cStandard": "c17",
+            "cppStandard": "c++23",
             "intelliSenseMode": "linux-gcc-x64"
         }
     ],

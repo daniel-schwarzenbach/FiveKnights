@@ -64,7 +64,15 @@
       "charconv": "cpp",
       "chrono": "cpp",
       "format": "cpp",
-      "span": "cpp"
+      "span": "cpp",
+      "bitset": "cpp"
    },
+   "editor.rulers": [
+      80
+   ],
+   "editor.tabSize": 3,
+   "editor.wrappingIndent": "deepIndent",
+   "editor.wordWrapColumn": 80,
+   "editor.wordWrap": "wordWrapColumn",
    "dotnet.defaultSolution": "disable"
 }

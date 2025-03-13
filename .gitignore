@@ -1,5 +1,8 @@
-# Ignore everything inside the library folder
-library/**
+# Ignore the private folder
+private/
 
-# Ignore everything inside the build folder
-build/**
+# Ignore the build folder
+build/
+
+# Ignore the SDL3 libraries
+Senpai/lib/

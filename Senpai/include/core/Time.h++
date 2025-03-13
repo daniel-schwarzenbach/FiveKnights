@@ -1,13 +1,20 @@
 #pragma once
 #include <chrono>
 
-using Time = std::chrono::time_point<std::chrono::system_clock>;
+using TimePoint = std::chrono::time_point<std::chrono::system_clock>;
+
+// get the current time
+TimePoint get_TimePoint();
+
+// get the difference between two time points in seconds
+double get_time_diff(TimePoint start, TimePoint end);
+
 
 // used to Track time
 struct Stopwatch
 {
-    Time startTime;
-    Time endTime;
+    TimePoint startTime;
+    TimePoint endTime;
     
     // start measuring time
     void start();
