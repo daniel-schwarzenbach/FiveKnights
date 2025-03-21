@@ -40,7 +40,7 @@ endif(UNIX)
 
 # precompile headers
 target_precompile_headers(${PROJECT_NAME} 
-   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/core/pch.h)
+   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Core.h++)
 
 # include directory
 target_include_directories(${PROJECT_NAME}

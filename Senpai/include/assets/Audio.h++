@@ -1,14 +1,11 @@
 #pragma once
 
-#include "../core/pch.h"
+#include <core/Core.h++>
 
 namespace Senpai::Assets{
    struct Audio final : public Asset{
       private:
-         GenricPtr sdlAudio = nullptr;
+         SharedPtr<void> sdlAudio = nullptr;
          String filename = "";
-
-      public:
-         ~Audio();
    };
 };

@@ -65,7 +65,8 @@
       "chrono": "cpp",
       "format": "cpp",
       "span": "cpp",
-      "bitset": "cpp"
+      "bitset": "cpp",
+      "Senpai": "cpp"
    },
    "editor.rulers": [
       80

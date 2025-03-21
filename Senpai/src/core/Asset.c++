@@ -1,4 +1,4 @@
-#include <core/Asset.h++>
+#include <core/scene/Asset.h++>
 
 namespace Senpai {
    u32 Asset::get_asset_id() const {

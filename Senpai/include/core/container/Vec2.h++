@@ -3,7 +3,11 @@
 
 namespace Senpai {
 
-   // generic 2D Vector created by GithubCopilot
+   /*
+   ```cpp
+      Vec2{x,y}
+   ```
+   */
    template <typename T>
    struct Vec2{
       T x, y;

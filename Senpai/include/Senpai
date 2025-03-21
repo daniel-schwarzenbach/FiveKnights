@@ -1,0 +1,34 @@
+#pragma once
+
+#include <components/Components.h++>
+#include <core/Core.h++>
+#include <events/Events.h++>
+#include <systems/Systems.h++>
+
+namespace Senpai {
+struct App {
+ private:
+   bool isRunning = false;
+   bool apply_settings();
+
+ public:
+   struct Settings {
+      u8 fpsTarget = 60;
+      bool vsync = true;
+      bool fullscreen = false;
+   };
+   // Scenes are loaded and unloaded as needed, scenes[0] is the loading scene and  scenes[1] is the first scene
+   // be loaded by the App
+   Vector<Function<void(Ptr<Scene>)>> sceneLoaders = {};
+
+   Inputs inputs = Inputs{};
+
+   u32 height = 720;
+   u32 width = 1280;
+   String title = "SenpaiGame";
+   String version = "α";
+   Settings settings = Settings{};
+   bool run();
+   bool is_running();
+};
+} // namespace Senpai

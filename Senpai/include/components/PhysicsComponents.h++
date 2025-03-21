@@ -1,5 +1,5 @@
 #pragma once
-#include <core/ECS.h++>
+#include <core/Core.h++>
 
 namespace Senpai::Components {
    struct Rigidbody : Component {

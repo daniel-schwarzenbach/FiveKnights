@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../core/pch.h"
+#include "../core/Core.h++"
 #include "./Texture.h++"
 
 namespace Senpai::Assets{

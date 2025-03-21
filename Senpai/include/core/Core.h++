@@ -1,3 +1,7 @@
+/*
+   precompiles all the headers in the core folder
+*/
+
 #pragma once
 #include "./Base.h++"
 #include "./Time.h++"
@@ -9,4 +13,5 @@
 #include "./RNG.h++"
 #include "./Inputs.h++"
 #include "./Event.h++"
-#include "./Asset.h++"
+#include "./Graphics.h++"
+#include "./scene/ECS.h++"

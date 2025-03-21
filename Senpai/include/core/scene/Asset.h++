@@ -1,7 +1,7 @@
 #pragma once
 
-#include "./Base.h++"
-#include "./container/Vector.h++"
+#include "../Base.h++"
+#include "../container/Vector.h++"
 
 namespace Senpai{
    struct Asset {
@@ -26,8 +26,8 @@ namespace Senpai{
 
    // where all Asset types live
    struct AssetRegistry {
-      // sored assets by asset id
-      Vector<UniquePtr<Asset>> assets;
+      // assets refrence safe
+      Deque<UniquePtr<Asset>> assets;
       // generate unique asset id
       u32 generate_unique_id();
       // keep track of type Ids
@@ -39,18 +39,20 @@ namespace Senpai{
       void clear();
 
       // templated functions
-      template<AssetType AssetT>
-      void add_asset(AssetT&& asset){
+      template<AssetType AssetT, typename... Args>
+      AssetT& add_asset(Args&&... args){
+         AssetT asset(std::forward<Args>(args)...);
          u32 assetId = assets.size();
          asset.set_asset_id(assetId);
          
-         if(name_to_assetId.contains(asset.name)){
-            debug_log("Asset with that name already exists!");
-            return;
+         while(name_to_assetId.contains(asset.name)){
+            debug_log(asset.name << " already exists!, adding a 2 to the name");
+            asset.name += "2";
          }
          name_to_assetId[asset.name] = assetId;
          assetTypeId_to_assetIds[asset_type_id<AssetT>()].insert(assetId);
-         assets.push_back(make_unique<Asset>(move(asset)));
+         assets.push_back(make_unique<AssetT>(move(asset)));
+         return *static_cast<Ptr<AssetT>>(assets.back().get());
       }
 
       template<AssetType AssetT>

@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <Senpai.h++>
+#include <Senpai>
 
 // TEST(Containers, Vector){
 //    Vector<Int> vec1 = {1,2,3,4,5};

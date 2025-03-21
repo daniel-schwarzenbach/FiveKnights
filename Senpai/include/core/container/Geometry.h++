@@ -22,8 +22,10 @@ namespace Senpai {
       }
 
       bool contains(Vec2<T> point) const {
-         return position.x < point.x && point.x < position.x + size.x &&
-                position.y < point.y && point.y < position.y + size.y;
+         const T x2 = size.x/2.;
+         const T y2 = size.y/2.;
+         return position.x - x2 < point.x && point.x < position.x + x2 &&
+                position.y  - y2 < point.y && point.y < position.y + y2;
       }
 
       Vec2<T> right_bottom() const {

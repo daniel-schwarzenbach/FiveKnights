@@ -25,3 +25,7 @@ ctest || { echo "Tests failed"; exit 1; }
 
 # Return to original directory
 cd ..
+
+# copy the assets folder to the build directory
+cp -r Game/assets build/Game/
+

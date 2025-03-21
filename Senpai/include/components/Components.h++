@@ -3,6 +3,6 @@
 */
 
 #pragma once
-#include "./Common.h++"
-#include "./Graphics.h++"
-#include "./Physics.h++"
+#include "./CommonComponents.h++"
+#include "./GraphicsComponents.h++"
+#include "./PhysicsComponents.h++"

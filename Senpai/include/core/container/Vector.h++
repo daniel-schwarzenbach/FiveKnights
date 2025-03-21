@@ -1,5 +1,6 @@
 #pragma once
 #include <core/Base.h++>
+#include <vector>
 
 // Extension of std::vector
 template<typename T>
@@ -48,14 +49,29 @@ class Vector : public std::vector<T> {
          }
       }
 
-      // removes first element that matches the value
-      void remove_element(const T& element) {
+      // returns true if an element was removed
+      // removes first elements that matches the value via `==`
+      bool remove_element(const T& element) {
          for (UInt i = 0; i < this->size(); i++) {
             if (this->at(i) == element) {
                remove(i);
-               return;
+               return true;
             }
          }
+         return false;
+      }
+
+      // returns true if an element was removed
+      // removes all elements that match the value via `==`
+      bool remove_elements(const T& element) {
+         bool result = false;
+         for (UInt i = 0; i < this->size(); i++) {
+            if (this->at(i) == element) {
+               remove(i);
+               result = true;
+            }
+         }
+         return result;
       }
 
       // remove element at ptr
@@ -78,6 +94,23 @@ class Vector : public std::vector<T> {
 
       bool operator!=(const Vector<T>& other) const {
          return !(*this == other);
+      }
+
+      // inserts an element into the vector in a sorted manner
+      void insert_sorted(const T& value, Function<bool(const T&, const T&)> const& compare = [](const T& a, const T& b) { return a < b; }) {
+         this->push_back(value);
+         for (UInt i = 0; i < this->size()-1; i++) {
+            if (compare(value, this->at(i))) {
+               swap(this->at(i), this->back());
+               return;
+            }
+         }
+         return;
+      }
+
+      // sorts the vector
+      void sort(Function<bool(const T&, const T&)> const& compare = [](const T& a, const T& b) { return a < b; }) {
+         std::sort(this->begin(), this->end(), compare);
       }
 };
 
