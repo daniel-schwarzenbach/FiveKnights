@@ -1,4 +1,6 @@
 #!/bin/bash
+
+# stop script if error occurs
 set -e
 
 # Directory where libraries will be stored
@@ -15,25 +17,25 @@ cd "$LIB_DIR"
 # Clone SDL repository if not already present
 if [ ! -d "SDL" ]; then
     echo "Cloning SDL..."
-    git clone https://github.com/libsdl-org/SDL.git
+    git clone --depth 1 https://github.com/libsdl-org/SDL.git
 fi
 
 # Clone SDL_ttf repository if not already present
 if [ ! -d "SDL_ttf" ]; then
     echo "Cloning SDL_ttf..."
-    git clone https://github.com/libsdl-org/SDL_ttf.git
+    git clone --depth 1 https://github.com/libsdl-org/SDL_ttf.git
 fi
 
 # Clone SDL_image repository if not already present
 if [ ! -d "SDL_image" ]; then
     echo "Cloning SDL_image..."
-    git clone https://github.com/libsdl-org/SDL_image.git
+    git clone --depth 1 https://github.com/libsdl-org/SDL_image.git
 fi
 
 # Clone SDL_mixer repository if not already present
 if [ ! -d "SDL_mixer" ]; then
     echo "Cloning SDL_mixer..."
-    git clone https://github.com/libsdl-org/SDL_mixer.git
+    git clone --depth 1 https://github.com/libsdl-org/SDL_mixer.git
 fi
 
 echo "All necessary SDL libraries have been fetched."

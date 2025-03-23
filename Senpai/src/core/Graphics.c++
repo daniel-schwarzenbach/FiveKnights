@@ -7,7 +7,7 @@ namespace Senpai {
    }
 
    u8 Color::from_f32(f32 color) {
-      return u8(roundf32(color * 255.0f));
+      return u8(std::round(color * 255.0f));
    }
 
    Color Color::operator-(const Color &other) const {

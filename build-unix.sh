@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# stop script in error occurs
+set -e
+
 # Create build directory if it doesn't exist
 BUILD_DIR="./build"
 if [ ! -d "$BUILD_DIR" ]; then
@@ -8,7 +11,8 @@ if [ ! -d "$BUILD_DIR" ]; then
 fi
 
 # Fetch SDL libraries in Senpai
-./Senpai/fetch-lib-unix.sh
+chmod +x ./Senpai/fetch-lib-unix.sh
+(cd ./Senpai; ./fetch-lib-unix.sh)
 
 # Navigate to build directory
 cd "$BUILD_DIR"

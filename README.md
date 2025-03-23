@@ -13,10 +13,9 @@ pacman -S mingw-w64-ucrt-x86_64-gcc
 
 ### macOS
 
-With Homebrew
-```
-brew install gcc
-```
+Let macOS install the XCode Command Line Extensions by either
+- running 'gcc' or 'clang' and confirming the prompt
+- running 'xcode-select --install'
 
 ### Linux (Ubuntu/Debian)
 ```
@@ -28,10 +27,10 @@ sudo apt install g++-13
 
 ### Windows
 
-### macOs
+### macOS
 
 ```
-brew install cmake@3.20 && brew link --force cmake@3.20
+brew install cmake
 ```
 
 

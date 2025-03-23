@@ -36,11 +36,11 @@ struct move_script final : public Script {
          show = true;
       }
       if (Inputs::get_key(Key::Q)) {
-         tr.frame.size *= powf32(2.0f, Δt);
+         tr.frame.size *= std::pow(2.0f, Δt);
          show = true;
       }
       if (Inputs::get_key(Key::E)) {
-         tr.frame.size /= powf32(2.0f, Δt);
+         tr.frame.size /= std::pow(2.0f, Δt);
          show = true;
       }
 

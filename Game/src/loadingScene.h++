@@ -32,7 +32,7 @@ void set_up_loading_scene(Ptr<Scene> scenePtr) {
    scenePtr->add_system<Systems::CameraRenderSystem>();
    scenePtr->add_system<Systems::UIRenderSystem>();
 
-   Assets::Font &font = scenePtr->add_asset<Assets::Font>(move(Assets::Font{
+   Assets::Font &font = scenePtr->add_asset<Assets::Font>(std::move(Assets::Font{
        String("./assets/fonts/The Centurion .ttf"), 200, String("HeroFont")}));
    auto& texture = scenePtr->add_asset<Assets::Texture>(String("./assets/pics/Test.png"), String("MenuBackground"));
    
