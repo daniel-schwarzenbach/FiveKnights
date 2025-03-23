@@ -2,8 +2,9 @@
 #include "./mainMenu.h++"
 #include <cstdlib>
 
-int main (){
+int main() {
    std::system("ls -R");
+
    Senpai::App app;
    app.settings.fpsTarget = 30;
    app.sceneLoaders.push_back(set_up_loading_scene);
@@ -11,8 +12,6 @@ int main (){
    app.run();
 
    cout << "App closed successfully" << endl;
-   
-   
-   
+
    return 0;
 };
