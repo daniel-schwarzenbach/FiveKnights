@@ -145,6 +145,21 @@ namespace Senpai{
       // get the size of the window
       Vec2<int> get_size(){
          SDL_GetWindowSize(window, &windowSize.x, &windowSize.y);
+
+         int rw, rh;
+         SDL_GetCurrentRenderOutputSize(renderer, &rw, &rh);
+         
+         // debug_log("size: " << windowSize.x << "/" << windowSize.y << ", renderer: " << rw << "/" << rh);
+         
+         float widthScale = (float)rw / (float) windowSize.x;
+         float heightScale = (float)rh / (float) windowSize.y;
+      
+         if(widthScale != heightScale) {
+            fprintf(stderr, "WARNING: width scale != height scale\n");
+         }
+      
+         SDL_SetRenderScale(renderer, widthScale, heightScale);
+
          return windowSize;
       }
       // get the aspect ratio of the window
