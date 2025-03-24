@@ -29,15 +29,6 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 
-# Windows Build
-if(WIN32)
-    
-endif(WIN32)
-
-if(UNIX)
-
-endif(UNIX)
-
 # precompile headers
 target_precompile_headers(${PROJECT_NAME} 
    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Core.h++)

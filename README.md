@@ -7,9 +7,8 @@
 ### Windows
 
 install MinGW-w64 (GCC)
-```
-pacman -S mingw-w64-ucrt-x86_64-gcc
-```
+
+[Donwload MinGW-w64](https://code.visualstudio.com/docs/cpp/config-mingw)
 
 ### macOS
 
