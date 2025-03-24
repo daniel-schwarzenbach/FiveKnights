@@ -17,6 +17,24 @@
                 "reveal":"always"
             },
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build-Windows",
+            "type": "shell",
+            "command": "./build-windows.bat",
+            "args": [
+            ],
+            "group":  {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "reveal":"always"
+            },
+            "problemMatcher": "$msCompile"
         }
     ],
     "version": "2.0.0"

@@ -27,25 +27,14 @@ sudo apt install g++-13
 
 ### Windows
 
-### macOS
+- Official installer: [Download Cmake](https://cmake.org/download/#latest)
 
-```
-brew install cmake
-```
-
-
-
-Here's how to install CMake 3.20 alongside C++23 compilers for each platform:
-
-**Windows**
-1. **CMake 3.20 Installation**
-   - Official installer: [Download Cmake](https://cmake.org/download/)
    
 
 ### macOS
    - Homebrew: 
    ```
-   brew install cmake@3.20 && brew link --force cmake@3.20
+   brew install cmake@3.20
    ```
    - Official .dmg: [Download Cmake](https://cmake.org/files/v3.20/cmake-3.20.0-macos-universal.dmg)
 
@@ -61,4 +50,4 @@ sudo apt install cmake=3.20.*
 
 ### Git
 
-for fetching SDL3
+neccecary for fetching SDL3
