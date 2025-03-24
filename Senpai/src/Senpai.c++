@@ -10,6 +10,7 @@ bool App::run() {
    SDL::init(title, width, height);
    // init inputs
    Inputs::init();
+   Window::resize();
    bool isRunning = true;
    Scene* scene = nullptr;
    // mouse position
@@ -35,9 +36,16 @@ bool App::run() {
       }
       return true;
    };
+   // handle window resize
+   auto onResize = [&](Events::WindowResize const &event) -> bool {
+      Window::resize();
+      return true;
+   };
+   // add the callbacks
    Inputs::add_callback<Events::Quit>(onQuit);
    Inputs::add_callback<Events::KeyDown>(onPause);
    Inputs::add_callback<Events::MouseDown>(onMouseDown);
+   Inputs::add_callback<Events::WindowResize>(onResize);
    // create a scene
    Scene loadingScene = {};
    Scene currentScene = {};

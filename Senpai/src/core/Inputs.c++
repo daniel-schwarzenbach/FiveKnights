@@ -46,6 +46,9 @@ bool Inputs::dispatch_events() {
          dispatcher.post<Events::KeyUp>(event.key.key);
          keyboard = SDL_GetKeyboardState(NULL);
          break;
+      case SDL_EVENT_WINDOW_RESIZED:
+         dispatcher.post<Events::WindowResize>();
+         break;
       }
    }
    dispatcher.dispatch();

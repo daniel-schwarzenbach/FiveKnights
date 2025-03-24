@@ -9,6 +9,7 @@ namespace Senpai{
    static SDL_Window* window;
    static SDL_Renderer* renderer;
    static Vec2<int> windowSize;
+   static SDL_AudioSpec audioSpec;
 
 
    namespace SDL {
@@ -20,23 +21,37 @@ namespace Senpai{
          if(SDL_Init(SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_VIDEO)){
             debug_log("sdl initialized!");
          } else {
+            cerr << SDL_GetError() << endl;
             return false;
          }
 
-
-         // initialize SDL_ttf
+          // initialize SDL_ttf
          if(TTF_Init()){
             debug_log("sdl_ttf initialized!");
          } else {
+            cerr << SDL_GetError() << endl;
             return false;
          }
 
          // initialize SDL_mixer
-         if(Mix_Init(MIX_INIT_MP3)){
+         if(Mix_Init(MIX_INIT_MP3 | MIX_INIT_WAVPACK | MIX_INIT_MOD)){
             debug_log("sdl_mixer initialized!");
          } else {
+            cerr << SDL_GetError() << endl;
             return false;
          }
+         /* Open Audio Device */
+         audioSpec.freq = MIX_DEFAULT_FREQUENCY;
+         audioSpec.format = MIX_DEFAULT_FORMAT;
+         audioSpec.channels = MIX_DEFAULT_CHANNELS;
+         if(Mix_OpenAudio(0,&audioSpec)) {
+            debug_log("Audio Device Opened");
+         } else {
+            cerr << SDL_GetError() << endl;
+         }
+         // set volume for all chanals to max
+         Mix_Volume(-1, MIX_MAX_VOLUME);
+
          
 
          // create a window
@@ -45,6 +60,7 @@ namespace Senpai{
          if(window){
             debug_log("window created!");
          } else {
+            cerr << SDL_GetError() << endl;
             return false;
          }
 
@@ -53,6 +69,7 @@ namespace Senpai{
          if(renderer){
             debug_log("renderer created!");
          } else {
+            cerr << SDL_GetError() << endl;
             return false;
          }
          return true;
@@ -119,7 +136,7 @@ namespace Senpai{
             (SDL_FlipMode)flip // flipflags
          );
       }
-   }
+   } // SDL
 
    
    namespace Renderer {
@@ -142,31 +159,29 @@ namespace Senpai{
       Ptr<SDL_Window> get(){
          return window;
       }
-      // get the size of the window
-      Vec2<int> get_size(){
+      // get the new sizes of the window
+      void resize(){
          SDL_GetWindowSize(window, &windowSize.x, &windowSize.y);
 
          int rw, rh;
          SDL_GetCurrentRenderOutputSize(renderer, &rw, &rh);
          
-         // debug_log("size: " << windowSize.x << "/" << windowSize.y << ", renderer: " << rw << "/" << rh);
-         
          float widthScale = (float)rw / (float) windowSize.x;
          float heightScale = (float)rh / (float) windowSize.y;
       
-         if(widthScale != heightScale) {
-            fprintf(stderr, "WARNING: width scale != height scale\n");
-         }
-      
          SDL_SetRenderScale(renderer, widthScale, heightScale);
+      }
 
+      Vec2<int> get_size(){
          return windowSize;
       }
-      // get the aspect ratio of the window
+
+
+      // get the aaudioSpect ratio of the window
       f32 get_aspect_ratio(){
          auto [width, height] = get_size();
          return (f32)width / (f32)height;
-   }
+      }
    
    }
 

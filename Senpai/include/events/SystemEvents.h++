@@ -38,4 +38,8 @@ namespace Senpai::Events {
       inline MouseWheel() = default;
    };
 
+   struct WindowResize final : Event {
+      inline WindowResize() = default;
+   };
+
 } // namespace Senpai::event

@@ -15,6 +15,10 @@ f32 read_high_score(const std::string& filePath) {
 }
 
 struct move_script final : public Script {
+   Ptr<Assets::Audio> audio;
+   void on_start() {
+      audio->play(1.0, true);
+   }
    void on_update(f32 Δt) override {
       auto &tr = entityPtr->get_component<Components::Transform>();
       bool show = false;
@@ -62,8 +66,6 @@ struct start_game_script final : public Script {
 };
 
 void set_up_menu_scene(Ptr<Scene> scenePtr) {
-   // show the loading screen
-   sleep(0.4);
    // register all needet systems
    scenePtr->add_system<Systems::UIButtonSystem>();
    scenePtr->add_system<Systems::ScriptRunner>();
@@ -73,12 +75,15 @@ void set_up_menu_scene(Ptr<Scene> scenePtr) {
    Assets::Font &font = scenePtr->add_asset<Assets::Font>(String("./assets/fonts/The Centurion .ttf"), 100, String("HeroFont"));
    Assets::Font &fontsmall = scenePtr->add_asset<Assets::Font>(String("./assets/fonts/The Centurion .ttf"), 50, String("HeroFontSmall"));
    auto& texture = scenePtr->add_asset<Assets::Texture>(String("./assets/pics/Test.png"), String("MenuBackground"));
+   Assets::Audio &music = scenePtr->add_asset<Assets::Audio>(String("./assets/audio/Musique.mp3"), String("MenuMusic"));
+   music.channel = 1;
    f32 highScore = read_high_score("./assets/data/highscore.dat");
    // camera entity
    Entity& camera = scenePtr->add_entity();
    camera.add_component<Components::Transform>();
    camera.add_component<Components::Camera>(Vec2<f32>{0,0},2.0);
-   camera.add_script<move_script>();
+   auto& ms = camera.add_script<move_script>();
+   ms.audio = &music;
    // background entity
    Entity &bg = scenePtr->add_entity();
    auto &bg_tr = bg.add_component<Components::Transform>();
