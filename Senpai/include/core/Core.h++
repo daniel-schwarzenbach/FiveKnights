@@ -5,6 +5,7 @@
 #pragma once
 #include "./Base.h++"
 #include "./Time.h++"
+#include "./Thread.h++"
 #include "./container/Range.h++"
 #include "./container/Vector.h++"
 #include "./container/Matrix.h++"
@@ -15,3 +16,4 @@
 #include "./Event.h++"
 #include "./Graphics.h++"
 #include "./scene/ECS.h++"
+#include "./FileReader.h++"

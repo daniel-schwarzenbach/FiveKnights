@@ -13,12 +13,13 @@ bool init(String title, u32 width, u32 height);
 // quits all sdl packages
 void quit();
 SDL_FRect to_sdl_dst(const Senpai::Rectangle<f32> &rect);
+SDL_FRect to_sdl_src(const Senpai::PixelArea);
 SDL_Rect to_sdl(const Senpai::Rectangle<int> &rect);
 
 SDL_Rect to_sdl_viewport(const Senpai::Rectangle<f32> &rect);
 
 void RenderFrame(Senpai::Frame<f32> const &frame, SDL_Texture *texture, u8 flip,
-                 u8 blendmode, SDL_FRect *src = nullptr);
+                 SDL_BlendMode blendmode, PixelArea src);
 } // namespace SDL
 
 namespace Renderer {

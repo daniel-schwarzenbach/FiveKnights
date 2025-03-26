@@ -22,6 +22,11 @@ namespace Senpai::Systems {
 
    struct SpriteAnimator final : public System {
       void update(f32 Δt);
+      void start();
    };
    REGISTER_SYSTEM_TYPE(SpriteAnimator);
+
+   struct LightingSystem final : public System {
+      void update(f32 Δt);
+   };
 }

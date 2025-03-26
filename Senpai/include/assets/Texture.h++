@@ -2,6 +2,12 @@
 #include <core/Core.h++>
 
 namespace Senpai::Assets {
+
+/*
+```cpp
+{const String &filename, String const &name, bool pixelPerfect = false}
+```
+*/
 struct Texture final : public Asset {
  private:
    // can only be loaded by the main-thread
@@ -13,8 +19,9 @@ struct Texture final : public Asset {
    String filename;
    f32 height = 1;
    f32 width = 1;
+   bool isPixelPerfect = false;
 
-   Texture(const String &filename, String const &name);
+   Texture(const String &filename, String const &name, bool pixelPerfect = false);
    GenericPtr get_sdl_texture();
 };
 

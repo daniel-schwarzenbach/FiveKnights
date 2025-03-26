@@ -3,12 +3,19 @@
 #include "../core/Core.h++"
 #include "./Texture.h++"
 
-namespace Senpai::Assets{
-   struct Animation final : public Asset{
-      public:
-         Vector<Ptr<Texture>> frames;
-         f32 speed = 30;
+namespace Senpai::Assets {
 
-         ~Animation() = default;
-   };
+/*
+```cpp
+{Ptr<Texture> texture = nullptr, Vec2<f32> size = {64, 64}, uint frames = 1}
+```
+*/
+struct Animation final : public Asset {
+ public:
+   Ptr<Texture> texturePtr;
+   Vector<PixelArea> frameAreas;
+   Animation(Ptr<Texture> texture = nullptr, Vec2<f32> size = {64, 64},
+             uint frames = 1);
+   ~Animation() = default;
 };
+}; // namespace Senpai::Assets

@@ -8,7 +8,9 @@ namespace Senpai {
       Ptr<Scene> scenePtr = nullptr;
       // end protected
    public:
-      bool canBePaused = false;
+      // execution hints
+      const bool canBePaused = false;
+      const bool isParallel = false;
 
       inline virtual ~System() = default;
       // assings a system to the correct registries

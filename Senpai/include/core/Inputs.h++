@@ -27,6 +27,11 @@ class Inputs {
    static bool get_key(Key key);
    // dispatches all events and get the new state
    static bool dispatch_events();
+   // post an event to the dispatcher
+   template <EventType EventT, typename... Args>
+   static inline void post(Args &&...args) {
+      dispatcher.post<EventT>(forward<Args>(args)...);
+   }
    // add a callback to the dispatcher
    template <EventType EventT>
    static inline void add_callback(Function<bool(EventT const &)> &&callback) {
@@ -37,5 +42,6 @@ class Inputs {
    static Vec2<f32> get_mouse_wheel();
    static bool get_mouse_button(uint button);
    static void clear_all_callbacks();
+
 };
 } // namespace Senpai

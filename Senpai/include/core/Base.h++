@@ -91,12 +91,7 @@ template <typename T> String str(T const &in) {
 
 template <typename... Types> using Tuple = std::tuple<Types...>;
 
-// for loop macros
-#define for_(i, n) for (UInt i = 1; i <= static_cast<UInt>(n); i++)
-#define for_wards(i, a, b)                                                     \
-   for (Int i = static_cast<Int>(a); i <= static_cast<Int>(b); i++)
-#define back_wards(i, a, b)                                                    \
-   for (Int i = static_cast<Int>(a); i >= static_cast<Int>(b); i--)
+template <typename T1,typename T2> using Pair = std::pair<T1, T2>;
 
 // mathmatical mod
 constexpr Int mod(Int a, Int b) {
@@ -217,3 +212,5 @@ static constexpr f32 inf = std::numeric_limits<f32>::infinity();
 using std::abs;
 using std::cos;
 using std::sin;
+using std::round;
+using std::pow;

@@ -28,7 +28,7 @@ void Systems::CameraRenderSystem::update(f32 Δt) {
       auto cameraRect = camera.get_rect(entityPtr->get_transform());
       auto canvas = camera.get_canvas();
       SDL_Rect viewport = SDL::to_sdl_viewport(camera.viewport);
-      //SDL_SetRenderViewport(Renderer::get(), &viewport);
+      // SDL_SetRenderViewport(Renderer::get(), &viewport);
       for (auto &toRender : this->scenePtr->ecRegistry.componentsToRender) {
          toRender->render(cameraRect, canvas);
       }
@@ -62,18 +62,37 @@ void Systems::UIButtonSystem::update(f32 Δt) {
    }
 }
 
+void Systems::SpriteAnimator::start() {
+   this->update(0);
+}
+
 void Systems::SpriteAnimator::update(f32 Δt) {
    for (auto entity : view<Components::Animator>()) {
       if (!entity->has_component<Components::Sprite>()) {
-         debug_log("Entity with Animator does not have a Sprit component!");
+         debug_log("Entity with Animator does not have a Sprite component!");
          continue;
       }
       auto &animator = entity->get_component<Components::Animator>();
       auto &sprite = entity->get_component<Components::Sprite>();
-      auto &animation = *animator.animationPtr;
 
       if (animator.flip_frame(Δt)) {
-         sprite.texturePtr = animator.next_frame();
+         auto animationPtr = animator.animations[animator.animId];
+         ++animator.frameId;
+         if (animator.frameId >= animationPtr->frameAreas.size()) {
+            uint nextId = animator.nextAnimId[animator.animId];
+            if (nextId != animator.animId) {
+               animator.switch_animation(nextId);
+            } else {
+               animator.frameId = 0; 
+            }
+         } 
+         sprite.scrArea = animationPtr->frameAreas[animator.frameId];
+      }
+
+      if (animator.has_switched) {
+         animator.has_switched = false;
+         sprite.scrArea = animator.animations[animator.animId]->frameAreas[0];
+         sprite.texturePtr = animator.animations[animator.animId]->texturePtr;
       }
    }
 }
@@ -206,6 +225,51 @@ void Systems::ScriptRunner::update(f32 Δt) {
       for (auto &script : scriptsComponent.scripts) {
          script->on_update(Δt);
       }
+   }
+}
+
+void Systems::LightingSystem::update(f32 Δt) {
+   for (auto &entityPtr : view<Components::Camera>()) {
+      auto &camera = entityPtr->get_component<Components::Camera>();
+      auto cameraRect = camera.get_rect(entityPtr->get_transform());
+      auto canvas = camera.get_canvas();
+      SDL_Rect viewport = SDL::to_sdl_viewport(camera.viewport);
+      //SDL_SetRenderViewport(Renderer::get(), &viewport);
+      auto wSize = Window::get_size();
+      SDL_Texture* lightTexture = SDL_CreateTexture(Renderer::get(),
+                                             SDL_PIXELFORMAT_RGBA8888,
+                                             SDL_TEXTUREACCESS_TARGET,
+                                             wSize.x,
+                                             wSize.y);
+      if(!lightTexture) {
+         debug_log("Failed to create light texture: " << SDL_GetError());
+         return;
+      }
+      // Set the render target to the light texture.
+      if(!SDL_SetRenderTarget(Renderer::get(), lightTexture)) {
+         debug_log("Failed to set render target: " << SDL_GetError());
+         SDL_DestroyTexture(lightTexture);
+         return;
+      }
+      // Clear the light texture.
+      SDL_SetRenderDrawColor(Renderer::get(), 0, 0, 0, 255);
+      SDL_RenderFillRect(Renderer::get(), nullptr);
+      // Render the lights.
+      for (auto &entity : view<Components::Light>()) {
+         Frame<f32> tr = entity->get_transform();
+         auto &light = entity->get_component<Components::Light>();
+         auto frame = light.get_frame(tr);
+         auto projection = frame.project(cameraRect, canvas);
+         SDL::RenderFrame(projection, (SDL_Texture *)light.texturePtr->get_sdl_texture(), light.flip, SDL_BLENDMODE_ADD, light.scrArea);
+      }
+      // Reset the render target to the window.
+      SDL_SetRenderTarget(Renderer::get(), nullptr);
+      // Set the blend mode to modulate the light texture.
+      SDL_SetTextureBlendMode(lightTexture, SDL_BLENDMODE_MOD);
+      // Render the light texture to the window.
+      SDL_RenderTexture(Renderer::get(), lightTexture, nullptr, nullptr);
+      // Free the light texture.
+      SDL_DestroyTexture(lightTexture);
    }
 }
 

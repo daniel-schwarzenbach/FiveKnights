@@ -1,7 +1,6 @@
 #include <SDL3/SDL.h>
 #include <sdl/SDLBackend.h++>
-#include <thread>
-#include <future>
+#include <Senpai>
 
 namespace Senpai {
 
@@ -59,8 +58,8 @@ bool App::run() {
    loadingScene.nextScene = 1;
    // init the loading scene
    loadingScene.start();
-   // set up thread pointer for loading the scene
-   UniquePtr<std::future<void>> loadPtr = nullptr;
+   // set up thread for loading the scene
+   Thread loadThread;
    
    // main loop
    TimePoint next, last;
@@ -82,16 +81,14 @@ bool App::run() {
       // show the new frame
       Renderer::present();
       // check if the next scene should be loaded
-      if (scene->nextScene >= 0 && loadPtr == nullptr) {
+      if (scene->nextScene >= 0 && !loadThread.is_running()) {
          if (sceneLoaders.size() > scene->nextScene) {
             // load a new scene in a new thread
+            uint nextScene = scene->nextScene;
             currentScene.clear();
-            loadPtr = make_unique<std::future<void>>(
-               std::async(std::launch::async, 
-                          sceneLoaders[scene->nextScene],
-                          &currentScene));
             scene = &loadingScene;
             scene->nextScene = -1;
+            loadThread.execute(sceneLoaders[nextScene], &currentScene);
          } else {
             debug_log("Scene index out of bounds");
             scene->nextScene = -1;
@@ -99,12 +96,17 @@ bool App::run() {
          // check if the scene is loaded
       } else {
          // if the scene is loaded
-         if (loadPtr != nullptr && loadPtr->wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
-            loadPtr->get();
-            loadPtr = nullptr;
-            scene = &currentScene;
-            scene->inputPtr = &inputs;
-            scene->start();
+         if (loadThread.is_running() && loadThread.is_finished()) {
+            if(loadThread.join()) {
+               debug_log("Scene loaded");
+               scene = &currentScene;
+               scene->start();
+            } else {
+               debug_log("Scene failed to load");
+               scene = &loadingScene;
+               currentScene.clear();
+               scene->nextScene = 1;
+            }
          }
       }
       // update Δt
@@ -117,7 +119,7 @@ bool App::run() {
          next = get_TimePoint();
          Δt = get_time_diff(last, next);
       }
-   }
+   } // end main loop
 
    loadingScene.clear();
    currentScene.clear();

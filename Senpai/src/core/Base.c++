@@ -7,7 +7,7 @@ IS& operator>>(IS& is, Ptr<const char> str) {
    while (str[i] != '\0') {
       is >> current;
       if (current != str[i] && !once) {
-         cerr << "Couldn't read the string:" << str << endl;
+         cerr << "Couldn't read the string:" << str << " was " << current << endl;
          once = true;
       }
       i++;

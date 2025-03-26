@@ -4,13 +4,15 @@ using namespace Senpai;
 
 struct loading_animator final : public Script {
    f32 timetochange = 0.1f;
+
    void on_update(f32 Δt) override {
+
       if ((timetochange -= Δt) > 0)
          return;
       timetochange = 0.3f;
-      constexpr f32 shift = 32;
       auto &b = entityPtr->get_component<Components::ButtonUI>();
       auto& tr = entityPtr->get_component<Components::Transform>();
+      f32 shift = b.fontPtr->size / 10.0f;
       if (b.text == "Loading...") {
          b.text = "Loading";
          tr.frame.position.x = 0;
@@ -29,7 +31,7 @@ struct loading_animator final : public Script {
 
 void set_up_loading_scene(Ptr<Scene> scenePtr) {
    scenePtr->add_system<Systems::ScriptRunner>();
-   scenePtr->add_system<Systems::CameraRenderSystem>();
+   // scenePtr->add_system<Systems::CameraRenderSystem>();
    scenePtr->add_system<Systems::UIRenderSystem>();
 
    Assets::Font &font = scenePtr->add_asset<Assets::Font>(std::move(Assets::Font{
@@ -44,7 +46,6 @@ void set_up_loading_scene(Ptr<Scene> scenePtr) {
        Components::ButtonUI{&font,
                             "Loading",
                             {255, 255, 255, 255},
-                            1,
                             {0, 0, 0, 0},
                             {0, 0, 0, 0},
                             {0, 0}});

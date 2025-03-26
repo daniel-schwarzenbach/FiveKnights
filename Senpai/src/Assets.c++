@@ -1,7 +1,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
-#include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3_mixer/SDL_mixer.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include <assets/Assets.h++>
 #include <sdl/SDLBackend.h++>
 
@@ -23,12 +23,14 @@ Audio::Audio(const String &filename, String const &name) {
 };
 
 void Audio::set_pan(int channel, float pan) {
-   if(pan > 1.0f) pan = 1.0f;
-   if(pan < -1.0f) pan = -1.0f;
-   if(pan > 0.0f) {
-      Mix_SetPanning(channel, (u8)(255.0*(1.0f-pan)), (u8)255);
+   if (pan > 1.0f)
+      pan = 1.0f;
+   if (pan < -1.0f)
+      pan = -1.0f;
+   if (pan > 0.0f) {
+      Mix_SetPanning(channel, (u8)(255.0 * (1.0f - pan)), (u8)255);
    } else {
-      Mix_SetPanning(channel, (u8)255, (u8)(255.0*(1.0f+pan)));
+      Mix_SetPanning(channel, (u8)255, (u8)(255.0 * (1.0f + pan)));
    }
 };
 
@@ -61,7 +63,8 @@ Font::Font(const String &filename, int size, String const &name) {
    });
 };
 
-Texture::Texture(const String &filename, String const &name) {
+Texture::Texture(const String &filename, String const &name, bool pp)
+    : isPixelPerfect{pp} {
    this->filename = filename;
    this->name = name;
    // theadsaf
@@ -76,18 +79,20 @@ Texture::Texture(const String &filename, String const &name) {
       SDL_DestroySurface((SDL_Surface *)texture);
    });
    // quickload the texture to get the size, this could be done probebly better
-   SDL_Texture* texturePtr = SDL_CreateTextureFromSurface(Renderer::get(),
-                                                        (SDL_Surface *)sdlSurface.get());
-   
+   SDL_Texture *texturePtr = SDL_CreateTextureFromSurface(
+       Renderer::get(), (SDL_Surface *)sdlSurface.get());
+
    SDL_GetTextureSize(texturePtr, &this->width, &this->height);
    SDL_DestroyTexture(texturePtr);
 };
 
 GenericPtr Texture::get_sdl_texture() {
-   if(sdlTexture) {
+   if (sdlTexture) {
       return sdlTexture.get();
    } else if (sdlSurface) {
-      GenericPtr genericPtr = SDL_CreateTextureFromSurface(Renderer::get(),(SDL_Surface*)sdlSurface.get());
+      GenericPtr genericPtr = SDL_CreateTextureFromSurface(
+          Renderer::get(), (SDL_Surface *)sdlSurface.get());
+      if(isPixelPerfect) SDL_SetTextureScaleMode((SDL_Texture*)genericPtr, SDL_SCALEMODE_NEAREST);
       if (genericPtr == nullptr) {
          debug_log("Failed to load texture: " + filename);
          cout << SDL_GetError() << endl;
@@ -95,39 +100,67 @@ GenericPtr Texture::get_sdl_texture() {
       }
       sdlTexture = SharedPtr<void>(genericPtr, [](void *texture) {
          debug_log("Surface destroyed");
-         SDL_DestroyTexture((SDL_Texture*)texture);
+         SDL_DestroyTexture((SDL_Texture *)texture);
       });
       return sdlTexture.get();
    } else {
-      debug_log("No Texture Present!")
-      return nullptr;
+      debug_log("No Texture Present!") return nullptr;
    }
 }
 
-    TileSet::TileSet(String const &filename, u8 cols, u8 rows, u16 sizeX,
-                     u16 sizeY)
+TileSet::TileSet(String const &filename, u16 cols, u16 rows, f32 sizeX, f32 sizeY)
     : filename(filename), cols(cols), rows(rows), sizeX(sizeX), sizeY(sizeY) {
    GenericPtr genericPtr =
-       (GenericPtr)IMG_LoadTexture(Renderer::get(), filename.c_str());
+       (GenericPtr)IMG_Load(filename.c_str());
    if (genericPtr == nullptr) {
       debug_log("Failed to load texture: " + filename);
       cout << SDL_GetError() << endl;
       return;
    }
-   sdlTexture = SharedPtr<void>(genericPtr, [](void *texture) {
-      SDL_DestroyTexture((SDL_Texture *)texture);
+   sdlSurface = SharedPtr<void>(genericPtr, [](void *surface) {
+      SDL_DestroySurface((SDL_Surface *)surface);
    });
 };
 
-Rectangle<f32> TileSet::operator[](u16 index) const {
+GenericPtr TileSet::get_sdl_texture() {
+   if (sdlTexture) {
+      return sdlTexture.get();
+   } else if (sdlSurface) {
+      GenericPtr genericPtr = SDL_CreateTextureFromSurface(
+          Renderer::get(), (SDL_Surface *)sdlSurface.get());
+      // tileset should always be pixel perfect
+      SDL_SetTextureScaleMode((SDL_Texture*)genericPtr, SDL_SCALEMODE_NEAREST);
+      if (genericPtr == nullptr) {
+         debug_log("Failed to load texture: " + filename);
+         cout << SDL_GetError() << endl;
+         return nullptr;
+      }
+      sdlTexture = SharedPtr<void>(genericPtr, [](void *texture) {
+         debug_log("Surface destroyed");
+         SDL_DestroyTexture((SDL_Texture *)texture);
+      });
+      return sdlTexture.get();
+   } else {
+      debug_log("No Texture Present!") return nullptr;
+   }
+}
+
+PixelArea TileSet::operator[](u16 index) const {
    f32 x = index % cols;
    f32 y = index / cols;
    if (y >= rows) {
       debug_log("TileSet index out of bounds");
       y = 0.0f;
    }
-   return {.position = {sizeX / 2.0f + x * sizeX, sizeY / 2.0f + y * sizeY},
+   return {.position = {x * sizeX, y * sizeY},
            .size = {f32(sizeX), f32(sizeY)}};
 };
+
+Animation::Animation(Ptr<Texture> texture, Vec2<f32> size, uint frames)
+    : texturePtr(texture) {
+   for (uint i = 0; i < frames; i++) {
+      frameAreas.push_back({.position = {i * size.x, 0}, .size = size});
+   }
+}
 
 }; // namespace Senpai::Assets

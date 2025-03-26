@@ -109,9 +109,21 @@ namespace Senpai {
          y = T(other.y);
          return *this;
       }
+
+      template <typename T2>
+      bool operator==(const Vec2<T2>& other) const {
+         return x == other.x && y == other.y;
+      }
+
+      template <typename T2>
+      bool similar_to(Vec2<T2>& other) const {
+         return abs(x - other.x) < ε  &&  abs(y - other.y) < ε;
+      }
+
    };
 
 } // namespace Senpai
+
 
 template <typename T>
 OS& operator<<(OS& os, const Senpai::Vec2<T>& vec) {
@@ -122,6 +134,6 @@ OS& operator<<(OS& os, const Senpai::Vec2<T>& vec) {
 template <typename T>
 IS& operator>>(IS& is, Senpai::Vec2<T>& vec) {
    char Vec2, comma, end;
-   is  >> "Vec2{" >> vec.x >> ", " >> vec.y >> "}";
+   is  >> "Vec2{" >> vec.x >> "," >> vec.y >> "}";
    return is;
 }

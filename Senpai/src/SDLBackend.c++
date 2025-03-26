@@ -93,6 +93,15 @@ namespace Senpai{
             rect.size.y
          };
       }
+
+      SDL_FRect to_sdl_src(const Senpai::PixelArea area) {
+         return SDL_FRect{
+            area.position.x,
+            area.position.y,
+            area.size.x,
+            area.size.y
+         };
+      }
    
       SDL_Rect to_sdl(const Senpai::Rectangle<int>& rect) {
          auto pos = rect.left_top();
@@ -114,22 +123,22 @@ namespace Senpai{
          };
       }
    
-      void RenderFrame(Senpai::Frame<f32> const& frame, SDL_Texture* texture , u8 flip, u8 blendmode, SDL_FRect*  src) {
+      void RenderFrame(Senpai::Frame<f32> const& frame, SDL_Texture* texture , u8 flip, SDL_BlendMode bm, PixelArea src) {
+         SDL_FRect srcRect = to_sdl_src(src);
          // define destination rect
          Senpai::Rectangle<f32> senpaiRect = {frame.position, frame.size};
          SDL_FRect dstRect = to_sdl_dst(senpaiRect);
          // get the rotation point
          SDL_FPoint point = {
-            frame.size.x/2 + frame.rotAnchor.x * frame.size.x, 
-            frame.size.y/2 + frame.rotAnchor.y * frame.size.y
+            dstRect.w * (0.5f + frame.rotAnchor.x), 
+            dstRect.h * (0.5f - frame.rotAnchor.y)
          };
-         //SDL_SetTextureBlendMode(texture, 1);
-         //SDL_SetTextureBlendMode(texture, (SDL_BlendMode)blendmode | 1);
+         SDL_SetTextureBlendMode(texture, bm);
          // render texture
          SDL_RenderTextureRotated(
             Senpai::Renderer::get(), // renderer
             texture, // texture
-            src, // source rect
+            &srcRect, // source rect
             &dstRect, // destination rect
             frame.rotation, // rotation
             &point, // rotation point

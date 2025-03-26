@@ -4,8 +4,10 @@ namespace Senpai
 {
    namespace rng{
       // x ∈ [0,1)
-      f64 get_f64();
+      f32 get();
       // get a random Adress
-      UInt get_UInt();
+      int get_in_range(int a, int b);
+      // x ∈ [0,∞)
+      f32 get_gaussian();
    };
 } // namespace Senpai

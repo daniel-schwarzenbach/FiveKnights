@@ -75,5 +75,5 @@
    "editor.wrappingIndent": "deepIndent",
    "editor.wordWrapColumn": 80,
    "editor.wordWrap": "wordWrapColumn",
-   "dotnet.defaultSolution": "disable"
+   "dotnet.defaultSolution": "disable",
 }

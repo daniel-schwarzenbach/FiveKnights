@@ -31,7 +31,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 # Add tests
-enable_testing()
+# enable_testing()
 
 # Create a test executable (replace YOUR_TESTS with your actual test files)
 add_executable(Tests ./tests/Tests.c++)
@@ -40,5 +40,5 @@ add_executable(Tests ./tests/Tests.c++)
 target_link_libraries(Tests PRIVATE gtest_main gtest Senpai)
 
 # Discover and register tests
-include(GoogleTest)
-#gtest_discover_tests(Tests)
+# include(GoogleTest)
+# gtest_discover_tests(Tests)

@@ -27,8 +27,6 @@ struct Component {
 struct RenderComponent : public Component {
    // flip mode of the renderable
    u8 flip = 0;
-   // the blend mode of the renderable
-   u8 blendMode = 1;
    // virtual z axis that determines the render order
    f32 z = 0;
    void flip_vertical();
@@ -48,8 +46,6 @@ struct RenderComponent : public Component {
 struct UIComponent : public Component {
    // flip mode of the renderable
    u8 flip = 0;
-   // the blend mode of the renderable
-   u8 blendMode = 1;
    // virtual z axis that determines the render order
    f32 z = 0;
    void flip_vertical();

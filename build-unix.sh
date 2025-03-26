@@ -24,8 +24,10 @@ cmake .. || { echo "CMake configuration failed"; exit 1; }
 # Build the project
 echo "Building project..."
 cmake --build . || { echo "Build failed"; exit 1; }
+echo "Build successfull"
 
-ctest || { echo "Tests failed"; exit 1; }
+./Tests
+#ctest || { echo "Tests failed"; exit 1; }
 
 # Return to original directory
 cd ..

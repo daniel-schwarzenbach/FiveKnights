@@ -107,9 +107,9 @@ namespace Senpai {
          // get rotation
          f32 sinA = 0, cosA = 1;
          // make a case distinction for more efficient calculation
-         if(abs(parent.rotation) < ε || abs(parent.rotation - 360) || abs(parent.rotation - 180) < ε) {
+         if(abs(parent.rotation - 180) < ε) {
             sinA = 0;
-            cosA = parent.rotation < 180 ? 1 : -1;
+            cosA = -1;
          } else if(abs(parent.rotation - 90) < ε || abs(parent.rotation - 270) < ε) {
             sinA = parent.rotation < 180 ? 1 : -1;
             cosA = 0;
@@ -128,7 +128,7 @@ namespace Senpai {
          result.size = size*parent.size;
          result.rotAnchor = rotAnchor;
          result.rotation = rotation + parent.rotation;
-         result.scale(parent.size);
+         //result.scale(parent.size);
          return result;
       }
 
@@ -139,9 +139,41 @@ namespace Senpai {
          return Frame{
             .position = (position - Camera.position) * scalefactor + Canvas.position,
             .size = this->size * scalefactor,
-            .rotAnchor = this->rotAnchor * scalefactor + Canvas.position,
+            .rotAnchor = this->rotAnchor,
             .rotation = this->rotation
          };
       }
    };
+
+   // Rectangle for Textures
+   struct PixelArea {
+      // left upper corner
+      Vec2<f32> position = {0,0};
+      // size in pixels
+      Vec2<f32> size = {32, 32};
+   };
+
+   // linear interpolation between two Vec2
+   template <typename T>
+   Vec2<T> lin_interpolate(Vec2<T> const& a, Vec2<T> const& b, f32 t) {
+      return a + (b - a) * t;
+   }
+
+   // get the angle in °
+   inline f32 get_angle(Vec2<f32> vec) {
+      constexpr f32 radToDegre = 180.0f / π;
+      f32 angle = std::atan2(vec.y , -vec.x) * radToDegre;
+      return angle;
+   }
+
+   // interpolate between to angle in degrees
+   inline f32 interpolate_between_angles(f32 a, f32 b, f32 intFactor) {
+      constexpr f32 degToRad = π / 180.0f;
+      // interpolate their virtual positions
+      Vec2<f32> α = {sin(a * degToRad), cos(a * degToRad)};
+      Vec2<f32> β = {sin(b * degToRad), cos(b * degToRad)};
+      Vec2<f32> γ = lin_interpolate(α,β,intFactor);
+      // return the current angle
+      return get_angle(γ);
+   }
 }

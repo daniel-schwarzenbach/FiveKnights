@@ -49,22 +49,23 @@ ScriptsHolder &ScriptsHolder::operator=(ScriptsHolder const &other) {
    return *this;
 }
 
-Sprite::Sprite(Ptr<Assets::Texture> assetPtr, Set<Flip> flips,
-               Set<BlendMode> blendModes)
-    : texturePtr(assetPtr) {
+Sprite::Sprite(Ptr<Assets::Texture> assetPtr, Vec2<f32> offset, Set<Flip> flips)
+    : texturePtr(assetPtr), offset(offset) {
    this->id = component_type_id<Sprite>();
    for (auto flip : flips) {
       this->flip |= flip;
    }
-   for (auto blendMode : blendModes) {
-      this->blendMode |= blendMode;
+   if (assetPtr) {
+      this->scrArea = {0, 0, texturePtr->width, texturePtr->height};
    }
 }
 
 Frame<f32> Sprite::get_frame(Frame<f32> const &tr) const {
    return {
-       .position = tr.position,
-       .size = Vec2<f32>{texturePtr->width, texturePtr->height} * tr.size,
+       .position = tr.position + offset,
+       .size = Vec2<f32>{this->scrArea.size.x, this->scrArea.size.x} * tr.size,
+       .rotAnchor = tr.rotAnchor,
+       .rotation = tr.rotation
    };
 }
 
@@ -77,11 +78,8 @@ void Sprite::render(Rectangle<f32> const &cameraRect,
    // get the rect of the sprite
    auto projection = frame.project(cameraRect, canvasRect);
    // render the projection
-   SDL_FRect src = {0, 0, this->texturePtr->width, this->texturePtr->height};
-
-
    SDL::RenderFrame(projection, (SDL_Texture *)texturePtr->get_sdl_texture(),
-                    flip, blendMode);
+                    flip, SDL_BLENDMODE_BLEND, this->scrArea);
 }
 
 // TextUI::TextUI(
@@ -109,13 +107,6 @@ get_texture_from_text(Components::ButtonUI const &button) {
    // create font
    bool fontHasToBeFreed = false;
    TTF_Font *sdlFont = (TTF_Font *)font.sdlFont.get();
-   if (abs(button.textScale - 1.0f) > ε) {
-      sdlFont =
-          TTF_OpenFont(font.filename.c_str(), font.size * button.textScale);
-      fontHasToBeFreed = true;
-      if (!sdlFont)
-         cout << SDL_GetError() << endl;
-   }
    // create surface
    SDL_Surface *surface =
        TTF_RenderText_Blended(sdlFont, button.text.c_str(), button.text.size(),
@@ -143,11 +134,11 @@ get_texture_from_text(Components::ButtonUI const &button) {
 }
 
 ButtonUI::ButtonUI(Ptr<Assets::Font> fontPtr, String text, Color textColor,
-                   f32 textSize, Color buttonColor, Color buttonHoverColor,
+                   Color buttonColor, Color buttonHoverColor,
                    Vec2<f32> buttonScale)
-    : text(text), textColor(textColor), textScale(textSize),
-      buttonColor(buttonColor), buttonHoverColor(buttonHoverColor),
-      buttonScale(buttonScale), fontPtr(fontPtr) {
+    : text(text), textColor(textColor), buttonColor(buttonColor),
+      buttonHoverColor(buttonHoverColor), buttonScale(buttonScale),
+      fontPtr(fontPtr) {
    this->hoverstate = false;
    this->id = component_type_id<ButtonUI>();
 }
@@ -167,8 +158,7 @@ void ButtonUI::render() {
    // first render the button
    auto rect = get_rect();
    SDL_FRect sdlRect = SDL::to_sdl_dst(rect);
-   SDL_SetRenderDrawBlendMode(Renderer::get(),
-                              this->blendMode | SDL_BLENDMODE_BLEND);
+   SDL_SetRenderDrawBlendMode(Renderer::get(), SDL_BLENDMODE_BLEND);
    if (hoverstate) {
       SDL_SetRenderDrawColor(Renderer::get(), buttonHoverColor.r,
                              buttonHoverColor.g, buttonHoverColor.b,
@@ -177,8 +167,7 @@ void ButtonUI::render() {
       SDL_SetRenderDrawColor(Renderer::get(), buttonColor.r, buttonColor.g,
                              buttonColor.b, buttonColor.a);
    }
-   SDL_SetRenderDrawBlendMode(Renderer::get(),
-                              this->blendMode | SDL_BLENDMODE_BLEND);
+   SDL_SetRenderDrawBlendMode(Renderer::get(), SDL_BLENDMODE_BLEND);
    if (!SDL_RenderFillRect(Renderer::get(), &sdlRect)) {
       cout << SDL_GetError() << endl;
    }
@@ -188,35 +177,48 @@ void ButtonUI::render() {
    }
    // create surface
    auto [texture, width, height] = get_texture_from_text(*this);
-   auto textFrame = Frame<f32>{rect.position, Vec2<f32>{width, height}};
-   SDL::RenderFrame(textFrame, texture, this->flip, this->blendMode);
+   auto rs = get_render_scale();
+   auto textFrame =
+       Frame<f32>{rect.position, Vec2<f32>{width * rs.y, height * rs.y}};
+   auto src = PixelArea{0, 0, width, height};
+   SDL::RenderFrame(textFrame, texture, this->flip, SDL_BLENDMODE_BLEND, src);
    SDL_SetRenderDrawColor(Renderer::get(), 0, 0, 0, 255);
    SDL_DestroyTexture(texture);
 }
 
 bool Animator::flip_frame(f32 Δt) {
-   δt += Δt;
-   if (δt >= flipTime) {
-      δt -= flipTime;
+   lastFlipTime += Δt;
+   if (lastFlipTime >= flipTime) {
+      lastFlipTime -= flipTime;
       return true;
    }
    return false;
 }
 
-Ptr<Assets::Texture> Animator::next_frame() {
-   frameId++;
-   if (frameId >= animationPtr->frames.size()) {
-      frameId = 0;
-   }
-   return animationPtr->frames[frameId];
-}
-
-Animator::Animator(f32 flipTime, Ptr<Assets::Animation> animationPtr)
-    : flipTime(flipTime), animationPtr(animationPtr) {
+Animator::Animator(f32 fps, Vector<Ptr<Assets::Animation>> animations,
+                   Vector<u32> nextAnimations) : flipTime(1.0/fps), animations(animations) {
    this->id = component_type_id<Animator>();
+   nextAnimId.reserve(animations.size());
+   for (uint i = 0; i < animations.size(); i++) {
+      if (i < nextAnimations.size())
+         nextAnimId.push_back(nextAnimations[i]);
+      else
+         nextAnimId.push_back(i);
+   }
 }
 
-TileMap::TileMap(Matrix<u8> tiles, Ptr<Assets::TileSet> tileSetPtr)
+bool Animator::switch_animation(u32 id) {
+   if (id >= animations.size()) {
+      debug_log("Animation id out of bounds");
+      return false;
+   }
+   animId = id;
+   frameId = 0;
+   has_switched = true;
+   return true;
+}
+
+TileMap::TileMap(Matrix<u16> tiles, Ptr<Assets::TileSet> tileSetPtr)
     : tileSetPtr(tileSetPtr), tiles(tiles) {
    this->id = component_type_id<TileMap>();
 }
@@ -229,8 +231,8 @@ Tuple<uint, uint> TileMap::get_tile_at_point(Frame<f32> const &transform,
    // get the total size of the tiles-matrix
    auto [X, Y] = tiles.shape();
    // calculate the tile drawn at this position
-   int x = floor((point.x - transform.position.x) / sizeX);
-   int y = floor((point.y - transform.position.x) / sizeY);
+   int x = floor((point.x - transform.position.x) / (sizeX*transform.size.x));
+   int y = floor((point.y - transform.position.x) / sizeY*transform.size.y);
    // return the tile closest to the point
    return {min(max(0, x), X - 1), min(max(0, y), Y - 1)};
 }
@@ -239,13 +241,19 @@ Tuple<Range, Range>
 TileMap::get_render_ranges(Frame<f32> const &transform,
                            Rectangle<f32> const &camera) const {
    // get the left upper corner of the camera
-   Vec2<f32> left_top = camera.left_top();
+   Vec2<f32> left_bottom = camera.left_bottom();
    // get the right lower corner of the camera
-   Vec2<f32> right_bottom = camera.right_bottom();
+   Vec2<f32> right_top = camera.right_top();
    // get the tile at the left upper corner
-   auto [x1, y1] = get_tile_at_point(transform, left_top);
+   auto [x1, y1] = get_tile_at_point(transform, left_bottom);
    // get the tile at the right lower corner
-   auto [x2, y2] = get_tile_at_point(transform, right_bottom);
+   auto [X, Y] = tiles.shape();
+   auto [x2, y2] = get_tile_at_point(transform, right_top);
+   if(x2 < X-1) x2++;
+   if(y2 < Y-1) y2++;
+   if(x1 > 0) x1--;
+   if(y1 > 0) y1--;
+   if(y1 > 0) y1--;
    // return the range of tiles to render
    return {Range{x1, x2}, Range{y1, y2}};
 }
@@ -271,15 +279,15 @@ void TileMap::render(Rectangle<f32> const &camera,
          // get the frame of the tile
          Frame<f32> tileFrame = get_tile(entityPtr->get_transform(), x, y);
          // get the tile id
-         u8 tileId = tiles[x, y];
+         u16 tileId = tiles[x, y];
          // get source rect
-         SDL_FRect src = SDL::to_sdl_dst(tileSetPtr->operator[](tileId));
+         PixelArea src = tileSetPtr->operator[](tileId);
          // get the projection of the tile
          Frame<f32> projection = tileFrame.project(camera, canvas);
          // render the projection
          SDL::RenderFrame(projection,
-                          (SDL_Texture *)tileSetPtr->sdlTexture.get(),
-                          this->flip, this->blendMode, &src);
+                          (SDL_Texture *)tileSetPtr->get_sdl_texture(),
+                          this->flip, SDL_BLENDMODE_BLEND, src);
       }
    }
 }
@@ -302,4 +310,26 @@ Rectangle<f32> RectangleCollider::get_rect(Frame<f32> const &transform) const {
 ScriptsHolder::ScriptsHolder() {
    this->id = component_type_id<ScriptsHolder>();
 }
+
+Light::Light(Ptr<Assets::Texture> assetPtr, Set<Flip> flips)
+    : texturePtr(assetPtr) {
+   this->id = component_type_id<Light>();
+   for (auto flip : flips) {
+      this->flip |= flip;
+   }
+   if (assetPtr) {
+      this->scrArea = {0, 0, texturePtr->width, texturePtr->height};
+   }
+}
+
+Frame<f32> Light::get_frame(Frame<f32> const &tr) const {
+   return {
+      .position = tr.position + this->offset,
+      .size = Vec2<f32>{this->scrArea.size.x, this->scrArea.size.x} * tr.size,
+       .rotAnchor = tr.rotAnchor,
+       .rotation = tr.rotation
+       
+   };
+}
+
 } // namespace Senpai::Components

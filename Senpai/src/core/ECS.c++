@@ -44,6 +44,8 @@ void UIComponent::flip_horizontal() { this->flip ^= Flip::Horizontal; }
 void ECRegistry::clear() {
    this->componentId_to_entityPtrs.clear();
    this->entities.clear();
+   this->uiComponents.clear();
+   this->componentsToRender.clear();
 }
 
 Entity& ECRegistry::add_entity(bool isAlive) {
@@ -87,9 +89,15 @@ void ECRegistry::register_component(Ptr<Component> componentPtr,
    componentId_to_entityPtrs[componentPtr->id].push_back(entityPtr);
    if (RenderComponent::is_sub_type(componentPtr)) {
       componentsToRender.insert_sorted(
-          dynamic_cast<Ptr<RenderComponent>>(componentPtr));
+          dynamic_cast<Ptr<RenderComponent>>(componentPtr),
+          [](Ptr<RenderComponent> const &a, Ptr<RenderComponent> const &b) {
+             return *a < *b;
+          });
    } else if (UIComponent::is_sub_type(componentPtr)) {
-      uiComponents.insert_sorted(dynamic_cast<Ptr<UIComponent>>(componentPtr));
+      uiComponents.insert_sorted(dynamic_cast<Ptr<UIComponent>>(componentPtr), 
+                                 [](Ptr<UIComponent> const &a, Ptr<UIComponent> const &b) {
+                                     return *a < *b;
+                                 });
    }
 }
 
@@ -174,7 +182,7 @@ void Entity::enable() {
 bool Entity::is_enabled() const { return enabled; }
 
 void Entity::disable() {
-   if (!enabled) {
+   if (enabled) {
       for (auto &component : components) {
          ecRegistryPtr->unregister_component(component.get(), this);
       }
@@ -194,21 +202,47 @@ Entity& Scene::add_entity_copy(Entity const& entity, bool isAlive) {
    return this->ecRegistry.add_entity_copy(entity, isAlive);
 }
 
-void Scene::update(f32 δt) {
+void Scene::update(f32 Δt) {
+   Deque<Thread> threads;
    if (this->isPaused) {
       for (auto &system : systems) {
          if (!system->canBePaused) {
-            system->update(δt);
+            if(system->isParallel) {
+               threads.push_back(Thread());
+               threads.back().execute([&system, Δt]() {
+                  system->update(Δt);
+               });
+            } else {
+               system->update(Δt);
+            }
          }
       }
    } else {
       for (auto &system : systems) {
-         system->update(δt);
+         if(system->isParallel) {
+            threads.push_back(Thread());
+            threads.back().execute([&system, Δt]() {
+               system->update(Δt);
+            });
+         } else {
+            system->update(Δt);
+         }
       }
+   }
+   for (auto &thread : threads) {
+      thread.join();
    }
 }
 
 void Scene::start() {
+   ecRegistry.componentsToRender.sort([](Ptr<RenderComponent> const &a,
+                                        Ptr<RenderComponent> const &b) {
+      return *a < *b;
+   });
+   ecRegistry.uiComponents.sort([](Ptr<UIComponent> const &a,
+                                  Ptr<UIComponent> const &b) {
+      return *a < *b;
+   });
    for (auto &system : systems) {
       system->start();
    }
