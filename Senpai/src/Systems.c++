@@ -23,6 +23,9 @@ void Systems::TestSystem::update(f32 Δt) {
 }
 
 void Systems::CameraRenderSystem::update(f32 Δt) {
+   std::sort(this->scenePtr->ecRegistry.componentsToRender.begin(),
+             this->scenePtr->ecRegistry.componentsToRender.end(),
+             [](auto &a, auto &b) { return *a < *b; });
    for (auto &entityPtr : view<Components::Camera>()) {
       auto &camera = entityPtr->get_component<Components::Camera>();
       auto cameraRect = camera.get_rect(entityPtr->get_transform());
@@ -36,6 +39,9 @@ void Systems::CameraRenderSystem::update(f32 Δt) {
 }
 
 void Systems::UIRenderSystem::update(f32 Δt) {
+   std::sort(this->scenePtr->ecRegistry.uiComponents.begin(),
+             this->scenePtr->ecRegistry.uiComponents.end(),
+             [](auto &a, auto &b) { return *a < *b; });
    for (auto &toRender : this->scenePtr->ecRegistry.uiComponents) {
       toRender->render();
    }

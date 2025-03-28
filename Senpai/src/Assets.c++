@@ -22,25 +22,41 @@ Audio::Audio(const String &filename, String const &name) {
    });
 };
 
-void Audio::set_pan(int channel, float pan) {
-   if (pan > 1.0f)
-      pan = 1.0f;
-   if (pan < -1.0f)
-      pan = -1.0f;
-   if (pan > 0.0f) {
-      Mix_SetPanning(channel, (u8)(255.0 * (1.0f - pan)), (u8)255);
-   } else {
-      Mix_SetPanning(channel, (u8)255, (u8)(255.0 * (1.0f + pan)));
-   }
-};
+// void Audio::set_pan(int channel, float pan) {
+//    if (pan > 1.0f)
+//       pan = 1.0f;
+//    if (pan < -1.0f)
+//       pan = -1.0f;
+//    if (pan > 0.0f) {
+//       Mix_SetPanning(channel, (u8)(255.0 * (1.0f - pan)), (u8)255);
+//    } else {
+//       Mix_SetPanning(channel, (u8)255, (u8)(255.0 * (1.0f + pan)));
+//    }
+// };
 
 void Audio::play(float volume, bool looping) {
    if (sdlAudio) {
       Mix_Chunk *audio = (Mix_Chunk *)sdlAudio.get();
+      
       Mix_VolumeChunk(audio, volume * MIX_MAX_VOLUME);
       Mix_PlayChannel(channel, audio, looping ? -1 : 0);
    }
 };
+
+void Audio::play_direction(Vec2<f32> dir, f32 scale) {
+   if (!sdlAudio) return;
+   // get the distance:
+   f32 rawDistance = std::sqrt(dir|dir);
+   int distance = int(min(max(rawDistance * scale, 1),255));
+   // get angle 
+   f32 angle = get_angle(dir)-90.0f;
+   if(angle < 0) angle += 360.0f;
+
+   Mix_Chunk *audio = (Mix_Chunk *)sdlAudio.get();
+   Mix_VolumeChunk(audio, MIX_MAX_VOLUME);
+   channel = Mix_PlayChannel(-1, audio, 0);
+   Mix_SetPosition(channel, i16(angle), u8(distance));
+}
 
 Font::Font(const String &filename, int size, String const &name) {
    this->filename = filename;

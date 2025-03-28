@@ -15,7 +15,7 @@ class Vector : public std::vector<T> {
       Vector(Vector<T>&& other) : std::vector<T>(std::move(other)) {}
       Vector(const Vector<T>& other) : std::vector<T>(other) {}
       ~Vector() = default;
-      template<typename... Args>
+      template<typename... Args, typename = std::enable_if_t<std::conjunction_v<std::is_constructible<T, Args>...>>>
       Vector(Args... args) {
          (this->push_back(args), ...);
       }
@@ -115,7 +115,7 @@ class Vector : public std::vector<T> {
 };
 
 template<typename T>
-OS& operator<<(OS& os, Vector<T> const& vec) {
+inline OS& operator<<(OS& os, Vector<T> const& vec) {
    os << "Vector{";
    for(UInt i = 0; i < vec.size()-1; ++i){
       os << vec[i] << ", ";

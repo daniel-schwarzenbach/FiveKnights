@@ -42,6 +42,9 @@ struct Thread {
 
    // joins the thread and resets it, returns true if no Exceptions accured
    inline bool join() {
+      if(!thread) {
+         return false;
+      }
       thread->join();
       thread.reset();
       finished = false;

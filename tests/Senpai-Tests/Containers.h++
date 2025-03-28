@@ -10,10 +10,24 @@ TEST(Containers, Vector){
    EXPECT_TRUE(vec1 == vec2);
    cout << vec1 << endl;
    cout << vec2 << endl;
+   vec1.push_back(6);
+   // test the copy constructor
+   {
+      Vector<Int> vec3(vec1);
+      vec2 = vec3;
+   }
+   EXPECT_TRUE(vec1 == vec2);
+   vec1.pop_back();
+   // test the move constructor
+   {
+      auto vec4 = vec1;
+      Vector<Int> vec3(std::move(vec4));
+      vec2 = std::move(vec3);
+   }
+   EXPECT_TRUE(vec1 == vec2);
 }
 
 TEST(Containers, Vec2){
-   using Senpai::Vec2;
     Vec2<Int> vec1{1,2};
     Vec2<Int> vec2{3,4};
     Vec2<Int> vec3 = vec1 + vec2;

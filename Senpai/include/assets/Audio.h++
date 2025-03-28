@@ -15,13 +15,10 @@ namespace Senpai::Assets{
       String name = "";
       // loads the audio from the file
       Audio(const String& filename, String const& name);
-      /**
-       * 
-       * @param  {int} channel : the chanal to change the pan of
-       * @param  {float} pan   : ∈ [-1, 1]
-       */
-      static void set_pan(int channel, float pan);
+      
 
       void play(float volume = 1.0f, bool looping = false);
+      // plays an audio from a specific direction
+      void play_direction(Vec2<f32> direction, f32 scale = 1.0f);
    };
-};
+}

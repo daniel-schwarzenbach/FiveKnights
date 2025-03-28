@@ -33,7 +33,7 @@ struct Info final : public Component {
 REGISTER_COMPONENT_TYPE(Info);
 
 struct ScriptsHolder final : public Component {
-   Vector<UniquePtr<Script>> scripts = {};
+   Deque<UniquePtr<Script>> scripts = {};
    
    ScriptsHolder(ScriptsHolder const& other);
    ScriptsHolder& operator=(ScriptsHolder const& other);
@@ -41,6 +41,7 @@ struct ScriptsHolder final : public Component {
    template<ScriptType ScriptT, typename... Args>
    ScriptT& add_script(Args&&... args){
       UniquePtr<Script> script = make_unique<ScriptT>(std::forward<Args>(args)...);
+      script->prepare(nullptr, entityPtr);
       scripts.push_back(move(script));
       // set the script settings
       return *static_cast<Ptr<ScriptT>>(scripts.back().get());

@@ -1,7 +1,6 @@
 #pragma once
 #include "../Base.h++"
 
-namespace Senpai {
 
    /*
    ```cpp
@@ -11,6 +10,8 @@ namespace Senpai {
    template <typename T>
    struct Vec2{
       T x, y;
+
+      
 
       inline Vec2 operator+(const Vec2& other) const {
          return Vec2(x + other.x, y + other.y);
@@ -122,17 +123,20 @@ namespace Senpai {
 
    };
 
-} // namespace Senpai
 
+template <typename T1, typename T2>
+Vec2<T1> convert(Vec2<T2> const& other)  {
+   return Vec2<T1>{T1(other.x), T1(other.y)};
+}
 
 template <typename T>
-OS& operator<<(OS& os, const Senpai::Vec2<T>& vec) {
+inline OS& operator<<(OS& os, const Vec2<T>& vec) {
    os << "Vec2{" << vec.x << ", " << vec.y << "}";
    return os;
 }
 
 template <typename T>
-IS& operator>>(IS& is, Senpai::Vec2<T>& vec) {
+inline IS& operator>>(IS& is, Vec2<T>& vec) {
    char Vec2, comma, end;
    is  >> "Vec2{" >> vec.x >> "," >> vec.y >> "}";
    return is;

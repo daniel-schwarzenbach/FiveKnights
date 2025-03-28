@@ -37,7 +37,7 @@ Ptr<SDL_Window> get();
 // should be called when the window is resized
 void resize();
 // get the size of the window
-Senpai::Vec2<int> get_size();
+Vec2<int> get_size();
 // get the aspect ratio of the window
 f32 get_aspect_ratio();
 } // namespace Window

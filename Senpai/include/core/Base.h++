@@ -146,8 +146,10 @@ class SenpaiException : public Exception {
 #define debug_assert(expr, err)                                                \
    if (!(expr))                                                                \
       \ 
-            throw Exception(String("[DEBUG]: ") + String(err));
-#define debug_log(message) cout << "[DEBUG]: " << message << endl;
+            throw SenpaiException(String("[DEBUG]: ") + String(err));
+#define debug_log(message) cout << "\033[1;32m" << "[Log]: " << message << "\033[0m" << endl;
+#define debug_warning(message) cout << "\033[1;33m" << "[Warning]: " << message << "\033[0m" << endl;
+#define debug_error(message) cout << "\033[1;31m" << "[Error]: " << message << "\033[0m" << endl;
 // End Debugging
 #else
 // No Debugging
