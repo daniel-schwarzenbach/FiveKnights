@@ -31,7 +31,7 @@ struct Script {
    // called when the entity is destroyed
    inline virtual void on_destroy() {};
    // called every frame
-   inline virtual void on_update(f32 Δt) {};
+   inline virtual void on_update(f32 dt) {};
    // called on the start of the scene
    inline virtual void on_start() {};
    // called when the mouse is clicked on the entity

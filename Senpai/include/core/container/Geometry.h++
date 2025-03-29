@@ -170,10 +170,10 @@ namespace Senpai {
    inline f32 interpolate_between_angles(f32 a, f32 b, f32 intFactor) {
       constexpr f32 degToRad = π / 180.0f;
       // interpolate their virtual positions
-      Vec2<f32> α = {sin(a * degToRad), cos(a * degToRad)};
-      Vec2<f32> β = {sin(b * degToRad), cos(b * degToRad)};
-      Vec2<f32> γ = lin_interpolate(α,β,intFactor);
+      Vec2<f32> alpha = {sin(a * degToRad), cos(a * degToRad)};
+      Vec2<f32> beta = {sin(b * degToRad), cos(b * degToRad)};
+      Vec2<f32> gamma = lin_interpolate(alpha,beta,intFactor);
       // return the current angle
-      return get_angle(γ);
+      return get_angle(gamma);
    }
 }

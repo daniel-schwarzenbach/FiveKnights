@@ -27,7 +27,7 @@ namespace Senpai {
       }
 
       // update all systems
-      void update(f32 Δt);
+      void update(f32 dt);
 
       // start all systems
       void start();

@@ -30,7 +30,7 @@ if ERRORLEVEL 1 (
 
 REM Build the project
 echo Building project...
-cmake --build .
+cmake --build . --verbose
 if ERRORLEVEL 1 (
     echo "Build failed"
     exit /b 1
@@ -47,5 +47,13 @@ cd ..
 
 REM Copy the assets folder to the build directory.
 REM The /E flag copies directories and subdirectories, including empty ones.
+REM The /Y flag suppresses prompting to confirm overwriting files.
 REM The /I flag assumes the destination is a directory.
-xcopy /E /I Game\assets build\Game\
+xcopy /E /Y /I Game\assets build\Game\Debug\assets\
+
+REM Copy necessary DLLs to the executable directory
+echo Copying DLLs to executable directory...
+copy build\Senpai\lib\SDL\Debug\SDL3.dll build\Game\Debug\
+copy build\Senpai\lib\SDL_ttf\Debug\SDL3_ttf.dll build\Game\Debug\
+copy build\Senpai\lib\SDL_image\Debug\SDL3_image.dll build\Game\Debug\
+copy build\Senpai\lib\SDL_mixer\Debug\SDL3_mixer.dll build\Game\Debug\

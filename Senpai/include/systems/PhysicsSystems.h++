@@ -4,7 +4,7 @@
 
 namespace Senpai::Systems {
    struct Physics : System {
-      f32 gravity = 9.81;
+      f32 gravity = 9.81f;
       void update(f32 δt);
    };
    REGISTER_SYSTEM_TYPE(Physics);

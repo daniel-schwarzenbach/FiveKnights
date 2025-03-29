@@ -69,33 +69,45 @@ namespace Senpai
    class ComponentTypeRegistry
    {
    private:
-      static bool isInitialized;
-      static void init();
+      //static bool isInitialized;
+      //static void init();
 
    public:
       // A mapping from stable type name -> runtime id
-      static Map<String, u32> name_to_id;
+      // static Map<String, u32> name_to_id;
       // A mapping from runtime id -> constructor
-      static Map<u32, Function<UniquePtr<Component>(Ptr<Component>)>> id_to_constructor;
+      // static Map<u32, Function<UniquePtr<Component>(Ptr<Component>)>> id_to_constructor;
+      // only way to initialize the id_to_constructor map on windows
+      static Map<String, u32>& get_name_to_id() { 
+         static Map<String, u32> name_to_id = {};
+         return name_to_id;
+      }
+      // only way to initialize the id_to_constructor map on windows
+      static Map<u32, Function<UniquePtr<Component>(Ptr<Component>)>>& get_id_to_constructor() {
+         static Map<u32, Function<UniquePtr<Component>(Ptr<Component>)>> id_to_constructor = {};
+         return id_to_constructor;
+      }
       // register a new component type
       template <ComponentType ComponentT>
       inline static u32 register_component_type(const String &typeName, u32 typeId)
       {
          // Check for initialization to avoid static initialization order fiasco
-         if (!isInitialized)
-         {
-            init();
-         }
+         //if (!isInitialized)
+         //{
+         //   init();
+         //}
          // Only register if not already registered.
-         if (!id_to_constructor.contains(typeId)) {
-            name_to_id.try_emplace(typeName, typeId);
-            id_to_constructor.try_emplace(typeId, [](Ptr<Component> component)
+         if (!get_id_to_constructor().contains(typeId)) {
+            get_name_to_id().try_emplace(typeName, typeId);
+            get_id_to_constructor().try_emplace(typeId, [](Ptr<Component> component)
                                           {
                   // check for nullptr
                   if(component)
                      return make_unique<ComponentT>(*dynamic_cast<ComponentT*>(component));
                   else
-                     return make_unique<ComponentT>(); });
+                     return make_unique<ComponentT>(); 
+               }
+            );
          }
          return typeId;
       }
@@ -117,7 +129,7 @@ namespace Senpai
    */
    class SystemTypeRegistry
    {
-   private:
+   /* private:
       static bool isInitialized;
       static void init();
 
@@ -125,21 +137,32 @@ namespace Senpai
       // A mapping from stable type name -> runtime id
       static Map<String, u32> name_to_id;
       // A mapping from runtime id -> constructor
-      static Map<u32, Function<UniquePtr<System>(Ptr<System>)>> id_to_constructor;
+      static Map<u32, Function<UniquePtr<System>(Ptr<System>)>> id_to_constructor; */
+      // only way to initialize the id_to_constructor map on windows
+   public:
+      static Map<String, u32>& get_name_to_id() { 
+         static Map<String, u32> name_to_id = {};
+         return name_to_id;
+      }
+      // only way to initialize the id_to_constructor map on windows
+      static Map<u32, Function<UniquePtr<System>(Ptr<System>)>>& get_id_to_constructor() {
+         static Map<u32, Function<UniquePtr<System>(Ptr<System>)>> id_to_constructor = {};
+         return id_to_constructor;
+      }
       // register a new system type
       template <SystemType SystemT>
       inline static u32 register_system_type(const String &typeName, u32 typeId)
       {
          // Check for initialization to avoid static initialization order fiasco
-         if (!isInitialized)
+         /* if (!isInitialized)
          {
             init();
-         }
+         } */
          // Only register if not already registered.
-         if (!id_to_constructor.contains(typeId))
+         if (!get_id_to_constructor().contains(typeId))
          {
-            name_to_id.try_emplace(typeName, typeId);
-            id_to_constructor.try_emplace(typeId, [](Ptr<System> system)
+            get_name_to_id().try_emplace(typeName, typeId);
+            get_id_to_constructor().try_emplace(typeId, [](Ptr<System> system)
                                           {
                   // check for nullptr
                   if(system)

@@ -4,7 +4,8 @@
 #include <cstdlib>
 
 int main() {
-   std::system("ls -R");
+   //std::system("ls -R");
+   debug_log("Starting the game");
 
    Senpai::App app;
    app.settings.fpsTarget = 30;

@@ -186,8 +186,8 @@ void ButtonUI::render() {
    SDL_DestroyTexture(texture);
 }
 
-bool Animator::flip_frame(f32 Δt) {
-   lastFlipTime += Δt;
+bool Animator::flip_frame(f32 dt) {
+   lastFlipTime += dt;
    if (lastFlipTime >= flipTime) {
       lastFlipTime -= flipTime;
       return true;
@@ -255,7 +255,7 @@ TileMap::get_render_ranges(Frame<f32> const &transform,
    if(y1 > 0) y1--;
    if(y1 > 0) y1--;
    // return the range of tiles to render
-   return {Range{x1, x2}, Range{y1, y2}};
+   return {Range{int(x1), int(x2)}, Range{int(y1), int(y2)}};
 }
 
 Frame<f32> TileMap::get_tile(Frame<f32> const &transfom, uint x, uint y) const {

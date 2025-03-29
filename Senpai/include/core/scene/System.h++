@@ -19,7 +19,7 @@ namespace Senpai {
       template <ComponentType ComponentT>
       Vector<Ptr<Entity>> view();
       // update the system, called every frame
-      inline virtual void update(f32 δt) {};
+      inline virtual void update(f32 dt) {};
       // start the system, called once
       inline virtual void start() {};
       // input

@@ -25,6 +25,7 @@ concept IntType = std::is_integral_v<T>;
 using Int = signed long;
 // replacement for size_t
 using UInt = unsigned long;
+using uint = unsigned int;
 
 using i8 = int8_t;
 using i16 = int16_t;
@@ -144,9 +145,7 @@ class SenpaiException : public Exception {
 #ifndef NDEBUG
 // on Debugging
 #define debug_assert(expr, err)                                                \
-   if (!(expr))                                                                \
-      \ 
-            throw SenpaiException(String("[DEBUG]: ") + String(err));
+   if (!(expr)) throw SenpaiException(String("[DEBUG]: ") + String(err));
 #define debug_log(message) cout << "\033[1;32m" << "[Log]: " << message << "\033[0m" << endl;
 #define debug_warning(message) cout << "\033[1;33m" << "[Warning]: " << message << "\033[0m" << endl;
 #define debug_error(message) cout << "\033[1;31m" << "[Error]: " << message << "\033[0m" << endl;
@@ -155,6 +154,8 @@ class SenpaiException : public Exception {
 // No Debugging
 #define debug_assert(expr, err) // noghting
 #define debug_log(message)      // nothing
+#define debug_warning(message)      // nothing
+#define debug_error(message)      // nothing
 // End No Debugging
 #endif
 
@@ -208,8 +209,8 @@ template <typename T> constexpr u32 get_subtype_id() {
 }
 }; // namespace Senpai
 
-static constexpr f32 ε = 1e-5;
-static constexpr f32 π = 3.14159265358979323846;
+static constexpr f32 ε = 1e-5f;
+static constexpr f32 π = 3.14159265358979323846f;
 static constexpr f32 inf = std::numeric_limits<f32>::infinity();
 using std::abs;
 using std::cos;

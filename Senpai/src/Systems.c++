@@ -7,7 +7,7 @@
 
 namespace Senpai {
 
-void Systems::TestSystem::update(f32 Δt) {
+void Systems::TestSystem::update(f32 dt) {
    // Define rectangles
    SDL_FRect outlineRect = {100, 100, 200, 150}; // x, y, width, height
    SDL_FRect filledRect = {350, 100, 200, 150};
@@ -22,7 +22,7 @@ void Systems::TestSystem::update(f32 Δt) {
    SDL_SetRenderDrawColor(Renderer::get(), 0, 0, 0, 255);
 }
 
-void Systems::CameraRenderSystem::update(f32 Δt) {
+void Systems::CameraRenderSystem::update(f32 dt) {
    std::sort(this->scenePtr->ecRegistry.componentsToRender.begin(),
              this->scenePtr->ecRegistry.componentsToRender.end(),
              [](auto &a, auto &b) { return *a < *b; });
@@ -38,7 +38,7 @@ void Systems::CameraRenderSystem::update(f32 Δt) {
    }
 }
 
-void Systems::UIRenderSystem::update(f32 Δt) {
+void Systems::UIRenderSystem::update(f32 dt) {
    std::sort(this->scenePtr->ecRegistry.uiComponents.begin(),
              this->scenePtr->ecRegistry.uiComponents.end(),
              [](auto &a, auto &b) { return *a < *b; });
@@ -47,7 +47,7 @@ void Systems::UIRenderSystem::update(f32 Δt) {
    }
 }
 
-void Systems::UIButtonSystem::update(f32 Δt) {
+void Systems::UIButtonSystem::update(f32 dt) {
    Vec2<f32> mousePos = this->scenePtr->inputPtr->get_mouse_position();
    for (auto &entity : view<Components::ButtonUI>()) {
       auto &button = entity->get_component<Components::ButtonUI>();
@@ -72,7 +72,7 @@ void Systems::SpriteAnimator::start() {
    this->update(0);
 }
 
-void Systems::SpriteAnimator::update(f32 Δt) {
+void Systems::SpriteAnimator::update(f32 dt) {
    for (auto entity : view<Components::Animator>()) {
       if (!entity->has_component<Components::Sprite>()) {
          debug_log("Entity with Animator does not have a Sprite component!");
@@ -81,7 +81,7 @@ void Systems::SpriteAnimator::update(f32 Δt) {
       auto &animator = entity->get_component<Components::Animator>();
       auto &sprite = entity->get_component<Components::Sprite>();
 
-      if (animator.flip_frame(Δt)) {
+      if (animator.flip_frame(dt)) {
          auto animationPtr = animator.animations[animator.animId];
          ++animator.frameId;
          if (animator.frameId >= animationPtr->frameAreas.size()) {
@@ -103,7 +103,7 @@ void Systems::SpriteAnimator::update(f32 Δt) {
    }
 }
 
-void Systems::Physics::update(f32 Δt) {
+void Systems::Physics::update(f32 dt) {
    for (auto &entity : view<Components::Rigidbody>()) {
       if (!entity->has_component<Components::Transform>()) {
          debug_log(
@@ -112,16 +112,16 @@ void Systems::Physics::update(f32 Δt) {
       }
       auto &tr = entity->get_component<Components::Transform>();
       auto &rb = entity->get_component<Components::Rigidbody>();
-      rb.velocity += rb.acceleration * Δt;
+      rb.velocity += rb.acceleration * dt;
       // apply gravity
-      rb.velocity.y -= gravity * Δt;
-      tr.frame.position += rb.velocity * Δt;
-      entity->get_transform().add_offset(rb.velocity * Δt);
+      rb.velocity.y -= gravity * dt;
+      tr.frame.position += rb.velocity * dt;
+      entity->get_transform().add_offset(rb.velocity * dt);
    }
 }
 
 // O(n²) collision detection
-void Systems::Collisions::update(f32 Δt) {
+void Systems::Collisions::update(f32 dt) {
    auto entityPtrs = view<Components::RectangleCollider>();
    for (UInt i = 0; i < entityPtrs.size(); i++) {
       auto &entity1 = entityPtrs[i];
@@ -224,17 +224,17 @@ void Systems::ScriptRunner::start() {
    }
 }
 
-void Systems::ScriptRunner::update(f32 Δt) {
+void Systems::ScriptRunner::update(f32 dt) {
    for (auto &entity : view<Components::ScriptsHolder>()) {
       auto &scriptsComponent =
           entity->get_component<Components::ScriptsHolder>();
       for (auto &script : scriptsComponent.scripts) {
-         script->on_update(Δt);
+         script->on_update(dt);
       }
    }
 }
 
-void Systems::LightingSystem::update(f32 Δt) {
+void Systems::LightingSystem::update(f32 dt) {
    for (auto &entityPtr : view<Components::Camera>()) {
       auto &camera = entityPtr->get_component<Components::Camera>();
       auto cameraRect = camera.get_rect(entityPtr->get_transform());

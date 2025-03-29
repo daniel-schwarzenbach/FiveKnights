@@ -1,6 +1,14 @@
 # CMake File to Build the Senpai Engine
 project(Senpai VERSION 0.0.1)
 
+if(WIN32)
+    # Use or do not use vendored libs
+    set(SDLTTF_VENDORED ON)
+    set(SDLIMAGE_VENDORED OFF)
+    set(SDLMIXER_VENDORED OFF)
+endif()
+
+
 
 # Add SDL subsystems first
 add_subdirectory(lib/SDL)
@@ -10,9 +18,18 @@ add_subdirectory(lib/SDL_mixer)
 
 
 
+
+
 # get all cpp-files
 file(GLOB_RECURSE SRC_FILES src/**.c++ CMAKE_CONFIGURE_DEPENDS)
-add_library(${PROJECT_NAME} ${SRC_FILES})
+
+
+if(WIN32)
+    # Build as static library on Windows
+    add_library(${PROJECT_NAME} STATIC ${SRC_FILES})
+else()
+    add_library(${PROJECT_NAME} ${SRC_FILES})
+endif()
 
 # prioritize the SDL3 headers
 target_compile_options(${PROJECT_NAME} PRIVATE

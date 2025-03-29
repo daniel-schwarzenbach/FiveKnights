@@ -31,7 +31,7 @@ REM Clone SDL_image repository if not already present
 IF NOT EXIST "SDL_image" (
     echo Cloning SDL_image...
     git clone --depth 1 https://github.com/libsdl-org/SDL_image.git
-    powershell.exe -ExecutionPolicy Bypass -File .\SDL_image\external\Get-GitModules.ps1
+    REM powershell.exe -ExecutionPolicy Bypass -File .\SDL_image\external\Get-GitModules.ps1
     if ERRORLEVEL 1 exit /b 1
 )
 
@@ -39,7 +39,7 @@ REM Clone SDL_mixer repository if not already present
 IF NOT EXIST "SDL_mixer" (
     echo Cloning SDL_mixer...
     git clone --depth 1 https://github.com/libsdl-org/SDL_mixer.git
-    powershell.exe -ExecutionPolicy Bypass -File .\SDL_mixer\external\Get-GitModules.ps1
+    REM powershell.exe -ExecutionPolicy Bypass -File .\SDL_mixer\external\Get-GitModules.ps1
     if ERRORLEVEL 1 exit /b 1
 )
 

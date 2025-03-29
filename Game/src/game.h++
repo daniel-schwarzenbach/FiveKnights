@@ -92,8 +92,8 @@ struct Movement {
    f32 timeTotal = -1;
    f32 currentTime = 0;
 
-   inline Vec2<f32> get_current_pos(f32 Δt) {
-      currentTime += Δt;
+   inline Vec2<f32> get_current_pos(f32 dt) {
+      currentTime += dt;
       if (currentTime >= timeTotal) {
          return target;
       }
@@ -145,10 +145,10 @@ struct KnightScript final : public Script {
 
    
 
-   inline void on_update(f32 Δt) override {
+   inline void on_update(f32 dt) override {
       if (movement.is_moving()) {
          auto &tr = entityPtr->get_component<Components::Transform>();
-         tr.frame.position = movement.get_current_pos(Δt);
+         tr.frame.position = movement.get_current_pos(dt);
          if (movement.is_moving())
             return;
          if (hasToAdjust) {
@@ -267,10 +267,10 @@ struct AIManager {
    }
 
    // to be called by the game manager at update
-   inline static void update(f32 Δt) {
-      game::nextKingMove -= Δt;
-      nextKnightMove -= Δt;
-      game::difficultyTimer -= Δt;
+   inline static void update(f32 dt) {
+      game::nextKingMove -= dt;
+      nextKnightMove -= dt;
+      game::difficultyTimer -= dt;
       if (game::difficultyTimer < 0) {
          game::difficultyTimer = game::difficultyTime;
          chess_computer::increase_difficulty();
@@ -343,11 +343,11 @@ struct GameManager final : public Script {
       ambientPtr->play(1.0, true);
       game::timer = 0;
       auto &tr = entityPtr->get_component<Components::Transform>();
-      auto &trくplayer = playerPtr->get_component<Components::Transform>();
-      tr.frame.position = trくplayer.frame.position;
+      auto &tr_player = playerPtr->get_component<Components::Transform>();
+      tr.frame.position = tr_player.frame.position;
       AIManager::start();
    }
-   void on_update(f32 Δt) override {
+   void on_update(f32 dt) override {
       // handle game over case
       if (game::gameOver) {
          if (!once) {
@@ -360,12 +360,12 @@ struct GameManager final : public Script {
          return;
       }
       // increase the time
-      game::timer += Δt;
+      game::timer += dt;
       // make the camera follow the player
       auto &tr = entityPtr->get_component<Components::Transform>();
-      auto &trくplayer = playerPtr->get_component<Components::Transform>();
+      auto &tr_player = playerPtr->get_component<Components::Transform>();
       Vec2<f32> pos =
-          lin_interpolate(tr.frame.position, trくplayer.frame.position, 0.1f);
+          lin_interpolate(tr.frame.position, tr_player.frame.position, 0.1f);
       tr.frame.position = pos;
       // update flashlightUI
       if (game::batteryLeft < 0) {
@@ -374,7 +374,7 @@ struct GameManager final : public Script {
       auto &textUI = flashLightUIPtr->get_component<Components::ButtonUI>();
       textUI.text = to_string(int((game::batteryLeft/game::batteryMax) * 100)) + " %";
       // update the AI
-      AIManager::update(Δt);
+      AIManager::update(dt);
    }
 
 
@@ -399,12 +399,12 @@ struct PlayerMovement final : public Script {
 
    void on_start() override { flashlightPtr->disable(); }
 
-   void on_update(f32 Δt) override {
+   void on_update(f32 dt) override {
 
       if (flashlightPtr->is_enabled()) {
          Vec2<f32> mouse = Inputs::get_mouse_position();
          if (!(lastMouse.similar_to(mouse))) {
-            f32 factor = pow(0.95f, 1.0 / Δt);
+            f32 factor = pow(0.95f, 1.0 / dt);
             lastMouse = lin_interpolate(lastMouse, mouse, factor);
             f32 angle = get_angle(lastMouse) - 90.0f;
             auto &tr = flashlightPtr->get_component<Components::Transform>();
@@ -419,7 +419,7 @@ struct PlayerMovement final : public Script {
 
       // toglle flashlight
       if (flashlightPtr->is_enabled()) {
-         game::batteryLeft -= Δt;
+         game::batteryLeft -= dt;
       }
       if (game::batteryLeft <= 0) {
          if (flashlightPtr->is_enabled()) {
@@ -443,10 +443,10 @@ struct PlayerMovement final : public Script {
       }
       if (movement.is_moving()) {
          auto &tr = entityPtr->get_component<Components::Transform>();
-         tr.frame.position = movement.get_current_pos(Δt);
+         tr.frame.position = movement.get_current_pos(dt);
       }
       if (toggle < 0) {
-         toggle += Δt;
+         toggle += dt;
          return;
       }
       Vec2<f32> direction = {0, 0};
@@ -494,7 +494,7 @@ struct PlayerMovement final : public Script {
          movement = {tr.frame.position, tr.frame.position + direction, AIManager::kingMoveTime,
                      0.0f};
          anim.switch_animation(1);
-         sp.z = -virtualPos.y-0.5;
+         sp.z = -virtualPos.y - 0.5f;
          if (audioPtr)
             audioPtr->play();
       }
@@ -555,45 +555,45 @@ void load_game(Ptr<Scene> scene) {
    
    // FlashlightUI
    auto &flashlightUI = scene->add_entity();
-   auto &trくflashlightUI = flashlightUI.add_component<Components::Transform>(
+   auto &tr_flashlightUI = flashlightUI.add_component<Components::Transform>(
        Vec2<f32>{0, 400}, Vec2<f32>{1.0, 1.0}, 100);
-   auto &btくflashlightUI = flashlightUI.add_component<Components::ButtonUI>(
+   auto &bt_flashlightUI = flashlightUI.add_component<Components::ButtonUI>(
       &font, "100 %", Color{255, 255, 255, 255}, Color{0, 0, 0, 0}, Color{0, 0, 0, 0}, Vec2<f32>{0, 0});
 
    // GameManager Entity
    auto &manager = scene->add_entity();
-   auto &trくmanager =
+   auto &tr_manager =
        manager.add_component<Components::Transform>(Vec2<f32>{0, 0});
-   auto &camくmanager =
+   auto &cam_manager =
        manager.add_component<Components::Camera>(Vec2<f32>{0, 0}, 5.0); // 5.0
-   auto &gmくmanager = manager.add_script<GameManager>();
-   gmくmanager.ambientPtr = &ambient;
-   gmくmanager.flashLightUIPtr = &flashlightUI;
+   auto &gm_manager = manager.add_script<GameManager>();
+   gm_manager.ambientPtr = &ambient;
+   gm_manager.flashLightUIPtr = &flashlightUI;
 
    // Player Entity
    auto &player = scene->add_entity();
-   auto &trくplayer = player.add_component<Components::Transform>(
+   auto &tr_player = player.add_component<Components::Transform>(
        Vec2<f32>{0, 12} + game::playerStart);
-   auto &spくplayer =
+   auto &sp_player =
        player.add_component<Components::Sprite>(&kingIdleTexture);
-   auto &animくplayer = player.add_component<Components::Animator>(
+   auto &anim_player = player.add_component<Components::Animator>(
        30, Vector<Ptr<Assets::Animation>>{&kingIdleAnim, &kingRunAnim},
        Vector<u32>{0, 0});
-   auto &pmくplayer = player.add_script<PlayerMovement>();
-   pmくplayer.audioPtr = &kingAudio;
-   auto &lightくplayer = player.add_component<Components::Light>(&laternLight);
-   lightくplayer.offset = {0, -5};
+   auto &pm_player = player.add_script<PlayerMovement>();
+   pm_player.audioPtr = &kingAudio;
+   auto &light_player = player.add_component<Components::Light>(&laternLight);
+   light_player.offset = {0, -5};
 
    // Flashlight entity
    auto &flashlight = scene->add_entity();
-   auto &trくflashlight = flashlight.add_component<Components::Transform>(
-       Vec2<f32>{0, 100}, Vec2<f32>{1.0, 2.5}, 15, Vec2<f32>{0, -0.7});
-   auto &lightくflashlight =
+   auto &tr_flashlight = flashlight.add_component<Components::Transform>(
+       Vec2<f32>{0.0f, 100.0f}, Vec2<f32>{1.0f, 2.5f}, 15.0f, Vec2<f32>{0.0f, -0.7f});
+   auto &light_flashlight =
        flashlight.add_component<Components::Light>(&flashLight);
    flashlight.parentPtr = &player;
-   pmくplayer.flashlightPtr = &flashlight;
-   pmくplayer.flashAudioPtr = &flashSound;
-   gmくmanager.playerPtr = &player;
+   pm_player.flashlightPtr = &flashlight;
+   pm_player.flashAudioPtr = &flashSound;
+   gm_manager.playerPtr = &player;
 
    // Knight0
    auto [knight0, kScript0] =
@@ -616,8 +616,8 @@ void load_game(Ptr<Scene> scene) {
 
    // chessboard Entity
    auto &chess = scene->add_entity();
-   auto &trくchess = chess.add_component<Components::Transform>();
-   auto &tmくchess =
+   auto &tr_chess = chess.add_component<Components::Transform>();
+   auto &tm_chess =
        chess.add_component<Components::TileMap>(generate_map(9, 9), &tileSet);
-   tmくchess.z = -20;
+   tm_chess.z = -20;
 }

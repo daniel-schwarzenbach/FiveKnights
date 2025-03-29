@@ -1,5 +1,6 @@
 #pragma once
 #include "./Vector.h++"
+#include <stdint.h>
 
 template<typename T>
 class Matrix {

@@ -5,9 +5,9 @@ using namespace Senpai;
 struct loading_animator final : public Script {
    f32 timetochange = 0.1f;
 
-   void on_update(f32 Δt) override {
+   void on_update(f32 dt) override {
 
-      if ((timetochange -= Δt) > 0)
+      if ((timetochange -= dt) > 0)
          return;
       timetochange = 0.3f;
       auto &b = entityPtr->get_component<Components::ButtonUI>();
@@ -36,12 +36,11 @@ void set_up_loading_scene(Ptr<Scene> scenePtr) {
 
    Assets::Font &font = scenePtr->add_asset<Assets::Font>(std::move(Assets::Font{
        String("./assets/fonts/The Centurion .ttf"), 200, String("HeroFont")}));
-   auto& texture = scenePtr->add_asset<Assets::Texture>(String("./assets/pics/Test.png"), String("MenuBackground"));
+   /* auto& texture = scenePtr->add_asset<Assets::Texture>(String("./assets/pics/Test.png"), String("MenuBackground")); */
    
 
    Entity &loadingText = scenePtr->add_entity();
-   Components::Transform &tr =
-       loadingText.add_component<Components::Transform>();
+   auto &tr = loadingText.add_component<Components::Transform>();
    auto &button = loadingText.add_component<Components::ButtonUI>(
        Components::ButtonUI{&font,
                             "Loading",
@@ -56,8 +55,8 @@ void set_up_loading_scene(Ptr<Scene> scenePtr) {
    camera.add_component<Components::Transform>();
    camera.add_component<Components::Camera>(Vec2<f32>{0,0},1.6);
    // background entity
-   Entity &bg = scenePtr->add_entity();
+   /* Entity &bg = scenePtr->add_entity();
    auto &bg_tr = bg.add_component<Components::Transform>();
    auto &bg_sprite = bg.add_component<Components::Sprite>(&texture);
-   bg_sprite.z = -5;
+   bg_sprite.z = -5; */
 }

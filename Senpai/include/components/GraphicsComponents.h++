@@ -125,7 +125,7 @@ struct Animator final : public Component {
    // change the current animation
    bool switch_animation(u32 id);
    // returns true if it has to flip the frame
-   bool flip_frame(f32 Δt);
+   bool flip_frame(f32 dt);
 
    Animator(f32 fps = 15, Vector<Ptr<Assets::Animation>> animations = {},
             Vector<u32> nextAnimations = {});

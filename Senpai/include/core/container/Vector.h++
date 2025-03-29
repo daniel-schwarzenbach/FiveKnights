@@ -1,6 +1,8 @@
 #pragma once
 #include <core/Base.h++>
 #include <vector>
+#include <algorithm> // For std::sort and std::iter_swap 
+
 
 // Extension of std::vector
 template<typename T>

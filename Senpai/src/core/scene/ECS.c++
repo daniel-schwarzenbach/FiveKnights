@@ -4,26 +4,26 @@
 
 // definitions of the ComponentTypeRegistry
 namespace Senpai {
-bool ComponentTypeRegistry::isInitialized = false;
-Map<String, u32> ComponentTypeRegistry::name_to_id;
+/* bool ComponentTypeRegistry::isInitialized = false;
+Map<String, u32> ComponentTypeRegistry::name_to_id = {};
 Map<u32, Function<UniquePtr<Component>(Ptr<Component>)>>
-    ComponentTypeRegistry::id_to_constructor;
+    ComponentTypeRegistry::id_to_constructor = {};
 void ComponentTypeRegistry::init() {
    ComponentTypeRegistry::isInitialized = true;
-   name_to_id = Map<String, u32>{};
-   id_to_constructor =
-       Map<u32, Function<UniquePtr<Component>(Ptr<Component>)>>{};
+   cout << "ComponentTypeRegistry initialized" << endl;
+   name_to_id.clear();
+   id_to_constructor.clear();
 }
 
 bool SystemTypeRegistry::isInitialized = false;
-Map<String, u32> SystemTypeRegistry::name_to_id;
+Map<String, u32> SystemTypeRegistry::name_to_id = {};
 Map<u32, Function<UniquePtr<System>(Ptr<System>)>>
-    SystemTypeRegistry::id_to_constructor;
+    SystemTypeRegistry::id_to_constructor = {};
 void SystemTypeRegistry::init() {
    SystemTypeRegistry::isInitialized = true;
-   name_to_id = Map<String, u32>{};
-   id_to_constructor = Map<u32, Function<UniquePtr<System>(Ptr<System>)>>{};
-}
+   name_to_id.clear();
+   id_to_constructor.clear();
+} */
 
 bool RenderComponent::is_sub_type(Ptr<Component> componentPtr) {
    return dynamic_cast<RenderComponent *>(componentPtr) != nullptr;
@@ -125,7 +125,7 @@ Entity::Entity(Entity const &other)
       parentPtr{other.parentPtr}, componentsMap{} {
    // copy the components
    for (auto &componentPtr : other.components) {
-      auto comp = ComponentTypeRegistry::id_to_constructor[componentPtr->id](
+      auto comp = ComponentTypeRegistry::get_id_to_constructor()[componentPtr->id](
           componentPtr.get());
       u32 id = comp->id;
       components.push_back(move(comp));
@@ -138,7 +138,7 @@ Entity &Entity::operator=(Entity const &other) {
    this->componentsMap.clear();
    // copy the components
    for (auto &componentPtr : other.components) {
-      auto comp = ComponentTypeRegistry::id_to_constructor[componentPtr->id](
+      auto comp = ComponentTypeRegistry::get_id_to_constructor()[componentPtr->id](
           componentPtr.get());
       u32 id = comp->id;
       components.push_back(move(comp));
@@ -202,18 +202,18 @@ Entity& Scene::add_entity_copy(Entity const& entity, bool isAlive) {
    return this->ecRegistry.add_entity_copy(entity, isAlive);
 }
 
-void Scene::update(f32 Δt) {
+void Scene::update(f32 dt) {
    Deque<Thread> threads;
    if (this->isPaused) {
       for (auto &system : systems) {
          if (!system->canBePaused) {
             if(system->isParallel) {
                threads.push_back(Thread());
-               threads.back().execute([&system, Δt]() {
-                  system->update(Δt);
+               threads.back().execute([&system, dt]() {
+                  system->update(dt);
                });
             } else {
-               system->update(Δt);
+               system->update(dt);
             }
          }
       }
@@ -221,11 +221,11 @@ void Scene::update(f32 Δt) {
       for (auto &system : systems) {
          if(system->isParallel) {
             threads.push_back(Thread());
-            threads.back().execute([&system, Δt]() {
-               system->update(Δt);
+            threads.back().execute([&system, dt]() {
+               system->update(dt);
             });
          } else {
-            system->update(Δt);
+            system->update(dt);
          }
       }
    }

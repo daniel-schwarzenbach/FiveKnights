@@ -21,7 +21,7 @@ namespace Senpai::Events {
    struct MouseMove final : Event {
       f32 x;
       f32 y;
-      inline MouseMove(i32 x, i32 y) : x(x), y(y) {}
+      inline MouseMove(i32 x, i32 y) : x{f32(x)}, y{f32(y)} {}
    };
 
    struct MouseDown final : Event {

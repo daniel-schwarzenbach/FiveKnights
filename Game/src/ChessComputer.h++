@@ -42,7 +42,7 @@ struct MoveNode {
    Vector<V2> kingMoves;
    // all possible moves of the knights, for each king move, up to 5 × 5 × 8 =
    // 200 possible moves
-   Vector<Deque<UniquePtr<MoveNode>>> subNodes;
+   Deque<Deque<UniquePtr<MoveNode>>> subNodes;
 
    #ifndef NDEBUG
    // debug the knights positions
@@ -106,11 +106,11 @@ static inline Vector<V2> get_all_possible_king_moves(V2 king,
 }
 
 // scorefunction = xˣ
-inline static f32 score(uint possibleMoves) {
+inline static f32 score(UInt possibleMoves) {
    if (possibleMoves >= 5)
       return 0;
-   f32 x = 5.0 - possibleMoves;
-   return pow(x, x);
+   f32 x = 5.0f - f32(possibleMoves);
+   return std::pow(x, x);
 }
 
 static inline Vector<ChessMove>
@@ -158,7 +158,7 @@ static inline MoveNode get_new_layer(ChessMove chessMove, Vector<V2> knights,
    node.kingMoves = get_all_possible_king_moves(king, knights);
    // get the score of the king moves
    node.score = score(node.kingMoves.size());
-   // make the subNodes empty
+   // ensure the subNodes are empty
    node.subNodes.clear();
    // debug the knights and king
    #ifndef NDEBUG
@@ -187,12 +187,11 @@ static inline void calculate_move_tree(MoveNode *Tree, int depth,
          }
       }
    } else if (depth > 0) {
-      // reseve the memory for the knightMoves
-      Tree->subNodes.resize(Tree->kingMoves.size());
+
       for (int i = 0; i < Tree->kingMoves.size(); i++) {
          auto kingMove = Tree->kingMoves[i];
          // init with an empty deque
-         Tree->subNodes[i].clear();
+         Tree->subNodes.push_back(Deque<UniquePtr<MoveNode>>());
          auto &subsubNodes = Tree->subNodes[i];
          // get all possible knight moves
          for (auto knightMove :
@@ -256,7 +255,7 @@ static ChessMove get_next_move(V2 kingPosition, ChessMove &result) {
          auto &mNodes = moveTree->subNodes[i];
          // get a random move from gaussian distribution
          int index =
-             floor(min(abs(Senpai::rng::get_gaussian() * difficulty),
+             (int)floor(min(abs(Senpai::rng::get_gaussian() * difficulty),
                        static_cast<f32>(moveTree->subNodes[i].size() - 1)));
          result = moveTree->subNodes[i][index]->chessMove;
          // do the move

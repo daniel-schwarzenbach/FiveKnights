@@ -63,7 +63,7 @@ bool App::run() {
    
    // main loop
    TimePoint next, last;
-   f32 Δt = 0;
+   f32 dt = 0;
    const f32 frameTime = 1.0f / this->settings.fpsTarget;
    last = next = get_TimePoint();
    //
@@ -77,7 +77,7 @@ bool App::run() {
       // clear the Renderer
       Renderer::clear();
       // update the scene
-      scene->update(Δt);
+      scene->update(dt);
       // show the new frame
       Renderer::present();
       // check if the next scene should be loaded
@@ -109,15 +109,15 @@ bool App::run() {
             }
          }
       }
-      // update Δt
+      // update dt
       last = next;
       next = get_TimePoint();
-      Δt = get_time_diff(last, next);
+      dt = get_time_diff(last, next);
       // handle fps Target
-      if (settings.fpsTarget > 0 && Δt < frameTime) {
-         sleep(frameTime - Δt - ε);
+      if (settings.fpsTarget > 0 && dt < frameTime) {
+         sleep(frameTime - dt - ε);
          next = get_TimePoint();
-         Δt = get_time_diff(last, next);
+         dt = get_time_diff(last, next);
       }
    } // end main loop
 

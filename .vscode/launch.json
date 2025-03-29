@@ -25,8 +25,8 @@
         "type": "cppvsdbg",
         "request": "launch",
         "console": "integratedTerminal",
-        "cwd": "${workspaceFolder}/build/bin/Debug",
-        "program": "${workspaceFolder}/build/bin/Debug/game",
+        "cwd": "${workspaceFolder}/build/Game/Debug",
+        "program": "${workspaceFolder}/build/Game/Debug/FiveKnights.exe",
         "args": [],
         "preLaunchTask": "build-Windows"
       }

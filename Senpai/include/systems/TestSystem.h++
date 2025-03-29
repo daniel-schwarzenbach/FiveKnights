@@ -3,7 +3,7 @@
 
 namespace Senpai::Systems {
    struct TestSystem final : public System {
-      void update(f32 Δt) override;
+      void update(f32 dt) override;
    };
    REGISTER_SYSTEM_TYPE(TestSystem);
 }

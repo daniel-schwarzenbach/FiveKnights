@@ -20,35 +20,35 @@ struct menuHandlerScript final : public Script {
    Ptr<Assets::Audio> ambient;
    Ptr<Assets::Audio> music;
    void on_start() {
-      ambient->play(0.4, true);
-      music->play(0.4, false);
+      ambient->play(0.4f, true);
+      music->play(0.4f, false);
    }
-   void on_update(f32 Δt) override {
+   void on_update(f32 dt) override {
       auto &tr = entityPtr->get_component<Components::Transform>();
       bool show = false;
       bool toggleSpace = false;
       if (Inputs::get_key(Key::A)) {
-         tr.frame.position.x -= 500 * Δt;
+         tr.frame.position.x -= 500 * dt;
          show = true;
       }
       if (Inputs::get_key(Key::D)) {
-         tr.frame.position.x += 500 * Δt;
+         tr.frame.position.x += 500 * dt;
          show = true;
       }
       if (Inputs::get_key(Key::W)) {
-         tr.frame.position.y += 500 * Δt;
+         tr.frame.position.y += 500 * dt;
          show = true;
       }
       if (Inputs::get_key(Key::S)) {
-         tr.frame.position.y -= 500 * Δt;
+         tr.frame.position.y -= 500 * dt;
          show = true;
       }
       if (Inputs::get_key(Key::Q)) {
-         tr.frame.size *= std::pow(2.0f, Δt);
+         tr.frame.size *= std::pow(2.0f, dt);
          show = true;
       }
       if (Inputs::get_key(Key::E)) {
-         tr.frame.size /= std::pow(2.0f, Δt);
+         tr.frame.size /= std::pow(2.0f, dt);
          show = true;
       }
 
@@ -64,9 +64,9 @@ struct menuHandlerScript final : public Script {
 
 struct startGameScript final : public Script {
    f32 toggle = 0;
-   void on_update(f32 Δt) override {
+   void on_update(f32 dt) override {
       if(toggle < 0) {
-         toggle += Δt;
+         toggle += dt;
       }
    }
    void on_button_click() override {
@@ -82,9 +82,9 @@ struct startGameScript final : public Script {
 
 struct settingsScript final : public Script {
    f32 toggle = 0;
-   void on_update(f32 Δt) override {
+   void on_update(f32 dt) override {
       if(toggle < 0) {
-         toggle += Δt;
+         toggle += dt;
       }
    }
    void on_button_click() override {
@@ -97,9 +97,9 @@ struct settingsScript final : public Script {
 
 struct exitScript final : public Script {
    f32 toggle = 0;
-   void on_update(f32 Δt) override {
+   void on_update(f32 dt) override {
       if(toggle < 0) {
-         toggle += Δt;
+         toggle += dt;
       }
    }
    void on_button_click() override {
