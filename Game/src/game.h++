@@ -101,6 +101,14 @@ struct Movement {
       return lin_interpolate(start, target, tRelative);
    }
 
+   inline f32 get_current_percent(f32 dt) {
+      currentTime += dt;
+      if (currentTime >= timeTotal) {
+         return 1.0f;
+      }
+      return currentTime / timeTotal;
+   }
+
    inline bool is_moving() { return currentTime < timeTotal; }
 };
 
@@ -150,6 +158,9 @@ struct KnightScript final : public Script {
          auto &tr = entityPtr->get_component<Components::Transform>();
          tr.frame.position = movement.get_current_pos(dt);
          if (movement.is_moving())
+            if (game::nextKingMove == inf && movement.get_current_percent(dt) > 0.95f) {
+               game::gameOver = true;
+            }
             return;
          if (hasToAdjust) {
             adjust_sprite();
@@ -197,7 +208,7 @@ struct AIManager {
          if (chess_computer::is_check(newPos, knightPositions)) {
             uint id =
                 chess_computer::which_knight_checks(newPos, knightPositions);
-            knightScriptPtrs[id]->do_move(newPos, kingMoveTime * 1.2, newPos);
+            knightScriptPtrs[id]->do_move(newPos, kingMoveTime * 2, newPos);
             knightPositions[id] = newPos;
             game::nextKingMove = inf;
             nextKnightMove = inf;
@@ -388,6 +399,7 @@ struct PlayerMovement final : public Script {
  public:
    Ptr<Assets::Audio> audioPtr;
    Ptr<Assets::Audio> flashAudioPtr;
+   Ptr<Assets::Audio> deathAudioPtr;
    const f32 toggleTime = 2.0;
    f32 toggle = 1;
    // for the chess
@@ -399,7 +411,25 @@ struct PlayerMovement final : public Script {
 
    void on_start() override { flashlightPtr->disable(); }
 
+   // called by update once the player dies
+   bool on_death_called = false;
+   void on_death() {
+      on_death_called = true;
+      deathAudioPtr->play(0.5);
+      auto &anim = entityPtr->get_component<Components::Animator>();
+      anim.switch_animation(2);
+      if (flashlightPtr->is_enabled()) {
+         flashlightPtr->disable();
+      }
+   }
+
    void on_update(f32 dt) override {
+      if (game::gameOver) {
+         if (!on_death_called) {
+            on_death();
+         }
+         return;
+      }
 
       if (flashlightPtr->is_enabled()) {
          Vec2<f32> mouse = Inputs::get_mouse_position();
@@ -528,16 +558,30 @@ void load_game(Ptr<Scene> scene) {
    //      ADD ASSETS
    auto &font = scene->add_asset<Assets::Font>(
        String("./assets/fonts/Griffiths.otf"), 40, String("Writtenfont"));
+
    auto &kingIdleTexture = scene->add_asset<Assets::Texture>(
        String("./assets/pics/KingIdle.png"), String("KingIdle"), true);
-   auto &kingIdleAnim = scene->add_asset<Assets::Animation>(
-       &kingIdleTexture, Vec2<f32>{48, 64}, 18);
    auto &kingRunTexture = scene->add_asset<Assets::Texture>(
        String("./assets/pics/KingRun.png"), String("KingRun"), true);
+   auto &kingDieTexture = scene->add_asset<Assets::Texture>(
+         "./assets/pics/KingDeath.png", "KingDie", true);
+   auto &kingDeathTexture = scene->add_asset<Assets::Texture>(
+            "./assets/pics/KingGameOver.png", "KingDeath", true);
+      
    auto &kingRunAnim = scene->add_asset<Assets::Animation>(
        &kingRunTexture, Vec2<f32>{48, 64}, 20);
+   auto &kingDeathAnim = scene->add_asset<Assets::Animation>(
+       &kingDeathTexture, Vec2<f32>{48, 64}, 1);
+   auto &kingDieAnim = scene->add_asset<Assets::Animation>(
+       &kingDieTexture, Vec2<f32>{48, 64}, 13);
+   auto &kingIdleAnim = scene->add_asset<Assets::Animation>(
+         &kingIdleTexture, Vec2<f32>{48, 64}, 18);
+
    auto &kingAudio =
        scene->add_asset<Assets::Audio>("./assets/audio/King.mp3", "KingAudio");
+   auto &deathAudio = scene->add_asset<Assets::Audio>(
+       "./assets/audio/KingDeathSound.wav", "DeathAudio");
+
    Assets::Audio &ambient = scene->add_asset<Assets::Audio>(
        String("./assets/audio/AmbientLoop.wav"), String("Ambient"));
    auto &tileSet = scene->add_asset<Assets::TileSet>(
@@ -577,10 +621,10 @@ void load_game(Ptr<Scene> scene) {
    auto &sp_player =
        player.add_component<Components::Sprite>(&kingIdleTexture);
    auto &anim_player = player.add_component<Components::Animator>(
-       30, Vector<Ptr<Assets::Animation>>{&kingIdleAnim, &kingRunAnim},
-       Vector<u32>{0, 0});
+       30, Vector<Ptr<Assets::Animation>>{&kingIdleAnim, &kingRunAnim, &kingDieAnim, &kingDeathAnim},Vector<u32>{0, 0, 3, 3});
    auto &pm_player = player.add_script<PlayerMovement>();
    pm_player.audioPtr = &kingAudio;
+   pm_player.deathAudioPtr = &deathAudio;
    auto &light_player = player.add_component<Components::Light>(&laternLight);
    light_player.offset = {0, -5};
 
@@ -620,4 +664,6 @@ void load_game(Ptr<Scene> scene) {
    auto &tm_chess =
        chess.add_component<Components::TileMap>(generate_map(9, 9), &tileSet);
    tm_chess.z = -20;
+
+   
 }
