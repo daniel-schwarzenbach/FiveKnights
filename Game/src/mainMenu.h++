@@ -23,43 +23,43 @@ struct menuHandlerScript final : public Script {
       ambient->play(0.4f, true);
       music->play(0.4f, false);
    }
-   void on_update(f32 dt) override {
-      auto &tr = entityPtr->get_component<Components::Transform>();
-      bool show = false;
-      bool toggleSpace = false;
-      if (Inputs::get_key(Key::A)) {
-         tr.frame.position.x -= 500 * dt;
-         show = true;
-      }
-      if (Inputs::get_key(Key::D)) {
-         tr.frame.position.x += 500 * dt;
-         show = true;
-      }
-      if (Inputs::get_key(Key::W)) {
-         tr.frame.position.y += 500 * dt;
-         show = true;
-      }
-      if (Inputs::get_key(Key::S)) {
-         tr.frame.position.y -= 500 * dt;
-         show = true;
-      }
-      if (Inputs::get_key(Key::Q)) {
-         tr.frame.size *= std::pow(2.0f, dt);
-         show = true;
-      }
-      if (Inputs::get_key(Key::E)) {
-         tr.frame.size /= std::pow(2.0f, dt);
-         show = true;
-      }
+   // void on_update(f32 dt) override {
+      // auto &tr = entityPtr->get_component<Components::Transform>();
+      // bool show = false;
+      // bool toggleSpace = false;
+      // if (Inputs::get_key(Key::A)) {
+      //    tr.frame.position.x -= 500 * dt;
+      //    show = true;
+      // }
+      // if (Inputs::get_key(Key::D)) {
+      //    tr.frame.position.x += 500 * dt;
+      //    show = true;
+      // }
+      // if (Inputs::get_key(Key::W)) {
+      //    tr.frame.position.y += 500 * dt;
+      //    show = true;
+      // }
+      // if (Inputs::get_key(Key::S)) {
+      //    tr.frame.position.y -= 500 * dt;
+      //    show = true;
+      // }
+      // if (Inputs::get_key(Key::Q)) {
+      //    tr.frame.size *= std::pow(2.0f, dt);
+      //    show = true;
+      // }
+      // if (Inputs::get_key(Key::E)) {
+      //    tr.frame.size /= std::pow(2.0f, dt);
+      //    show = true;
+      // }
 
-      bool space = Inputs::get_key(Key::SPACE);
-      if (space && !toggleSpace) {
-         toggleSpace = true;
-         cout << tr.frame.position.x << ", " << tr.frame.position.y << endl;
-      } else if (!space) {
-         toggleSpace = false;
-      }
-   }
+      // bool space = Inputs::get_key(Key::SPACE);
+      // if (space && !toggleSpace) {
+      //    toggleSpace = true;
+      //    cout << tr.frame.position.x << ", " << tr.frame.position.y << endl;
+      // } else if (!space) {
+      //    toggleSpace = false;
+      // }
+   // }
 };
 
 struct startGameScript final : public Script {
@@ -130,7 +130,7 @@ void set_up_menu_scene(Ptr<Scene> scenePtr) {
    // camera entity
    Entity& camera = scenePtr->add_entity();
    camera.add_component<Components::Transform>();
-   camera.add_component<Components::Camera>(Vec2<f32>{0,0},0.7);
+   camera.add_component<Components::Camera>(Vec2<f32>{0,0},0.45);
    auto& ms = camera.add_script<menuHandlerScript>();
    ms.music = &music;
    ms.ambient = &ambient;
@@ -162,4 +162,10 @@ void set_up_menu_scene(Ptr<Scene> scenePtr) {
    Entity& title = scenePtr->add_entity();
    auto& title_tr = title.add_component<Components::Transform>(Vec2<f32>{0, 350});
    auto& title_btn = title.add_component<Components::ButtonUI>(&fontLarge, String("Five Knights against King Fredric"), Color{255, 255, 255, 255}, Color{0,0,0,0}, Color{0,0,0,0}, Vec2<f32>{0, 0});
+   title_btn.z = 4;
+   // Title Shdow entity
+   Entity& titlesh = scenePtr->add_entity();
+   auto& titlesh_tr = titlesh.add_component<Components::Transform>(Vec2<f32>{5, 344});
+   auto& titlesh_btn = titlesh.add_component<Components::ButtonUI>(&fontLarge, String("Five Knights against King Fredric"), Color{0, 0, 0, 200}, Color{0,0,0,0}, Color{0,0,0,0}, Vec2<f32>{0, 0});
+   titlesh_btn.z = 3;
 }
