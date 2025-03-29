@@ -122,7 +122,7 @@ void set_up_menu_scene(Ptr<Scene> scenePtr) {
    Assets::Font &font = scenePtr->add_asset<Assets::Font>(String("./assets/fonts/The Centurion .ttf"), 100, String("HeroFont"));
    Assets::Font &fontLarge = scenePtr->add_asset<Assets::Font>(String("./assets/fonts/The Centurion .ttf"), 130, String("HeroFont"));
    Assets::Font &fontsmall = scenePtr->add_asset<Assets::Font>(String("./assets/fonts/Griffiths.otf"), 50, String("HeroFontSmall"));
-   auto& texture = scenePtr->add_asset<Assets::Texture>(String("./assets/pics/Midjourney.png"), String("MenuBackground"));
+   auto& texture = scenePtr->add_asset<Assets::Texture>(String("./assets/pics/BackGround.png"), String("MenuBackground"));
    Assets::Audio &ambient = scenePtr->add_asset<Assets::Audio>(String("./assets/audio/AmbientLoop.wav"), String("Ambient"));
    Assets::Audio &music = scenePtr->add_asset<Assets::Audio>(String("./assets/audio/Musique.wav"), String("MenuMusic"));
    clickSound = &scenePtr->add_asset<Assets::Audio>(String("./assets/audio/Click.mp3"), String("Click"));
