@@ -298,6 +298,7 @@ struct AIManager {
 
    inline static void init(V2 kingPos, Vector<KnightScript *> knights) {
       isGameOver = false;
+      isCheck = false;
       game::kingPosition = kingPos;
       knightScriptPtrs = knights;
       knightPositions.resize(knights.size());
