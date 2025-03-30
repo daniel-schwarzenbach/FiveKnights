@@ -155,7 +155,7 @@ struct ScoreTextScript final : public Script {
       if (game::timer > highscore) {
          debug_log("New Highscore!");
          write_to_file<f32>("./assets/data/highscore.dat", game::timer);
-         bt.text += " !New Record! ";
+         bt.text += ", New Record";
       }
    }
 };
@@ -216,6 +216,9 @@ struct KnightScript final : public Script {
          if (game::nextKingMove == inf) {
             game::gameOver = true;
          }
+      } else {
+         auto &sp = entityPtr->get_component<Components::Sprite>();
+         sp.z = -virtualPos.y;
       }
    }
 };
@@ -519,11 +522,13 @@ struct PlayerMovement final : public Script {
          }
          return;
       }
+      auto &sp = entityPtr->get_component<Components::Sprite>();
+      sp.z = -virtualPos.y - 0.5f;
 
       if (flashlightPtr->is_enabled()) {
          Vec2<f32> mouse = Inputs::get_mouse_position();
          if (!(lastMouse.similar_to(mouse))) {
-            f32 factor = pow(0.95f, 1.0 / dt);
+            f32 factor = std::pow(0.95f, 1.0f / dt);
             lastMouse = lin_interpolate(lastMouse, mouse, factor);
             f32 angle = get_angle(lastMouse) - 90.0f;
             auto &tr = flashlightPtr->get_component<Components::Transform>();
@@ -611,7 +616,6 @@ struct PlayerMovement final : public Script {
          debug_assert(virtualPos == game::kingPosition, "King desync");
          toggle = -game::kingMoveTimer;
          auto &tr = entityPtr->get_component<Components::Transform>();
-         auto &sp = entityPtr->get_component<Components::Sprite>();
          auto &anim = entityPtr->get_component<Components::Animator>();
          movement = {tr.frame.position, tr.frame.position + direction,
                      AIManager::kingMoveTime, 0.0f};
