@@ -107,9 +107,9 @@ static inline Vector<V2> get_all_possible_king_moves(V2 king,
 
 // scorefunction = xˣ
 inline static f32 score(UInt possibleMoves) {
-   if (possibleMoves >= 5)
+   if (possibleMoves >= possibleKingMoves.size())
       return 0;
-   f32 x = 5.0f - f32(possibleMoves);
+   f32 x = f32(possibleKingMoves.size()) - f32(possibleMoves);
    return std::pow(x, x);
 }
 

@@ -316,7 +316,9 @@ struct AIManager {
          knights.push_back(knight->virtualPos);
       }
       if(knights != knightPositions) {
-         throw std::logic_error("Knight positions desynced");
+         debug_warning("Desync on sanaty_check()");
+         debug_warning("KnightsAI: " << knightPositions);
+         debug_warning("KnightActual: " << knights);
       }
    }
 

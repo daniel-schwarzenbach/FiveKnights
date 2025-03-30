@@ -286,5 +286,11 @@ void set_up_menu_scene(Ptr<Scene> scenePtr) {
    returnHow.add_script<ReturnScript>();
    returnHow.add_component<Components::Info>("Return", "HowToPlay");
 
+   // what to do
+   // Entity& what = scenePtr->add_entity();
+   // auto& what_tr = what.add_component<Components::Transform>(Vec2<f32>{-700, -500});
+   // auto& score_btn = score.add_component<Components::ButtonUI>(&fontsmall, str("Longest Survival:  ") + str(highScore) + str("s"), Color{255, 255, 255, 255}, Color{0,0,0,0}, Color{0,0,0,0}, Vec2<f32>{0, 0});
+   // score.add_component<Components::Info>("Highscore", "Main");
+
 
 }

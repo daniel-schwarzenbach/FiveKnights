@@ -102,7 +102,7 @@ bool App::run() {
                scene = &currentScene;
                scene->start();
             } else {
-               debug_log("Scene failed to load");
+               debug_warning("Scene failed to load");
                scene = &loadingScene;
                currentScene.clear();
                scene->nextScene = 1;
