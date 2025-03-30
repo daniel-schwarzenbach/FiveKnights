@@ -21,7 +21,7 @@ struct Texture final : public Asset {
    f32 width = 1;
    bool isPixelPerfect = false;
 
-   Texture(const String &filename, String const &name,
+   Texture(const String &filename, String const &name = "",
            bool pixelPerfect = false);
    GenericPtr get_sdl_texture();
 };

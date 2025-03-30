@@ -12,9 +12,8 @@ struct Audio final : public Asset {
    int channel = -1;
    SharedPtr<void> sdlAudio = nullptr;
    String filename = "";
-   String name = "";
    // loads the audio from the file
-   Audio(const String& filename, String const& name);
+   Audio(const String& filename, String const& name = "");
 
    void play(float volume = 1.0f, bool looping = false);
    // plays an audio from a specific direction

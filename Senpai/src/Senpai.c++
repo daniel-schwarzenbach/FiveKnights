@@ -71,10 +71,8 @@ bool App::run() {
 
    // als long as the game is running
    while (isRunning) {
-      // get the timepoint
-      last = get_TimePoint();
       // dispatch events
-      inputs.dispatch_events();
+      Inputs::dispatch_events();
       // clear the Renderer
       Renderer::clear();
       // update the scene
@@ -95,20 +93,18 @@ bool App::run() {
             scene->nextScene = -1;
          }
          // check if the scene is loaded
-      } else {
+      } else if (loadThread.is_running() && loadThread.is_finished()) {
          // if the scene is loaded
-         if (loadThread.is_running() && loadThread.is_finished()) {
-            debug_log("is joining thread") if (loadThread.join()) {
-               debug_log("Scene loaded");
-               scene = &currentScene;
-               scene->start();
-            }
-            else {
-               debug_warning("Scene failed to load");
-               scene = &loadingScene;
-               currentScene.clear();
-               scene->nextScene = 1;
-            }
+         debug_log("is joining thread") if (loadThread.join()) {
+            debug_log("Scene loaded");
+            scene = &currentScene;
+            scene->start();
+         }
+         else {
+            debug_warning("Scene failed to load");
+            scene = &loadingScene;
+            currentScene.clear();
+            scene->nextScene = 1;
          }
       }
       // update dt

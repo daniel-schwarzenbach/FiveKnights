@@ -23,9 +23,6 @@ struct App {
    // be loaded by the App
    Vector<Function<void(Ptr<Scene>)>> sceneLoaders = {};
 
-   Inputs inputs = Inputs{};
-
-   
    String title = "SenpaiGame";
    String version = "α";
    Settings settings = Settings{};

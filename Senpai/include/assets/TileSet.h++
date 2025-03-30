@@ -4,6 +4,12 @@
 #include "./Texture.h++"
 
 namespace Senpai::Assets {
+
+/*
+```cpp
+   TileSet(String const& filename, u16 cols, u16 rows, f32 sizeX, f32 sizeY, 
+           String const& name = "");
+*/
 struct TileSet final : public Asset {
   private:
    // can only be loaded by the main-thread
@@ -20,7 +26,7 @@ struct TileSet final : public Asset {
    // get the src rectangle of the tile
    PixelArea operator[](u16 index) const;
 
-   TileSet(String const& filename, u16 cols, u16 rows, f32 sizeX, f32 sizeY);
+   TileSet(String const& filename, u16 cols, u16 rows, f32 sizeX, f32 sizeY, String const& name = "");
 
    GenericPtr get_sdl_texture();
 };

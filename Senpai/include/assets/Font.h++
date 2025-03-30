@@ -13,6 +13,6 @@ struct Font final : public Asset {
    String filename = "";
    int size = 0;
    // loads the font from the file
-   Font(const String& filename, int size, String const& name);
+   Font(const String& filename, int size, String const& name = "");
 };
 };  // namespace Senpai::Assets

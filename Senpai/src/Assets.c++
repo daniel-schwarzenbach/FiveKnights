@@ -127,8 +127,13 @@ GenericPtr Texture::get_sdl_texture() {
 }
 
 TileSet::TileSet(String const &filename, u16 cols, u16 rows, f32 sizeX,
-                 f32 sizeY)
+                 f32 sizeY, String const &name)
     : filename(filename), cols(cols), rows(rows), sizeX(sizeX), sizeY(sizeY) {
+   if(name == "") {
+      this->name = "TileSet";
+   } else {
+      this->name = name;
+   }
    GenericPtr genericPtr = (GenericPtr)IMG_Load(filename.c_str());
    if (genericPtr == nullptr) {
       debug_log("Failed to load texture: " + filename);
@@ -174,8 +179,14 @@ PixelArea TileSet::operator[](u16 index) const {
            .size = {f32(sizeX), f32(sizeY)}};
 };
 
-Animation::Animation(Ptr<Texture> texture, Vec2<f32> size, uint frames)
+Animation::Animation(Ptr<Texture> texture, Vec2<f32> size, uint frames, 
+                     String const &name)
     : texturePtr(texture) {
+   if (name == "") {
+      this->name = "Animation";
+   } else {
+      this->name = name;
+   }
    for (uint i = 0; i < frames; i++) {
       frameAreas.push_back({.position = {i * size.x, 0}, .size = size});
    }

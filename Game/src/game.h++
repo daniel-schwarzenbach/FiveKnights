@@ -788,8 +788,8 @@ void load_game(Ptr<Scene> scene) {
    auto &tr_mainMenu = mainMenu.add_component<Components::Transform>(
        Vec2<f32>{0, 0}, Vec2<f32>{1.0, 1.0}, 0);
    auto &bt_mainMenu = mainMenu.add_component<Components::ButtonUI>(
-       &fontLarge, "Main Menu", Color{255, 255, 255, 255}, Color{0, 0, 0, 50},
-       Color{0, 0, 0, 200}, Vec2<f32>{600, 100});
+       &fontLarge, "Main Menu", Color{255, 255, 255, 255}, Color{0, 0, 0, 0},
+       Color{0, 0, 0, 60}, Vec2<f32>{600, 130});
    auto &info_mainMenu =
        mainMenu.add_component<Components::Info>("MainMenuButton", "GameOver");
    auto &script_mainMenu = mainMenu.add_script<ToMainMenuScript>(&clickSound);
@@ -801,7 +801,7 @@ void load_game(Ptr<Scene> scene) {
        Vec2<f32>{0, -200}, Vec2<f32>{1.0, 1.0}, 0);
    auto &bt_restart = restart.add_component<Components::ButtonUI>(
        &fontLarge, "Restart", Color{255, 255, 255, 255}, Color{0, 0, 0, 50},
-       Color{0, 0, 0, 200}, Vec2<f32>{600, 100});
+       Color{0, 0, 0, 200}, Vec2<f32>{600, 130});
    auto &info_restart =
        restart.add_component<Components::Info>("RestartButton", "GameOver");
    auto &script_restart = restart.add_script<RestartScript>(&clickSound);
