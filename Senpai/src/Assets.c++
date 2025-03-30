@@ -84,22 +84,19 @@ Texture::Texture(const String &filename, String const &name, bool pp)
    this->filename = filename;
    this->name = name;
    // theadsaf
+   debug_log("Loading Surface: " << filename);
    GenericPtr surfacePtr = IMG_Load(filename.c_str());
    if (surfacePtr == nullptr) {
-      debug_log("Failed to load texture-surface: " + filename);
+      debug_error("Failed to load texture-surface from " << filename);
       cout << SDL_GetError() << endl;
       return;
    }
+   width = ((SDL_Surface *)surfacePtr)->w;
+   height = ((SDL_Surface *)surfacePtr)->h;
    sdlSurface = SharedPtr<void>(surfacePtr, [](void *texture) {
       debug_log("Surface destroyed");
       SDL_DestroySurface((SDL_Surface *)texture);
    });
-   // quickload the texture to get the size, this could be done probebly better
-   SDL_Texture *texturePtr = SDL_CreateTextureFromSurface(
-       Renderer::get(), (SDL_Surface *)sdlSurface.get());
-
-   SDL_GetTextureSize(texturePtr, &this->width, &this->height);
-   SDL_DestroyTexture(texturePtr);
 };
 
 GenericPtr Texture::get_sdl_texture() {
@@ -115,9 +112,10 @@ GenericPtr Texture::get_sdl_texture() {
          return nullptr;
       }
       sdlTexture = SharedPtr<void>(genericPtr, [](void *texture) {
-         debug_log("Surface destroyed");
+         debug_log("Texture destroyed");
          SDL_DestroyTexture((SDL_Texture *)texture);
       });
+      SDL_GetTextureSize((SDL_Texture*)sdlTexture.get(), &this->width, &this->height);
       return sdlTexture.get();
    } else {
       debug_log("No Texture Present!") return nullptr;

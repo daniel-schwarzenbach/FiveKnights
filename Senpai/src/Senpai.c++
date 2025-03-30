@@ -97,6 +97,7 @@ bool App::run() {
       } else {
          // if the scene is loaded
          if (loadThread.is_running() && loadThread.is_finished()) {
+            debug_log("is joining thread")
             if(loadThread.join()) {
                debug_log("Scene loaded");
                scene = &currentScene;

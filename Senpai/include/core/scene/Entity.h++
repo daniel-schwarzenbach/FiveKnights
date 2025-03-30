@@ -43,9 +43,9 @@ class Entity {
       // make sure the component has an the correct type id
       const u32 key = component_type_id<ComponentT>();
       componentPtr->id = key;
-      if this->has_component<ComponentT>() {
+      if (this->has_component<ComponentT>()) {
          debug_error("Component already present!");
-         return this->get_component<ComponentT>()
+         return this->get_component<ComponentT>();
       }
       // add the component to the entity
       components.push_back(move(componentPtr));

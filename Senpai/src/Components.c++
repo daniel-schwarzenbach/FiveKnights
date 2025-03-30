@@ -64,7 +64,7 @@ Sprite::Sprite(Ptr<Assets::Texture> assetPtr, Vec2<f32> offset, Set<Flip> flips)
 Frame<f32> Sprite::get_frame(Frame<f32> const &tr) const {
    return {
        .position = tr.position + offset,
-       .size = Vec2<f32>{this->scrArea.size.x, this->scrArea.size.x} * tr.size,
+       .size = Vec2<f32>{this->scrArea.size.x, this->scrArea.size.y} * tr.size,
        .rotAnchor = tr.rotAnchor,
        .rotation = tr.rotation
    };

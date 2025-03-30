@@ -15,7 +15,7 @@ template <typename T> T read_from_file(const String &filename) {
 
 template <typename T>
 bool write_to_file(const String &filename, T const& toWrite) {
-   std::ofstream file(filename);
+   std::ofstream file(filename, std::ios::out);
    if (!file) {
       std::cerr << "Failed to open file: " << filename << std::endl;
       return false;

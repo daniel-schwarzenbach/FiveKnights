@@ -626,7 +626,7 @@ Tuple<Entity*, KnightScript*>
 create_knight(Ptr<Scene> scenePtr, Vec2<int> virtualPos,
               Ptr<Assets::Texture> knightTexture, Ptr<Assets::Audio> audioPtr) {
    auto &knight = scenePtr->add_entity();
-   Vec2<f32> offset = {0, +16};
+   Vec2<f32> offset = {0, +22};
    auto &tr = knight.add_component<Components::Transform>(
        game::virtual_to_actual(virtualPos));
    auto &sp = knight.add_component<Components::Sprite>(knightTexture, offset);
@@ -717,14 +717,14 @@ void load_game(Ptr<Scene> scene) {
    auto &tr_player = player.add_component<Components::Transform>(
        Vec2<f32>{0, 12} + game::playerStart);
    auto &sp_player =
-       player.add_component<Components::Sprite>(&kingIdleTexture);
+       player.add_component<Components::Sprite>(&kingIdleTexture, Vec2<f32>{0, 5});
    auto &anim_player = player.add_component<Components::Animator>(
        30, Vector<Ptr<Assets::Animation>>{&kingIdleAnim, &kingRunAnim, &kingDieAnim, &kingDeathAnim},Vector<u32>{0, 0, 3, 3});
    auto &pm_player = player.add_script<PlayerMovement>();
    pm_player.audioPtr = &kingAudio;
    pm_player.deathAudioPtr = &deathAudio;
    auto &light_player = player.add_component<Components::Light>(&laternLight);
-   light_player.offset = {0, -5};
+   light_player.offset = {0, 0};
 
    // Flashlight entity
    auto &flashlight = scene->add_entity();

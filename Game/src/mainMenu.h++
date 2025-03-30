@@ -51,6 +51,12 @@ struct menuHandlerScript final : public Script {
    }
 
    void on_update(f32 dt) override {
+      if (Inputs::get_key(Key::DELETE)) {
+         scenePtr->nextScene = 1;
+         clickSound->play(1, false);
+         sleep(0.3);
+         return;
+      }
       if (state != MenuState::MAIN) {
          if (Inputs::get_key(Key::ESCAPE)) {
             menuState = MenuState::MAIN;
@@ -193,25 +199,29 @@ void set_up_menu_scene(Ptr<Scene> scenePtr) {
    scenePtr->add_system<Systems::UIRenderSystem>();
    // load needet assets
    Assets::Font &font = scenePtr->add_asset<Assets::Font>(String("./assets/fonts/The Centurion .ttf"), 100, String("HeroFont"));
-   Assets::Font &fontLarge = scenePtr->add_asset<Assets::Font>(String("./assets/fonts/The Centurion .ttf"), 130, String("HeroFont"));
+   Assets::Font &fontLarge = scenePtr->add_asset<Assets::Font>(String("./assets/fonts/The Centurion .ttf"), 130, String("HeroFontLarge"));
    Assets::Font &fontsmall = scenePtr->add_asset<Assets::Font>(String("./assets/fonts/Griffiths.otf"), 50, String("HeroFontSmall"));
-   auto& texture = scenePtr->add_asset<Assets::Texture>(String("./assets/pics/BackGround.png"), String("MenuBackground"));
+   debug_log("Loading Texture1");
+   auto& texture = scenePtr->add_asset<Assets::Texture>("./assets/pics/BackGround.png", "MenuBackground");
+   debug_log("Loading Texture2");
+   auto& howToPlayTexture = scenePtr->add_asset<Assets::Texture>(String("./assets/pics/HowToPlay.png"), String("HowToPlayTexture"));
    Assets::Audio &ambient = scenePtr->add_asset<Assets::Audio>(String("./assets/audio/AmbientLoop.wav"), String("Ambient"));
    Assets::Audio &music = scenePtr->add_asset<Assets::Audio>(String("./assets/audio/Musique.wav"), String("MenuMusic"));
    clickSound = &scenePtr->add_asset<Assets::Audio>(String("./assets/audio/Click.mp3"), String("Click"));
-   f32 highScore = read_high_score("./assets/data/highscore.dat");
+   f32 highScore = read_from_file<f32>("./assets/data/highscore.dat");
+   debug_log("Adding Entities");
    // camera entity
    Entity& camera = scenePtr->add_entity();
-   camera.add_component<Components::Transform>();
-   camera.add_component<Components::Camera>(Vec2<f32>{0,0},0.45);
+   camera.add_component<Components::Transform>(Vec2<f32>{0, 0}, Vec2<f32>{1.0f, 1.0f});
+   camera.add_component<Components::Camera>(Vec2<f32>{0, 0}, 1.0f);
    auto& ms = camera.add_script<menuHandlerScript>();
    ms.music = &music;
    ms.ambient = &ambient;
    // background entity
    Entity &bg = scenePtr->add_entity();
-   auto &bg_tr = bg.add_component<Components::Transform>();
+   auto &bg_tr = bg.add_component<Components::Transform>(Vec2<f32>{0, 0}, Vec2<f32>{0.6f, 0.6f});
    auto &bg_sprite = bg.add_component<Components::Sprite>(&texture);
-   bg_sprite.z = -5;
+   bg_sprite.z = -10;
 
    // create the menu entities
    buttonPos = {0, 150};
@@ -248,8 +258,8 @@ void set_up_menu_scene(Ptr<Scene> scenePtr) {
 
    // Highscore entity
    Entity& score = scenePtr->add_entity();
-   auto& score_tr = score.add_component<Components::Transform>(Vec2<f32>{-700, -500});
-   auto& score_btn = score.add_component<Components::ButtonUI>(&fontsmall, str("Longest Survival:  ") + str(highScore) + str("s"), Color{255, 255, 255, 255}, Color{0,0,0,0}, Color{0,0,0,0}, Vec2<f32>{0, 0});
+   auto& score_tr = score.add_component<Components::Transform>(Vec2<f32>{-650, -500});
+   auto& score_btn = score.add_component<Components::ButtonUI>(&fontsmall, str("longest survival:  ") + str(highScore) + str(" seconds"), Color{255, 255, 255, 255}, Color{0,0,0,0}, Color{0,0,0,0}, Vec2<f32>{0, 0});
    score.add_component<Components::Info>("Highscore", "Main");
 
    // Title entity
@@ -286,11 +296,12 @@ void set_up_menu_scene(Ptr<Scene> scenePtr) {
    returnHow.add_script<ReturnScript>();
    returnHow.add_component<Components::Info>("Return", "HowToPlay");
 
-   // what to do
-   // Entity& what = scenePtr->add_entity();
-   // auto& what_tr = what.add_component<Components::Transform>(Vec2<f32>{-700, -500});
-   // auto& score_btn = score.add_component<Components::ButtonUI>(&fontsmall, str("Longest Survival:  ") + str(highScore) + str("s"), Color{255, 255, 255, 255}, Color{0,0,0,0}, Color{0,0,0,0}, Vec2<f32>{0, 0});
-   // score.add_component<Components::Info>("Highscore", "Main");
+   // background entity
+   Entity &bgHowTo = scenePtr->add_entity();
+   auto &tr_bgHowTo = bgHowTo.add_component<Components::Transform>();
+   auto &sp_bgHowTo = bgHowTo.add_component<Components::Sprite>(&howToPlayTexture);
+   sp_bgHowTo.z = -1;
+   bgHowTo.add_component<Components::Info>("BackGroundHowToPlay", "HowToPlay");
 
 
 }
