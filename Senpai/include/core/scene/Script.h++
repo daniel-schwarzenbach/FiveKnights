@@ -19,6 +19,8 @@ struct Script {
       this->entityPtr = entityPtr;
    }
 
+   template <ComponentType ComponentT> Vector<Ptr<Entity>> view();
+
    inline virtual ~Script() = default;
    // called when an entity holding this script is copied
    inline virtual UniquePtr<Script> clone() {
@@ -30,6 +32,8 @@ struct Script {
    inline virtual void on_collision(Ptr<Entity> other) {};
    // called when the entity is destroyed
    inline virtual void on_destroy() {};
+   // called when the entity is enabled
+   inline virtual void on_enable() {};
    // called every frame
    inline virtual void on_update(f32 dt) {};
    // called on the start of the scene

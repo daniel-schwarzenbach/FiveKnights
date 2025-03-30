@@ -219,6 +219,12 @@ void Systems::ScriptRunner::start() {
           entity->get_component<Components::ScriptsHolder>();
       for (auto &script : scriptsComponent.scripts) {
          script->prepare(scenePtr, entity);
+      }
+   }
+   for (auto &entity : view<Components::ScriptsHolder>()) {
+      auto &scriptsComponent =
+          entity->get_component<Components::ScriptsHolder>();
+      for (auto &script : scriptsComponent.scripts) {
          script->on_start();
       }
    }

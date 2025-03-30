@@ -114,6 +114,11 @@ class Vector : public std::vector<T> {
       void sort(Function<bool(const T&, const T&)> const& compare = [](const T& a, const T& b) { return a < b; }) {
          std::sort(this->begin(), this->end(), compare);
       }
+
+      // returns true if the vector contains the value
+      bool contains(const T& value) const {
+         return std::find(this->begin(), this->end(), value) != this->end();
+      }
 };
 
 template<typename T>

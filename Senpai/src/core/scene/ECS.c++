@@ -52,7 +52,7 @@ Entity& ECRegistry::add_entity(bool isAlive) {
    // make a new entity
    entities.push_back(Entity());
    Ptr<Entity> entityPtr = &entities.back();
-   entityPtr->set_ecRegistry(this);
+   entityPtr->set_ecRegistry(this, isAlive);
    if (isAlive) {
       entityPtr->enable();
    } else {
@@ -64,7 +64,7 @@ Entity& ECRegistry::add_entity(bool isAlive) {
 Entity& ECRegistry::add_entity_copy(Entity const& entity, bool isAlive) {
    entities.push_back(entity);
    Ptr<Entity> entityPtr = &entities.back();
-   entityPtr->set_ecRegistry(this);
+   entityPtr->set_ecRegistry(this, isAlive);
    if (isAlive) {
       entityPtr->enable();
    } else {
@@ -85,6 +85,10 @@ void ECRegistry::register_component(Ptr<Component> componentPtr,
                                     Ptr<Entity> entityPtr) {
    if (componentPtr->id >= componentId_to_entityPtrs.size()) {
       componentId_to_entityPtrs.resize(componentPtr->id + 1);
+   }
+   if(componentId_to_entityPtrs[componentPtr->id].contains(entityPtr)) {
+      debug_warning("EntityPtr already registered");
+      return;
    }
    componentId_to_entityPtrs[componentPtr->id].push_back(entityPtr);
    if (RenderComponent::is_sub_type(componentPtr)) {
@@ -147,8 +151,9 @@ Entity &Entity::operator=(Entity const &other) {
    return *this;
 }
 
-void Entity::set_ecRegistry(Ptr<ECRegistry> ecRegistryPtr) {
+void Entity::set_ecRegistry(Ptr<ECRegistry> ecRegistryPtr, bool isAlive) {
    this->ecRegistryPtr = ecRegistryPtr;
+   if(!isAlive) return;
    // set the entityPtr for all components
    for (auto &component : components) {
       component->entityPtr = this;
@@ -171,6 +176,12 @@ void Entity::enable() {
    if (!this->ecRegistryPtr) {
       debug_log("Entity has no ecRegistry is not enabled");
       return;
+   }
+   if (this->has_component<Components::ScriptsHolder>()) {
+      auto& scriptsHolder = this->get_component<Components::ScriptsHolder>();
+      for (auto &script : scriptsHolder.scripts) {
+         script->on_enable();
+      }
    }
    if(enabled) return;
    for (auto &component : components) {
