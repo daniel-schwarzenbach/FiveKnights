@@ -1,6 +1,12 @@
-# FiveKnights Against King Fredrick
+# Five Knights against King Fredrick & the Senpai Game Engine
+
+A Five Nights at Fredies Inspired Chess Game and the Engine its running on
 
 # Requirements:
+
+- C++23 Compile
+- CMake min 3.20
+- Git
 
 ## C++23 Compiler
 
@@ -47,6 +53,14 @@ sudo apt update
 sudo apt install cmake=3.20.*
 ```
 
-### Git
+## Git
 
 neccecary for fetching SDL3
+
+## SDL3, SDL3_image, SDL3_Mixer, SDL3_ttf
+
+SDL3 will be fetched when executing Senpai/fetch-lib*
+
+build-* calls Senpai/fetch-lib* automatically
+
+# Classes

@@ -7,7 +7,7 @@ namespace Senpai {
 
 bool App::run() {
    // initialize SDL
-   SDL::init(title, width, height);
+   SDL::init(title, settings.width, settings.height);
    // init inputs
    Inputs::init();
    Window::resize();

@@ -5,14 +5,12 @@
 #include "./mainMenu.h++"
 
 int main() {
-   // std::system("ls -R");
-   debug_log("Starting the game");
 
    Senpai::App app;
    app.settings.fpsTarget = 30;
    app.title = "Five Knights against King Fredric";
-   app.width = 1920;
-   app.height = 1080;
+   app.settings.width = 1920;
+   app.settings.height = 1080;
    app.sceneLoaders.push_back(set_up_loading_scene);
    app.sceneLoaders.push_back(set_up_menu_scene);
    app.sceneLoaders.push_back(load_game);
