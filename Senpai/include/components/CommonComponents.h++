@@ -24,6 +24,11 @@ struct Transform final : public Component {
 };
 REGISTER_COMPONENT_TYPE(Transform);
 
+/*
+   ```cpp
+   Info{String name = "Entity", String tag = "default"};
+   ```
+*/
 struct Info final : public Component {
    String name = "Entity";
    String tag = "default";

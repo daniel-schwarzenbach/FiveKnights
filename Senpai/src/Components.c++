@@ -34,6 +34,7 @@ Transform::Transform(Vec2<f32> translate, Vec2<f32> scale, f32 rotation,
 
 Info::Info(String name, String tag) : name(name), tag(tag) {
    this->id = component_type_id<Info>();
+   debug_log("Name: " << name << ", Tag: " << tag);
 }
 
 ScriptsHolder::ScriptsHolder(ScriptsHolder const &other) {

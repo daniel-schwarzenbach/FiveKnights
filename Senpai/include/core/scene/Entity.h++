@@ -26,7 +26,8 @@ class Entity {
    Entity &operator=(Entity const &other);
 
    //    Functions
-   void set_ecRegistry(Ptr<ECRegistry> ecRegistryPtr);
+   // set the registry of the entity
+   void set_ecRegistry(Ptr<ECRegistry> ecRegistryPtr, bool isAlive);
    // get the total transform of the entity including the parents
    Frame<f32> get_transform();
    // register a copy of the componentn
@@ -42,12 +43,16 @@ class Entity {
       // make sure the component has an the correct type id
       const u32 key = component_type_id<ComponentT>();
       componentPtr->id = key;
+      if this->has_component<ComponentT>() {
+         debug_error("Component already present!");
+         return this->get_component<ComponentT>()
+      }
       // add the component to the entity
       components.push_back(move(componentPtr));
       // add the component to the component map
       componentsMap.try_emplace(key, components.size() - 1);
       // register the compoenent with the registry
-      if (ecRegistryPtr != nullptr) {
+      if (ecRegistryPtr != nullptr && is_enabled()) {
          ecRegistryPtr->register_component(components.back().get(), this);
       }
       return *dynamic_cast<Ptr<ComponentT>>(components.back().get());

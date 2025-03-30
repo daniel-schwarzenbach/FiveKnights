@@ -28,7 +28,7 @@ struct ECRegistry {
    template <ComponentType ComponentT> Vector<Ptr<Entity>> &view() {
       u32 componentId = component_type_id<ComponentT>();
       if (this->componentId_to_entityPtrs.size() <= componentId) {
-         componentId_to_entityPtrs.resize(componentId);
+         componentId_to_entityPtrs.resize(componentId+1);
       }
       return componentId_to_entityPtrs[componentId];
    }
