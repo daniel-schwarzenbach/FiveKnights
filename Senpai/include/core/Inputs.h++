@@ -7,7 +7,7 @@
 namespace Senpai {
 // Inputs Class that allows easy Reading of the inputs
 class Inputs {
- private:
+  private:
    struct MouseState {
       // 7 buttons but we take 8 to have a round number
       Bitset<8> buttons;
@@ -20,7 +20,7 @@ class Inputs {
    // Event Dispatcher that handles all the events
    static EventDispatcher dispatcher;
 
- public:
+  public:
    // should be called by the App
    static void init();
    // returns true if the key is pressed
@@ -42,6 +42,5 @@ class Inputs {
    static Vec2<f32> get_mouse_wheel();
    static bool get_mouse_button(uint button);
    static void clear_all_callbacks();
-
 };
-} // namespace Senpai
+}  // namespace Senpai

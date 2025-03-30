@@ -11,11 +11,11 @@ namespace Senpai::Components {
 ```
 */
 struct Camera final : public Component {
- private:
+  private:
    // the size of the camera// need to fit the aspect ratio
    Vec2<f32> size = {1920, 1080};
 
- public:
+  public:
    // camera offset form the rest of the entitie
    Vec2<f32> offset = {0, 0};
    // camera zoom
@@ -36,15 +36,17 @@ REGISTER_COMPONENT_TYPE(Camera);
 
 /*
 ```cpp
-{ Ptr<Assets::Texture> assetPtr = nullptr, Vec2<f32> offset = {0.0f, 0.0f}, Set<Flip> flips = {} }
+{ Ptr<Assets::Texture> assetPtr = nullptr, Vec2<f32> offset = {0.0f, 0.0f},
+Set<Flip> flips = {} }
 ```
 */
 struct Sprite final : public RenderComponent {
    Ptr<Assets::Texture> texturePtr = nullptr;
    PixelArea scrArea = {0, 0, 0, 0};
-   Vec2<f32> offset = {0,0};
+   Vec2<f32> offset = {0, 0};
 
-   Sprite(Ptr<Assets::Texture> assetPtr = nullptr, Vec2<f32> offset = {0.0f, 0.0f}, Set<Flip> flips = {});
+   Sprite(Ptr<Assets::Texture> assetPtr = nullptr,
+          Vec2<f32> offset = {0.0f, 0.0f}, Set<Flip> flips = {});
    // frame of the entire sprite from the transfomation frame
    Frame<f32> get_frame(Frame<f32> const &transform) const;
    // render the sprite
@@ -52,7 +54,6 @@ struct Sprite final : public RenderComponent {
                Rectangle<f32> const &canvas) override;
 };
 REGISTER_COMPONENT_TYPE(Sprite);
-
 
 /*
 used to easyly create buttons with text
@@ -107,18 +108,18 @@ REGISTER_COMPONENT_TYPE(ButtonUI);
 ```
 */
 struct Animator final : public Component {
- private:
+  private:
    // the time since the last flip
    f32 lastFlipTime = 0;
 
- public:
+  public:
    bool has_switched = false;
    // the current frame index
    u32 frameId = 0;
    // the current animation
    u32 animId = 0;
    // 1/(fps of the animation)
-   f32 flipTime = 1.0f/15.0f;
+   f32 flipTime = 1.0f / 15.0f;
    // the animations and the id of the next animation
    Vector<Ptr<Assets::Animation>> animations = {};
    Vector<u32> nextAnimId = {};
@@ -134,11 +135,11 @@ REGISTER_COMPONENT_TYPE(Animator);
 
 /*
 ```cpp
-{Matrix<u16> tiles = Matrix<u16>(0, 0), Ptr<Assets::TileSet> tileSetPtr = nullptr}
+{Matrix<u16> tiles = Matrix<u16>(0, 0), Ptr<Assets::TileSet> tileSetPtr =
+nullptr}
 ```
 */
 struct TileMap final : public RenderComponent {
-
    // virtual ~TileMap() noexcept override = default;
    Tuple<uint, uint> get_tile_at_point(Frame<f32> const &transform,
                                        Vec2<f32> point) const;
@@ -173,4 +174,4 @@ struct Light final : public Component {
 };
 REGISTER_COMPONENT_TYPE(Light);
 
-} // namespace Senpai::Components
+}  // namespace Senpai::Components

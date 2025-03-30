@@ -3,6 +3,7 @@
 */
 #pragma once
 #include <SDL3/SDL.h>
+
 #include <Senpai>
 
 namespace Senpai {
@@ -20,7 +21,7 @@ SDL_Rect to_sdl_viewport(const Senpai::Rectangle<f32> &rect);
 
 void RenderFrame(Senpai::Frame<f32> const &frame, SDL_Texture *texture, u8 flip,
                  SDL_BlendMode blendmode, PixelArea src);
-} // namespace SDL
+}  // namespace SDL
 
 namespace Renderer {
 // get the renderer
@@ -29,7 +30,7 @@ Ptr<SDL_Renderer> get();
 void clear();
 // present the renderer
 void present();
-} // namespace Renderer
+}  // namespace Renderer
 
 namespace Window {
 // get the window
@@ -40,6 +41,6 @@ void resize();
 Vec2<int> get_size();
 // get the aspect ratio of the window
 f32 get_aspect_ratio();
-} // namespace Window
+}  // namespace Window
 
-} // namespace Senpai
+}  // namespace Senpai

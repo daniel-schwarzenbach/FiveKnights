@@ -2,10 +2,14 @@
 project(Senpai VERSION 0.0.1)
 
 if(WIN32)
-    # Use or do not use vendored libs
-    set(SDLTTF_VENDORED ON)
-    set(SDLIMAGE_VENDORED OFF)
-    set(SDLMIXER_VENDORED OFF)
+   # Use or do not use vendored libs
+   set(SDLTTF_VENDORED ON)
+   set(SDLIMAGE_VENDORED OFF)
+   set(SDLMIXER_VENDORED OFF)
+else()
+   set(SDLTTF_VENDORED OFF)
+   set(SDLIMAGE_VENDORED OFF)
+   set(SDLMIXER_VENDORED OFF)
 endif()
 
 

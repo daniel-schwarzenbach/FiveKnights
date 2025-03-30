@@ -1,6 +1,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
+
 #include <core/Core.h++>
 #include <sdl/SDLBackend.h++>
 #include <systems/Systems.h++>
@@ -9,7 +10,7 @@ namespace Senpai {
 
 void Systems::TestSystem::update(f32 dt) {
    // Define rectangles
-   SDL_FRect outlineRect = {100, 100, 200, 150}; // x, y, width, height
+   SDL_FRect outlineRect = {100, 100, 200, 150};  // x, y, width, height
    SDL_FRect filledRect = {350, 100, 200, 150};
 
    // Draw outlined rectangle (red)
@@ -68,9 +69,7 @@ void Systems::UIButtonSystem::update(f32 dt) {
    }
 }
 
-void Systems::SpriteAnimator::start() {
-   this->update(0);
-}
+void Systems::SpriteAnimator::start() { this->update(0); }
 
 void Systems::SpriteAnimator::update(f32 dt) {
    for (auto entity : view<Components::Animator>()) {
@@ -89,9 +88,9 @@ void Systems::SpriteAnimator::update(f32 dt) {
             if (nextId != animator.animId) {
                animator.switch_animation(nextId);
             } else {
-               animator.frameId = 0; 
+               animator.frameId = 0;
             }
-         } 
+         }
          sprite.scrArea = animationPtr->frameAreas[animator.frameId];
       }
 
@@ -246,19 +245,17 @@ void Systems::LightingSystem::update(f32 dt) {
       auto cameraRect = camera.get_rect(entityPtr->get_transform());
       auto canvas = camera.get_canvas();
       SDL_Rect viewport = SDL::to_sdl_viewport(camera.viewport);
-      //SDL_SetRenderViewport(Renderer::get(), &viewport);
+      // SDL_SetRenderViewport(Renderer::get(), &viewport);
       auto wSize = Window::get_size();
-      SDL_Texture* lightTexture = SDL_CreateTexture(Renderer::get(),
-                                             SDL_PIXELFORMAT_RGBA8888,
-                                             SDL_TEXTUREACCESS_TARGET,
-                                             wSize.x,
-                                             wSize.y);
-      if(!lightTexture) {
+      SDL_Texture *lightTexture =
+          SDL_CreateTexture(Renderer::get(), SDL_PIXELFORMAT_RGBA8888,
+                            SDL_TEXTUREACCESS_TARGET, wSize.x, wSize.y);
+      if (!lightTexture) {
          debug_log("Failed to create light texture: " << SDL_GetError());
          return;
       }
       // Set the render target to the light texture.
-      if(!SDL_SetRenderTarget(Renderer::get(), lightTexture)) {
+      if (!SDL_SetRenderTarget(Renderer::get(), lightTexture)) {
          debug_log("Failed to set render target: " << SDL_GetError());
          SDL_DestroyTexture(lightTexture);
          return;
@@ -272,7 +269,9 @@ void Systems::LightingSystem::update(f32 dt) {
          auto &light = entity->get_component<Components::Light>();
          auto frame = light.get_frame(tr);
          auto projection = frame.project(cameraRect, canvas);
-         SDL::RenderFrame(projection, (SDL_Texture *)light.texturePtr->get_sdl_texture(), light.flip, SDL_BLENDMODE_ADD, light.scrArea);
+         SDL::RenderFrame(projection,
+                          (SDL_Texture *)light.texturePtr->get_sdl_texture(),
+                          light.flip, SDL_BLENDMODE_ADD, light.scrArea);
       }
       // Reset the render target to the window.
       SDL_SetRenderTarget(Renderer::get(), nullptr);
@@ -285,4 +284,4 @@ void Systems::LightingSystem::update(f32 dt) {
    }
 }
 
-} // namespace Senpai
+}  // namespace Senpai

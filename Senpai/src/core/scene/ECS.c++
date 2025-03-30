@@ -48,7 +48,7 @@ void ECRegistry::clear() {
    this->componentsToRender.clear();
 }
 
-Entity& ECRegistry::add_entity(bool isAlive) {
+Entity &ECRegistry::add_entity(bool isAlive) {
    // make a new entity
    entities.push_back(Entity());
    Ptr<Entity> entityPtr = &entities.back();
@@ -61,7 +61,7 @@ Entity& ECRegistry::add_entity(bool isAlive) {
    return *entityPtr;
 }
 
-Entity& ECRegistry::add_entity_copy(Entity const& entity, bool isAlive) {
+Entity &ECRegistry::add_entity_copy(Entity const &entity, bool isAlive) {
    entities.push_back(entity);
    Ptr<Entity> entityPtr = &entities.back();
    entityPtr->set_ecRegistry(this, isAlive);
@@ -76,9 +76,8 @@ Entity& ECRegistry::add_entity_copy(Entity const& entity, bool isAlive) {
 void ECRegistry::remove_entity(Ptr<Entity> entityPtr) {
    entityPtr->disable();
    // remove any entity at that pointer
-   entities.remove_if([entityPtr](Entity &entity) {
-      return &entity == entityPtr;
-   });
+   entities.remove_if(
+       [entityPtr](Entity &entity) { return &entity == entityPtr; });
 }
 
 void ECRegistry::register_component(Ptr<Component> componentPtr,
@@ -86,7 +85,7 @@ void ECRegistry::register_component(Ptr<Component> componentPtr,
    if (componentPtr->id >= componentId_to_entityPtrs.size()) {
       componentId_to_entityPtrs.resize(componentPtr->id + 1);
    }
-   if(componentId_to_entityPtrs[componentPtr->id].contains(entityPtr)) {
+   if (componentId_to_entityPtrs[componentPtr->id].contains(entityPtr)) {
       debug_warning("EntityPtr already registered");
       return;
    }
@@ -98,10 +97,11 @@ void ECRegistry::register_component(Ptr<Component> componentPtr,
              return *a < *b;
           });
    } else if (UIComponent::is_sub_type(componentPtr)) {
-      uiComponents.insert_sorted(dynamic_cast<Ptr<UIComponent>>(componentPtr), 
-                                 [](Ptr<UIComponent> const &a, Ptr<UIComponent> const &b) {
-                                     return *a < *b;
-                                 });
+      uiComponents.insert_sorted(
+          dynamic_cast<Ptr<UIComponent>>(componentPtr),
+          [](Ptr<UIComponent> const &a, Ptr<UIComponent> const &b) {
+             return *a < *b;
+          });
    }
 }
 
@@ -121,16 +121,21 @@ void ECRegistry::unregister_component(Ptr<Component> componentPtr,
 }
 
 Entity::Entity()
-    : components{}, componentsMap{}, parentPtr{nullptr},
+    : components{},
+      componentsMap{},
+      parentPtr{nullptr},
       ecRegistryPtr{nullptr} {}
 
 Entity::Entity(Entity const &other)
-    : components{}, ecRegistryPtr{other.ecRegistryPtr},
-      parentPtr{other.parentPtr}, componentsMap{} {
+    : components{},
+      ecRegistryPtr{other.ecRegistryPtr},
+      parentPtr{other.parentPtr},
+      componentsMap{} {
    // copy the components
    for (auto &componentPtr : other.components) {
-      auto comp = ComponentTypeRegistry::get_id_to_constructor()[componentPtr->id](
-          componentPtr.get());
+      auto comp =
+          ComponentTypeRegistry::get_id_to_constructor()[componentPtr->id](
+              componentPtr.get());
       u32 id = comp->id;
       components.push_back(move(comp));
       componentsMap.try_emplace(id, components.size() - 1);
@@ -142,8 +147,9 @@ Entity &Entity::operator=(Entity const &other) {
    this->componentsMap.clear();
    // copy the components
    for (auto &componentPtr : other.components) {
-      auto comp = ComponentTypeRegistry::get_id_to_constructor()[componentPtr->id](
-          componentPtr.get());
+      auto comp =
+          ComponentTypeRegistry::get_id_to_constructor()[componentPtr->id](
+              componentPtr.get());
       u32 id = comp->id;
       components.push_back(move(comp));
       componentsMap.try_emplace(id, components.size() - 1);
@@ -153,7 +159,7 @@ Entity &Entity::operator=(Entity const &other) {
 
 void Entity::set_ecRegistry(Ptr<ECRegistry> ecRegistryPtr, bool isAlive) {
    this->ecRegistryPtr = ecRegistryPtr;
-   if(!isAlive) return;
+   if (!isAlive) return;
    // set the entityPtr for all components
    for (auto &component : components) {
       component->entityPtr = this;
@@ -178,12 +184,12 @@ void Entity::enable() {
       return;
    }
    if (this->has_component<Components::ScriptsHolder>()) {
-      auto& scriptsHolder = this->get_component<Components::ScriptsHolder>();
+      auto &scriptsHolder = this->get_component<Components::ScriptsHolder>();
       for (auto &script : scriptsHolder.scripts) {
          script->on_enable();
       }
    }
-   if(enabled) return;
+   if (enabled) return;
    for (auto &component : components) {
       ecRegistryPtr->register_component(component.get(), this);
    }
@@ -202,14 +208,14 @@ void Entity::disable() {
 }
 
 void System::prepare(Ptr<Scene> scenePtr) { this->scenePtr = scenePtr; }
-} // namespace Senpai
+}  // namespace Senpai
 
 namespace Senpai {
-Entity& Scene::add_entity(bool isAlive) {
+Entity &Scene::add_entity(bool isAlive) {
    return this->ecRegistry.add_entity(isAlive);
 }
 
-Entity& Scene::add_entity_copy(Entity const& entity, bool isAlive) {
+Entity &Scene::add_entity_copy(Entity const &entity, bool isAlive) {
    return this->ecRegistry.add_entity_copy(entity, isAlive);
 }
 
@@ -218,11 +224,9 @@ void Scene::update(f32 dt) {
    if (this->isPaused) {
       for (auto &system : systems) {
          if (!system->canBePaused) {
-            if(system->isParallel) {
+            if (system->isParallel) {
                threads.push_back(Thread());
-               threads.back().execute([&system, dt]() {
-                  system->update(dt);
-               });
+               threads.back().execute([&system, dt]() { system->update(dt); });
             } else {
                system->update(dt);
             }
@@ -230,11 +234,9 @@ void Scene::update(f32 dt) {
       }
    } else {
       for (auto &system : systems) {
-         if(system->isParallel) {
+         if (system->isParallel) {
             threads.push_back(Thread());
-            threads.back().execute([&system, dt]() {
-               system->update(dt);
-            });
+            threads.back().execute([&system, dt]() { system->update(dt); });
          } else {
             system->update(dt);
          }
@@ -246,22 +248,22 @@ void Scene::update(f32 dt) {
 }
 
 void Scene::start() {
-   ecRegistry.componentsToRender.sort([](Ptr<RenderComponent> const &a,
-                                        Ptr<RenderComponent> const &b) {
-      return *a < *b;
-   });
-   ecRegistry.uiComponents.sort([](Ptr<UIComponent> const &a,
-                                  Ptr<UIComponent> const &b) {
-      return *a < *b;
-   });
+   ecRegistry.componentsToRender.sort(
+       [](Ptr<RenderComponent> const &a, Ptr<RenderComponent> const &b) {
+          return *a < *b;
+       });
+   ecRegistry.uiComponents.sort(
+       [](Ptr<UIComponent> const &a, Ptr<UIComponent> const &b) {
+          return *a < *b;
+       });
    for (auto &system : systems) {
       system->start();
    }
 }
 
 void Scene::on_pause() {
-   for (auto& entity : ecRegistry.view<Components::ScriptsHolder>()) {
-      auto& scriptHolder =  entity->get_component<Components::ScriptsHolder>();
+   for (auto &entity : ecRegistry.view<Components::ScriptsHolder>()) {
+      auto &scriptHolder = entity->get_component<Components::ScriptsHolder>();
       for (auto &script : scriptHolder.scripts) {
          script->on_resume();
       }
@@ -269,8 +271,8 @@ void Scene::on_pause() {
 }
 
 void Scene::on_resume() {
-   for (auto& entity : ecRegistry.view<Components::ScriptsHolder>()) {
-      auto& scriptHolder =  entity->get_component<Components::ScriptsHolder>();
+   for (auto &entity : ecRegistry.view<Components::ScriptsHolder>()) {
+      auto &scriptHolder = entity->get_component<Components::ScriptsHolder>();
       for (auto &script : scriptHolder.scripts) {
          script->on_resume();
       }
@@ -285,4 +287,4 @@ void Scene::clear() {
    nextScene = -1;
 }
 
-} // namespace Senpai
+}  // namespace Senpai

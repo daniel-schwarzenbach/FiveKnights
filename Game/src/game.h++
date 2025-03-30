@@ -9,18 +9,18 @@ Vector<V2> generate_knight_positions() {
    int n = rng::get_in_range(1, 4);
    V2 k0;
    switch (n) {
-   case 1:
-      k0 = {1, 1};
-      break;
-   case 2:
-      k0 = {1, boardsize.y};
-      break;
-   case 3:
-      k0 = {boardsize.x, 1};
-      break;
-   case 4:
-      k0 = {boardsize.x, boardsize.y};
-      break;
+      case 1:
+         k0 = {1, 1};
+         break;
+      case 2:
+         k0 = {1, boardsize.y};
+         break;
+      case 3:
+         k0 = {boardsize.x, 1};
+         break;
+      case 4:
+         k0 = {boardsize.x, boardsize.y};
+         break;
    }
    int x1 = rng::get_in_range(2, boardsize.x - 1);
    int x2 = rng::get_in_range(2, boardsize.x - 1);
@@ -67,9 +67,8 @@ f32 batteryLeft = 120;
 constexpr f32 batteryMax = 120;
 // timer to increase the difficulty
 f32 difficultyTimer = 20;
-constexpr f32 difficultyTime = 20;
-
-
+// the time it takes to increase the difficulty
+constexpr f32 difficultyTime = 10;
 
 void init() {
    nextKingMove = -1;
@@ -84,7 +83,7 @@ void init() {
 Vec2<f32> virtual_to_actual(Vec2<int> vPos) {
    return Vec2<f32>{xUnit * (vPos.x - 1), yUnit * (vPos.y - 1)};
 }
-} // namespace game
+}  // namespace game
 
 struct Movement {
    Vec2<f32> start;
@@ -150,7 +149,8 @@ struct RestartScript final : public Script {
 struct ScoreTextScript final : public Script {
    void on_enable() override {
       auto &bt = entityPtr->get_component<Components::ButtonUI>();
-      bt.text = "you survived for  " + std::to_string(UInt(game::timer)) + " seconds";
+      bt.text =
+          "you survived for  " + std::to_string(UInt(game::timer)) + " seconds";
       f32 highscore = read_from_file<f32>("./assets/data/highscore.dat");
       if (game::timer > highscore) {
          debug_log("New Highscore!");
@@ -160,15 +160,13 @@ struct ScoreTextScript final : public Script {
    }
 };
 
-
-
 struct KnightScript final : public Script {
    // if the knight has to flip after the move
    bool hasToAdjust = true;
    Movement movement;
    Ptr<Assets::Audio> audioPtr;
 
- public:
+  public:
    // position on the chessboard
    Vec2<int> virtualPos;
    // constuctor
@@ -183,16 +181,16 @@ struct KnightScript final : public Script {
       auto &tr = entityPtr->get_component<Components::Transform>();
       movement = {tr.frame.position, game::virtual_to_actual(newPos), dstTime,
                   0.0f};
-      audioPtr->play_direction(convert<f32,int>(newPos - kingPos), 255.0f/10.0f);
-      auto& sp = entityPtr->get_component<Components::Sprite>();
+      audioPtr->play_direction(convert<f32, int>(newPos - kingPos),
+                               255.0f / 10.0f);
+      auto &sp = entityPtr->get_component<Components::Sprite>();
       hasToAdjust = true;
       virtualPos = newPos;
-
    }
    inline void flip_sprite() {
       auto &sp = entityPtr->get_component<Components::Sprite>();
-      if(virtualPos.x > game::kingPosition.x) sp.flip = Flip::Horizontal;
-      if(virtualPos.x < game::kingPosition.x) sp.flip = Flip::None;
+      if (virtualPos.x > game::kingPosition.x) sp.flip = Flip::Horizontal;
+      if (virtualPos.x < game::kingPosition.x) sp.flip = Flip::None;
    }
 
    inline void adjust_sprite() {
@@ -202,17 +200,16 @@ struct KnightScript final : public Script {
       hasToAdjust = false;
    }
 
-   
-
    inline void on_update(f32 dt) override {
       if (movement.is_moving()) {
          auto &tr = entityPtr->get_component<Components::Transform>();
          tr.frame.position = movement.get_current_pos(dt);
          if (movement.is_moving())
-            if (game::nextKingMove == inf && movement.get_current_percent(dt) > 0.95f) {
+            if (game::nextKingMove == inf &&
+                movement.get_current_percent(dt) > 0.95f) {
                game::gameOver = true;
             }
-            return;
+         return;
          if (hasToAdjust) {
             adjust_sprite();
          }
@@ -225,13 +222,13 @@ struct KnightScript final : public Script {
 
 // Layer between the game and the ChessComputer
 struct AIManager {
- private:
+  private:
    // the average time the knight needs to move if the king is not moving
    inline static f32 knightRestTimer = 15;
    // the maxtime the knight needs to react to the kings move
    static constexpr f32 knightReactTimer = game::kingMoveTimer - 0.5;
 
- public:
+  public:
    inline static bool isGameOver = false;
    // how fast travels the king from one position to another
    static constexpr f32 kingMoveTime = 0.5;
@@ -244,7 +241,7 @@ struct AIManager {
    // the time left until the next knight moves
    inline static f32 nextKnightMove = 20;
    // the next move by the AI
-   inline static chess_computer::ChessMove nextMove{-1, V2{0,0}};
+   inline static chess_computer::ChessMove nextMove{-1, V2{0, 0}};
    // if the king is in check
    inline static bool isCheck = false;
 
@@ -253,7 +250,6 @@ struct AIManager {
       if (game::nextKingMove > 0) {
          return false;
       } else {
-         game::nextKingMove = game::kingMoveTimer;
          game::kingPosition = newPos;
          // if the player moves into check he dies
          if (chess_computer::is_check(newPos, knightPositions)) {
@@ -261,24 +257,25 @@ struct AIManager {
                 chess_computer::which_knight_checks(newPos, knightPositions);
             game::nextKingMove = inf;
             nextKnightMove = inf;
-            if(newPos == knightPositions[id]) {
+            if (newPos == knightPositions[id]) {
                return true;
             }
             knightScriptPtrs[id]->do_move(newPos, kingMoveTime * 2, newPos);
             knightPositions[id] = newPos;
-            
+
             return true;
          }
          if (!chess_computer::has_finished()) {
             debug_log("AI is still computing");
             return false;
          }
+         game::nextKingMove = game::kingMoveTimer;
          // knight should soon counter move
          nextKnightMove = knightReactTimer * rng::get();
          auto copy = knightPositions;
          nextMove = chess_computer::get_result(newPos);
          game::kingPosition = newPos;
-         for(auto knight : knightScriptPtrs) {
+         for (auto knight : knightScriptPtrs) {
             knight->flip_sprite();
          }
          nextMove.apply(copy);
@@ -288,10 +285,10 @@ struct AIManager {
             debug_warning(endl << "Desync on player_move()");
             debug_warning("KnightInput: " << copy);
             debug_warning("KnightGot: " << chess_computer::knightsPositions);
-            debug_warning("NextMove: " << nextMove.knightId << ", " << nextMove.target);
+            debug_warning("NextMove: " << nextMove.knightId << ", "
+                                       << nextMove.target);
          }
          return true;
-         
       }
       return false;
    }
@@ -310,12 +307,12 @@ struct AIManager {
       knightRestTimer = 15;
    }
 
-   inline static void sanaty_check(){
+   inline static void sanaty_check() {
       Vector<V2> knights = {};
       for (auto knight : knightScriptPtrs) {
          knights.push_back(knight->virtualPos);
       }
-      if(knights != knightPositions) {
+      if (knights != knightPositions) {
          debug_warning("Desync on sanaty_check()");
          debug_warning("KnightsAI: " << knightPositions);
          debug_warning("KnightActual: " << knights);
@@ -324,7 +321,7 @@ struct AIManager {
 
    // to be called by game manager at the start of the game
    inline static void start() {
-      nextMove = {-1, V2{0,0}};
+      nextMove = {-1, V2{0, 0}};
       nextKnightMove =
           knightRestTimer * abs(rng::get_gaussian()) + game::kingMoveTimer;
       chess_computer::knightsPositions = knightPositions;
@@ -347,27 +344,30 @@ struct AIManager {
          // make the knights faster
          AIManager::knightRestTimer *= 0.9;
       }
-      #ifndef NDEBUG
-      if(game::nextKingMove != inf) sanaty_check();
-      #endif
+#ifndef NDEBUG
+      if (game::nextKingMove != inf) sanaty_check();
+#endif
       if (nextKnightMove < 0) {
          // the king was in check yet did not move
          if (isCheck) {
             debug_log("Checkmate");
             game::nextKingMove = inf;
             nextKnightMove = inf;
-            uint id =
-                  chess_computer::which_knight_checks(game::kingPosition, knightPositions);
-            knightScriptPtrs[id]->do_move(game::kingPosition, knightMoveTime*2, game::kingPosition);
-            
+            uint id = chess_computer::which_knight_checks(game::kingPosition,
+                                                          knightPositions);
+            knightScriptPtrs[id]->do_move(
+                game::kingPosition, knightMoveTime * 2, game::kingPosition);
+
             return;
          }
-         // set the timer for the next king move to at least the time the knight needs to move
-         game::nextKingMove = max(game::nextKingMove, knightMoveTime);
+         // set the timer for the next king move to at least the time the knight
+         // needs to move
+         game::nextKingMove = max(game::nextKingMove, knightMoveTime * 1.2f);
          // if did not got a next move from the AI
          if (nextMove.knightId == -1) {
             // check if a next move is ready
             if (!chess_computer::has_finished()) {
+               debug_log("AI is still computing");
                return;
             }
             // get the next move if next move is not set yet
@@ -377,25 +377,26 @@ struct AIManager {
          if (nextMove.target.x > game::kingPosition.x) {
             flip = true;
          }
-         knightScriptPtrs[nextMove.knightId]->do_move(nextMove.target,
-                                                     knightMoveTime, game::kingPosition);
+         knightScriptPtrs[nextMove.knightId]->do_move(
+             nextMove.target, knightMoveTime, game::kingPosition);
          nextMove.apply(knightPositions);
          nextKnightMove =
              knightRestTimer * abs(rng::get_gaussian()) + game::kingMoveTimer;
          debug_log("nextKnightMove: " << nextKnightMove);
          nextMove = {-1, V2{0, 0}};
-         if(chess_computer::is_check(game::kingPosition, knightPositions)) {
+         if (chess_computer::is_check(game::kingPosition, knightPositions)) {
             cout << "Check" << endl;
             isCheck = true;
             return;
          }
          isCheck = false;
          debug_log("Cumpute update()");
-         if(chess_computer::knightsPositions != knightPositions) {
+         if (chess_computer::knightsPositions != knightPositions) {
             debug_warning(endl << "Desync on update()");
             debug_warning("KnightInput: " << knightPositions);
             debug_warning("KnightGot: " << chess_computer::knightsPositions);
-            debug_warning("nextMove: " << nextMove.knightId << ", " << nextMove.target);
+            debug_warning("nextMove: " << nextMove.knightId << ", "
+                                       << nextMove.target);
          }
       }
    }
@@ -412,8 +413,8 @@ struct GameManager final : public Script {
       debug_log("Game Over");
       flashLightUIPtr->disable();
       chess_computer::reset();
-      for (auto& gameOverEntity : gameOverEntities) {
-         auto& info = gameOverEntity->get_component<Components::Info>();
+      for (auto &gameOverEntity : gameOverEntities) {
+         auto &info = gameOverEntity->get_component<Components::Info>();
          debug_log("Name: " << info.name << "Tag: " << info.tag);
          if (info.tag == "GameOver") {
             gameOverEntity->enable();
@@ -430,11 +431,13 @@ struct GameManager final : public Script {
       tr.frame.position = tr_player.frame.position;
       AIManager::start();
       // get all game over entities
-      debug_log("Game Over Entities Size = " << scenePtr->ecRegistry.view<Components::Info>().size());
+      debug_log("Game Over Entities Size = "
+                << scenePtr->ecRegistry.view<Components::Info>().size());
       for (auto entity : view<Components::Info>()) {
          if (entity->has_component<Components::Info>() == false) continue;
          auto &info = entity->get_component<Components::Info>();
-         debug_assert(gameOverEntities.contains(entity) == false, "Entity already in game over entities");
+         debug_assert(gameOverEntities.contains(entity) == false,
+                      "Entity already in game over entities");
          if (info.tag == "GameOver") {
             gameOverEntities.push_back(entity);
             entity->disable();
@@ -457,33 +460,32 @@ struct GameManager final : public Script {
             game_over_called = true;
             on_game_over();
          }
-         if(Inputs::get_key(Key::ESCAPE)) {
+         if (Inputs::get_key(Key::ESCAPE)) {
             scenePtr->nextScene = 1;
          }
          return;
       }
       // increase the time
       game::timer += dt;
-      
+
       // update flashlightUI
       if (game::batteryLeft < 0) {
          game::batteryLeft = 0;
       }
       auto &textUI = flashLightUIPtr->get_component<Components::ButtonUI>();
-      textUI.text = to_string(int((game::batteryLeft/game::batteryMax) * 100)) + " %";
+      textUI.text =
+          to_string(int((game::batteryLeft / game::batteryMax) * 100)) + " %";
       // update the AI
       AIManager::update(dt);
    }
-
-
 };
 
 struct PlayerMovement final : public Script {
- private:
+  private:
    bool flashlightToggle = false;
    Vec2<f32> lastMouse = {0, 0};
 
- public:
+  public:
    Ptr<Assets::Audio> audioPtr;
    Ptr<Assets::Audio> flashAudioPtr;
    Ptr<Assets::Audio> deathAudioPtr;
@@ -546,8 +548,7 @@ struct PlayerMovement final : public Script {
          if (Inputs::get_mouse_button(1) || Inputs::get_mouse_button(2)) {
             if (!flashlightToggle) {
                flashlightToggle = true;
-               if (flashAudioPtr)
-                  flashAudioPtr->play();
+               if (flashAudioPtr) flashAudioPtr->play();
                if (flashlightPtr->is_enabled()) {
                   flashlightPtr->disable();
                } else {
@@ -558,7 +559,8 @@ struct PlayerMovement final : public Script {
             flashlightToggle = false;
          }
       }
-      if (game::nextKingMove == inf && movement.get_current_percent(dt) > 0.95f) {
+      if (game::nextKingMove == inf &&
+          movement.get_current_percent(dt) > 0.95f) {
          game::gameOver = true;
       }
       if (movement.is_moving()) {
@@ -611,20 +613,18 @@ struct PlayerMovement final : public Script {
          auto &tr = entityPtr->get_component<Components::Transform>();
          auto &sp = entityPtr->get_component<Components::Sprite>();
          auto &anim = entityPtr->get_component<Components::Animator>();
-         movement = {tr.frame.position, tr.frame.position + direction, AIManager::kingMoveTime,
-                     0.0f};
+         movement = {tr.frame.position, tr.frame.position + direction,
+                     AIManager::kingMoveTime, 0.0f};
          anim.switch_animation(1);
          sp.z = -virtualPos.y - 0.5f;
-         if (audioPtr)
-            audioPtr->play();
+         if (audioPtr) audioPtr->play();
       }
    }
 };
 
-
-Tuple<Entity*, KnightScript*>
-create_knight(Ptr<Scene> scenePtr, Vec2<int> virtualPos,
-              Ptr<Assets::Texture> knightTexture, Ptr<Assets::Audio> audioPtr) {
+Tuple<Entity *, KnightScript *> create_knight(
+    Ptr<Scene> scenePtr, Vec2<int> virtualPos,
+    Ptr<Assets::Texture> knightTexture, Ptr<Assets::Audio> audioPtr) {
    auto &knight = scenePtr->add_entity();
    Vec2<f32> offset = {0, +22};
    auto &tr = knight.add_component<Components::Transform>(
@@ -645,27 +645,26 @@ void load_game(Ptr<Scene> scene) {
    scene->add_system<Systems::CameraRenderSystem>();
    scene->add_system<Systems::LightingSystem>();
    scene->add_system<Systems::UIRenderSystem>();
-   
-   
 
    //      ADD ASSETS
    auto &font = scene->add_asset<Assets::Font>(
        String("./assets/fonts/Griffiths.otf"), 60, String("Writtenfont"));
    auto &fontHuge = scene->add_asset<Assets::Font>(
-         String("./assets/fonts/The Centurion .ttf"), 140, "TitleFont");
+       String("./assets/fonts/The Centurion .ttf"), 140, "TitleFont");
    auto &fontLarge = scene->add_asset<Assets::Font>(
-            String("./assets/fonts/The Centurion .ttf"), 80, "SettingFont");
+       String("./assets/fonts/The Centurion .ttf"), 80, "SettingFont");
 
    auto &kingIdleTexture = scene->add_asset<Assets::Texture>(
        String("./assets/pics/KingIdle.png"), String("KingIdle"), true);
    auto &kingRunTexture = scene->add_asset<Assets::Texture>(
        String("./assets/pics/KingRun.png"), String("KingRun"), true);
    auto &kingDieTexture = scene->add_asset<Assets::Texture>(
-         "./assets/pics/KingDeath.png", "KingDie", true);
+       "./assets/pics/KingDeath.png", "KingDie", true);
    auto &kingDeathTexture = scene->add_asset<Assets::Texture>(
-            "./assets/pics/KingGameOver.png", "KingDeath", true);
-   auto& clickSound = scene->add_asset<Assets::Audio>("./assets/audio/Click.mp3", "Click");
-      
+       "./assets/pics/KingGameOver.png", "KingDeath", true);
+   auto &clickSound =
+       scene->add_asset<Assets::Audio>("./assets/audio/Click.mp3", "Click");
+
    auto &kingRunAnim = scene->add_asset<Assets::Animation>(
        &kingRunTexture, Vec2<f32>{48, 64}, 20);
    auto &kingDeathAnim = scene->add_asset<Assets::Animation>(
@@ -673,7 +672,7 @@ void load_game(Ptr<Scene> scene) {
    auto &kingDieAnim = scene->add_asset<Assets::Animation>(
        &kingDieTexture, Vec2<f32>{48, 64}, 13);
    auto &kingIdleAnim = scene->add_asset<Assets::Animation>(
-         &kingIdleTexture, Vec2<f32>{48, 64}, 18);
+       &kingIdleTexture, Vec2<f32>{48, 64}, 18);
 
    auto &kingAudio =
        scene->add_asset<Assets::Audio>("./assets/audio/King.mp3", "KingAudio");
@@ -694,20 +693,21 @@ void load_game(Ptr<Scene> scene) {
        "./assets/audio/Flashlight.wav", "FlashlightSound");
    auto &knightAudio = scene->add_asset<Assets::Audio>(
        "./assets/audio/Horse.wav", "FlashlightSound");
-   
+
    // FlashlightUI
    auto &flashlightUI = scene->add_entity();
    auto &tr_flashlightUI = flashlightUI.add_component<Components::Transform>(
        Vec2<f32>{0, 400}, Vec2<f32>{1.0, 1.0}, 100);
    auto &bt_flashlightUI = flashlightUI.add_component<Components::ButtonUI>(
-      &font, "100 %", Color{255, 255, 255, 255}, Color{0, 0, 0, 0}, Color{0, 0, 0, 0}, Vec2<f32>{0, 0});
+       &font, "100 %", Color{255, 255, 255, 255}, Color{0, 0, 0, 0},
+       Color{0, 0, 0, 0}, Vec2<f32>{0, 0});
 
    // GameManager Entity
    auto &manager = scene->add_entity();
    auto &tr_manager =
        manager.add_component<Components::Transform>(Vec2<f32>{0, 0});
    auto &cam_manager =
-       manager.add_component<Components::Camera>(Vec2<f32>{0, 0}, 5.0); // 5.0
+       manager.add_component<Components::Camera>(Vec2<f32>{0, 0}, 5.0);  // 5.0
    auto &gm_manager = manager.add_script<GameManager>();
    gm_manager.ambientPtr = &ambient;
    gm_manager.flashLightUIPtr = &flashlightUI;
@@ -716,10 +716,13 @@ void load_game(Ptr<Scene> scene) {
    auto &player = scene->add_entity();
    auto &tr_player = player.add_component<Components::Transform>(
        Vec2<f32>{0, 12} + game::playerStart);
-   auto &sp_player =
-       player.add_component<Components::Sprite>(&kingIdleTexture, Vec2<f32>{0, 5});
+   auto &sp_player = player.add_component<Components::Sprite>(&kingIdleTexture,
+                                                              Vec2<f32>{0, 5});
    auto &anim_player = player.add_component<Components::Animator>(
-       30, Vector<Ptr<Assets::Animation>>{&kingIdleAnim, &kingRunAnim, &kingDieAnim, &kingDeathAnim},Vector<u32>{0, 0, 3, 3});
+       30,
+       Vector<Ptr<Assets::Animation>>{&kingIdleAnim, &kingRunAnim, &kingDieAnim,
+                                      &kingDeathAnim},
+       Vector<u32>{0, 0, 3, 3});
    auto &pm_player = player.add_script<PlayerMovement>();
    pm_player.audioPtr = &kingAudio;
    pm_player.deathAudioPtr = &deathAudio;
@@ -729,7 +732,8 @@ void load_game(Ptr<Scene> scene) {
    // Flashlight entity
    auto &flashlight = scene->add_entity();
    auto &tr_flashlight = flashlight.add_component<Components::Transform>(
-       Vec2<f32>{0.0f, 100.0f}, Vec2<f32>{1.0f, 2.5f}, 15.0f, Vec2<f32>{0.0f, -0.7f});
+       Vec2<f32>{0.0f, 100.0f}, Vec2<f32>{1.0f, 2.5f}, 15.0f,
+       Vec2<f32>{0.0f, -0.7f});
    auto &light_flashlight =
        flashlight.add_component<Components::Light>(&flashLight);
    flashlight.parentPtr = &player;
@@ -768,8 +772,10 @@ void load_game(Ptr<Scene> scene) {
    auto &tr_GameOver = GameOver.add_component<Components::Transform>(
        Vec2<f32>{0, 350}, Vec2<f32>{1.0, 1.0}, 0);
    auto &bt_GameOver = GameOver.add_component<Components::ButtonUI>(
-      &fontHuge, "GameOver", Color{255, 100, 100, 255}, Color{0, 0, 0, 0}, Color{0, 0, 0, 0}, Vec2<f32>{0, 0});
-   auto &info_GameOver = GameOver.add_component<Components::Info>("GameOverText", "GameOver");
+       &fontHuge, "GameOver", Color{255, 100, 100, 255}, Color{0, 0, 0, 0},
+       Color{0, 0, 0, 0}, Vec2<f32>{0, 0});
+   auto &info_GameOver =
+       GameOver.add_component<Components::Info>("GameOverText", "GameOver");
    auto &fade_GameOver = GameOver.add_script<FadeInTextScript>(1.0f);
 
    // Main Menu Button
@@ -777,18 +783,22 @@ void load_game(Ptr<Scene> scene) {
    auto &tr_mainMenu = mainMenu.add_component<Components::Transform>(
        Vec2<f32>{0, 0}, Vec2<f32>{1.0, 1.0}, 0);
    auto &bt_mainMenu = mainMenu.add_component<Components::ButtonUI>(
-      &fontLarge, "Main Menu", Color{255, 255, 255, 255}, Color{0, 0, 0, 50}, Color{0, 0, 0, 200}, Vec2<f32>{600, 100});
-   auto &info_mainMenu = mainMenu.add_component<Components::Info>("MainMenuButton", "GameOver");
+       &fontLarge, "Main Menu", Color{255, 255, 255, 255}, Color{0, 0, 0, 50},
+       Color{0, 0, 0, 200}, Vec2<f32>{600, 100});
+   auto &info_mainMenu =
+       mainMenu.add_component<Components::Info>("MainMenuButton", "GameOver");
    auto &script_mainMenu = mainMenu.add_script<ToMainMenuScript>(&clickSound);
    auto &fade_mainMenu = mainMenu.add_script<FadeInTextScript>(1.0f);
 
    // Restart Button
    auto &restart = scene->add_entity();
    auto &tr_restart = restart.add_component<Components::Transform>(
-         Vec2<f32>{0, -200}, Vec2<f32>{1.0, 1.0}, 0);
+       Vec2<f32>{0, -200}, Vec2<f32>{1.0, 1.0}, 0);
    auto &bt_restart = restart.add_component<Components::ButtonUI>(
-      &fontLarge, "Restart", Color{255, 255, 255, 255}, Color{0, 0, 0, 50}, Color{0, 0, 0, 200}, Vec2<f32>{600, 100});
-   auto &info_restart = restart.add_component<Components::Info>("RestartButton", "GameOver");
+       &fontLarge, "Restart", Color{255, 255, 255, 255}, Color{0, 0, 0, 50},
+       Color{0, 0, 0, 200}, Vec2<f32>{600, 100});
+   auto &info_restart =
+       restart.add_component<Components::Info>("RestartButton", "GameOver");
    auto &script_restart = restart.add_script<RestartScript>(&clickSound);
    auto &fade_restart = restart.add_script<FadeInTextScript>(1.0f);
 
@@ -797,10 +807,10 @@ void load_game(Ptr<Scene> scene) {
    auto &tr_score = score.add_component<Components::Transform>(
        Vec2<f32>{0, 200}, Vec2<f32>{1.0, 1.0}, 0);
    auto &bt_score = score.add_component<Components::ButtonUI>(
-      &font, "You Survived 69s", Color{255, 255, 255, 255}, Color{0, 0, 0, 0}, Color{0, 0, 0, 0}, Vec2<f32>{0, 0});
-   auto &info_score = score.add_component<Components::Info>("ScoreText", "GameOver");
+       &font, "You Survived 69s", Color{255, 255, 255, 255}, Color{0, 0, 0, 0},
+       Color{0, 0, 0, 0}, Vec2<f32>{0, 0});
+   auto &info_score =
+       score.add_component<Components::Info>("ScoreText", "GameOver");
    auto &fade_score = score.add_script<FadeInTextScript>(3.0f);
    auto &score_script = score.add_script<ScoreTextScript>();
-   
-   
 }

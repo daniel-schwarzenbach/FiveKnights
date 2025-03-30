@@ -1,18 +1,19 @@
 #pragma once
-#include "./ECRegistry.h++"
 #include <components/CommonComponents.h++>
+
+#include "./ECRegistry.h++"
 
 namespace Senpai {
 
 class Entity {
    //    Variables
- private:
+  private:
    // the registry that the entity is registered with, null if dead
    Ptr<ECRegistry> ecRegistryPtr = nullptr;
    // is enabled
    bool enabled = false;
 
- public:
+  public:
    // the parentPtr of the entity, null if no parentPtr
    Ptr<Entity> parentPtr = nullptr;
    // components store, refrence safe
@@ -34,7 +35,7 @@ class Entity {
    void enable();
    // add a component to the entity
    template <ComponentType ComponentT, typename... Args>
-   inline ComponentT& add_component(Args&&... args) {
+   inline ComponentT &add_component(Args &&...args) {
       // make the component
       UniquePtr<Component> componentPtr =
           make_unique<ComponentT>(std::forward<Args>(args)...);
@@ -58,12 +59,13 @@ class Entity {
       return *dynamic_cast<Ptr<ComponentT>>(components.back().get());
    }
    // add empty component
-   // template <ComponentType ComponentT> 
+   // template <ComponentType ComponentT>
    // inline ComponentT& add_component() {
    //    return add_component<ComponentT>(ComponentT());
    // }
 
-   template <ComponentType ComponentT> inline ComponentT &get_component() {
+   template <ComponentType ComponentT>
+   inline ComponentT &get_component() {
       u32 index = componentsMap[component_type_id<ComponentT>()];
       Ptr<Component> component = components[index].get();
       if (!component) {
@@ -77,7 +79,8 @@ class Entity {
       return *derivedComponent;
    }
 
-   template <ComponentType ComponentT> inline void remove_component() {
+   template <ComponentType ComponentT>
+   inline void remove_component() {
       if (ecRegistryPtr != nullptr)
          ecRegistryPtr->unregister_component(component_type_id<ComponentT>(),
                                              this);
@@ -93,7 +96,8 @@ class Entity {
       componentsMap.erase(component_type_id<ComponentT>());
    }
 
-   template <ComponentType ComponentT> inline bool has_component() {
+   template <ComponentType ComponentT>
+   inline bool has_component() {
       return componentsMap.find(component_type_id<ComponentT>()) !=
              componentsMap.end();
    }
@@ -103,7 +107,7 @@ class Entity {
    void disable();
    // add a script to the entity
    template <ScriptType ScriptT, typename... Args>
-   inline ScriptT& add_script(Args&&... args) {
+   inline ScriptT &add_script(Args &&...args) {
       if (!this->has_component<Components::ScriptsHolder>()) {
          this->add_component<Components::ScriptsHolder>();
       }
@@ -112,4 +116,4 @@ class Entity {
       return sh.add_script<ScriptT>(std::forward<Args>(args)...);
    }
 };
-} // namespace Senpai
+}  // namespace Senpai

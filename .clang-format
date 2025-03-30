@@ -1,3 +1,4 @@
-BasedOnStyle: LLVM
 IndentWidth: 3
+Language: Cpp
+BasedOnStyle: google
 ColumnLimit: 80

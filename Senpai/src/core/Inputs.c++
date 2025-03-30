@@ -19,36 +19,37 @@ bool Inputs::dispatch_events() {
    while (SDL_PollEvent(&event)) {
       dispatched = true;
       switch (event.type) {
-      case SDL_EVENT_QUIT:
-         dispatcher.post<Events::Quit>();
-         break;
-      case SDL_EVENT_MOUSE_BUTTON_DOWN:
-         dispatcher.post<Events::MouseDown>(event.button.button);
-         mouse.buttons.set(event.button.button);
-         break;
-      case SDL_EVENT_MOUSE_BUTTON_UP:
-         dispatcher.post<Events::MouseUp>(event.button.button);
-         mouse.buttons.reset(event.button.button);
-         break;
-      case SDL_EVENT_MOUSE_WHEEL:
-         dispatcher.post<Events::MouseWheel>();
-         mouse.wheel = {event.button.x, event.button.y};
-         break;
-      case SDL_EVENT_MOUSE_MOTION:
-         dispatcher.post<Events::MouseMove>(event.motion.x, event.motion.y);
-         mouse.position = {- wSize.x / 2.0f + event.motion.x, wSize.y / 2.0f - event.motion.y};
-         break;
-      case SDL_EVENT_KEY_DOWN:
-         dispatcher.post<Events::KeyDown>(event.key.key);
-         keyboard = SDL_GetKeyboardState(NULL);
-         break;
-      case SDL_EVENT_KEY_UP:
-         dispatcher.post<Events::KeyUp>(event.key.key);
-         keyboard = SDL_GetKeyboardState(NULL);
-         break;
-      case SDL_EVENT_WINDOW_RESIZED:
-         dispatcher.post<Events::WindowResize>();
-         break;
+         case SDL_EVENT_QUIT:
+            dispatcher.post<Events::Quit>();
+            break;
+         case SDL_EVENT_MOUSE_BUTTON_DOWN:
+            dispatcher.post<Events::MouseDown>(event.button.button);
+            mouse.buttons.set(event.button.button);
+            break;
+         case SDL_EVENT_MOUSE_BUTTON_UP:
+            dispatcher.post<Events::MouseUp>(event.button.button);
+            mouse.buttons.reset(event.button.button);
+            break;
+         case SDL_EVENT_MOUSE_WHEEL:
+            dispatcher.post<Events::MouseWheel>();
+            mouse.wheel = {event.button.x, event.button.y};
+            break;
+         case SDL_EVENT_MOUSE_MOTION:
+            dispatcher.post<Events::MouseMove>(event.motion.x, event.motion.y);
+            mouse.position = {-wSize.x / 2.0f + event.motion.x,
+                              wSize.y / 2.0f - event.motion.y};
+            break;
+         case SDL_EVENT_KEY_DOWN:
+            dispatcher.post<Events::KeyDown>(event.key.key);
+            keyboard = SDL_GetKeyboardState(NULL);
+            break;
+         case SDL_EVENT_KEY_UP:
+            dispatcher.post<Events::KeyUp>(event.key.key);
+            keyboard = SDL_GetKeyboardState(NULL);
+            break;
+         case SDL_EVENT_WINDOW_RESIZED:
+            dispatcher.post<Events::WindowResize>();
+            break;
       }
    }
    dispatcher.dispatch();
@@ -67,4 +68,4 @@ bool Inputs::get_mouse_button(uint button) { return mouse.buttons[button]; }
 
 void Inputs::clear_all_callbacks() { dispatcher.clear(); }
 
-} // namespace Senpai
+}  // namespace Senpai

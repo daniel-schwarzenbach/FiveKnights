@@ -5,13 +5,13 @@
 namespace Senpai {
 // Handles all Entities and Components
 struct ECRegistry {
- private:
+  private:
    // Keep track of all components and there enabled entities
    Vector<Vector<Ptr<Entity>>> componentId_to_entityPtrs;
    // Contains all entities, dead or alive, List is refrence safe!!!
    List<Entity> entities;
 
- public:
+  public:
    // a sorted vector of all components that need to be rendered by UI
    Vector<Ptr<UIComponent>> uiComponents;
    // a sorted vector of all components that need to be rendered by a camera
@@ -25,10 +25,11 @@ struct ECRegistry {
    // remove an entity from the registry
    void remove_entity(Ptr<Entity> entity);
 
-   template <ComponentType ComponentT> Vector<Ptr<Entity>> &view() {
+   template <ComponentType ComponentT>
+   Vector<Ptr<Entity>>& view() {
       u32 componentId = component_type_id<ComponentT>();
       if (this->componentId_to_entityPtrs.size() <= componentId) {
-         componentId_to_entityPtrs.resize(componentId+1);
+         componentId_to_entityPtrs.resize(componentId + 1);
       }
       return componentId_to_entityPtrs[componentId];
    }
@@ -38,4 +39,4 @@ struct ECRegistry {
    void unregister_component(Ptr<Component> componentPtr,
                              Ptr<Entity> entityPtr);
 };
-} // namespace Senpai
+}  // namespace Senpai

@@ -1,5 +1,6 @@
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
+
 #include <components/Components.h++>
 #include <sdl/SDLBackend.h++>
 
@@ -66,8 +67,7 @@ Frame<f32> Sprite::get_frame(Frame<f32> const &tr) const {
        .position = tr.position + offset,
        .size = Vec2<f32>{this->scrArea.size.x, this->scrArea.size.y} * tr.size,
        .rotAnchor = tr.rotAnchor,
-       .rotation = tr.rotation
-   };
+       .rotation = tr.rotation};
 }
 
 bool once = false;
@@ -102,8 +102,8 @@ void Sprite::render(Rectangle<f32> const &cameraRect,
 // }
 
 // rememver to free the texture
-Tuple<SDL_Texture *, f32, f32>
-get_texture_from_text(Components::ButtonUI const &button) {
+Tuple<SDL_Texture *, f32, f32> get_texture_from_text(
+    Components::ButtonUI const &button) {
    auto &font = *button.fontPtr;
    // create font
    bool fontHasToBeFreed = false;
@@ -137,8 +137,11 @@ get_texture_from_text(Components::ButtonUI const &button) {
 ButtonUI::ButtonUI(Ptr<Assets::Font> fontPtr, String text, Color textColor,
                    Color buttonColor, Color buttonHoverColor,
                    Vec2<f32> buttonScale)
-    : text(text), textColor(textColor), buttonColor(buttonColor),
-      buttonHoverColor(buttonHoverColor), buttonScale(buttonScale),
+    : text(text),
+      textColor(textColor),
+      buttonColor(buttonColor),
+      buttonHoverColor(buttonHoverColor),
+      buttonScale(buttonScale),
       fontPtr(fontPtr) {
    this->hoverstate = false;
    this->id = component_type_id<ButtonUI>();
@@ -197,7 +200,8 @@ bool Animator::flip_frame(f32 dt) {
 }
 
 Animator::Animator(f32 fps, Vector<Ptr<Assets::Animation>> animations,
-                   Vector<u32> nextAnimations) : flipTime(1.0/fps), animations(animations) {
+                   Vector<u32> nextAnimations)
+    : flipTime(1.0 / fps), animations(animations) {
    this->id = component_type_id<Animator>();
    nextAnimId.reserve(animations.size());
    for (uint i = 0; i < animations.size(); i++) {
@@ -232,15 +236,14 @@ Tuple<uint, uint> TileMap::get_tile_at_point(Frame<f32> const &transform,
    // get the total size of the tiles-matrix
    auto [X, Y] = tiles.shape();
    // calculate the tile drawn at this position
-   int x = floor((point.x - transform.position.x) / (sizeX*transform.size.x));
-   int y = floor((point.y - transform.position.x) / sizeY*transform.size.y);
+   int x = floor((point.x - transform.position.x) / (sizeX * transform.size.x));
+   int y = floor((point.y - transform.position.x) / sizeY * transform.size.y);
    // return the tile closest to the point
    return {min(max(0, x), X - 1), min(max(0, y), Y - 1)};
 }
 
-Tuple<Range, Range>
-TileMap::get_render_ranges(Frame<f32> const &transform,
-                           Rectangle<f32> const &camera) const {
+Tuple<Range, Range> TileMap::get_render_ranges(
+    Frame<f32> const &transform, Rectangle<f32> const &camera) const {
    // get the left upper corner of the camera
    Vec2<f32> left_bottom = camera.left_bottom();
    // get the right lower corner of the camera
@@ -250,11 +253,11 @@ TileMap::get_render_ranges(Frame<f32> const &transform,
    // get the tile at the right lower corner
    auto [X, Y] = tiles.shape();
    auto [x2, y2] = get_tile_at_point(transform, right_top);
-   if(x2 < X-1) x2++;
-   if(y2 < Y-1) y2++;
-   if(x1 > 0) x1--;
-   if(y1 > 0) y1--;
-   if(y1 > 0) y1--;
+   if (x2 < X - 1) x2++;
+   if (y2 < Y - 1) y2++;
+   if (x1 > 0) x1--;
+   if (y1 > 0) y1--;
+   if (y1 > 0) y1--;
    // return the range of tiles to render
    return {Range{int(x1), int(x2)}, Range{int(y1), int(y2)}};
 }
@@ -325,12 +328,12 @@ Light::Light(Ptr<Assets::Texture> assetPtr, Set<Flip> flips)
 
 Frame<f32> Light::get_frame(Frame<f32> const &tr) const {
    return {
-      .position = tr.position + this->offset,
-      .size = Vec2<f32>{this->scrArea.size.x, this->scrArea.size.x} * tr.size,
+       .position = tr.position + this->offset,
+       .size = Vec2<f32>{this->scrArea.size.x, this->scrArea.size.x} * tr.size,
        .rotAnchor = tr.rotAnchor,
        .rotation = tr.rotation
-       
+
    };
 }
 
-} // namespace Senpai::Components
+}  // namespace Senpai::Components

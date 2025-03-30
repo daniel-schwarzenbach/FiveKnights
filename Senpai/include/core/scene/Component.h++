@@ -33,7 +33,8 @@ struct RenderComponent : public Component {
    void flip_horizontal();
    virtual void render(Rectangle<f32> const &camera,
                        Rectangle<f32> const &canvas) {};
-   template <ComponentType ComponentT> static bool is_sub_type() {
+   template <ComponentType ComponentT>
+   static bool is_sub_type() {
       return std::is_base_of_v<RenderComponent, ComponentT>;
    }
    // find out if the component is a sub type of RenderComponent
@@ -51,7 +52,8 @@ struct UIComponent : public Component {
    void flip_vertical();
    void flip_horizontal();
    virtual void render() {};
-   template <ComponentType ComponentT> static bool is_sub_type() {
+   template <ComponentType ComponentT>
+   static bool is_sub_type() {
       return std::is_base_of_v<UIComponent, ComponentT>;
    }
    // find out if the component is a public sub type of UIComponent
@@ -59,4 +61,4 @@ struct UIComponent : public Component {
    // compare the z values of two UIComponents
    bool operator<(const UIComponent &other) const;
 };
-} // namespace Senpai
+}  // namespace Senpai

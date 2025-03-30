@@ -1,7 +1,8 @@
 #pragma once
+#include <stdint.h>
+
 #include <cmath>
 #include <numeric>
-#include <stdint.h>
 #include <type_traits>
 
 template <typename T>
@@ -45,20 +46,24 @@ using f64 = double;
 
 #include <functional>
 
-template <typename T> using Function = std::function<T>;
+template <typename T>
+using Function = std::function<T>;
 
 // Pointers
 #include <memory>
 
 using std::move;
 
-template <typename T> using Ptr = T *;
+template <typename T>
+using Ptr = T *;
 
 using GenericPtr = void *;
 
-template <typename T> using UniquePtr = std::unique_ptr<T>;
+template <typename T>
+using UniquePtr = std::unique_ptr<T>;
 
-template <typename T> using SharedPtr = std::shared_ptr<T>;
+template <typename T>
+using SharedPtr = std::shared_ptr<T>;
 
 using std::make_shared;
 using std::make_unique;
@@ -82,7 +87,8 @@ using String = std::string;
 using std::to_string;
 
 #include <sstream>
-template <typename T> String str(T const &in) {
+template <typename T>
+String str(T const &in) {
    std::ostringstream oss;
    oss << in;
    return oss.str();
@@ -90,9 +96,11 @@ template <typename T> String str(T const &in) {
 
 #include <tuple>
 
-template <typename... Types> using Tuple = std::tuple<Types...>;
+template <typename... Types>
+using Tuple = std::tuple<Types...>;
 
-template <typename T1,typename T2> using Pair = std::pair<T1, T2>;
+template <typename T1, typename T2>
+using Pair = std::pair<T1, T2>;
 
 // mathmatical mod
 constexpr Int mod(Int a, Int b) {
@@ -109,8 +117,7 @@ constexpr T min(const T &first, const Args &...args) {
    T m = first;
    (
        [&]() {
-          if (m > args)
-             m = args;
+          if (m > args) m = args;
        }(),
        ...);
    return m;
@@ -121,8 +128,7 @@ constexpr T max(const T &first, const Args &...args) {
    T m = first;
    (
        [&]() {
-          if (m < args)
-             m = args;
+          if (m < args) m = args;
        }(),
        ...);
    return m;
@@ -132,10 +138,10 @@ constexpr T max(const T &first, const Args &...args) {
 using Exception = std::exception;
 
 class SenpaiException : public Exception {
- private:
+  private:
    String message;
 
- public:
+  public:
    inline SenpaiException(String const &message)
        : Exception(), message(message) {}
    inline const char *what() const noexcept override { return message.c_str(); }
@@ -144,18 +150,21 @@ class SenpaiException : public Exception {
 // #define NDEBUG
 #ifndef NDEBUG
 // on Debugging
-#define debug_assert(expr, err)                                                \
+#define debug_assert(expr, err) \
    if (!(expr)) throw SenpaiException(String("[DEBUG]: ") + String(err));
-#define debug_log(message) cout << "\033[1;32m" << "[Log]: " << message << "\033[0m" << endl;
-#define debug_warning(message) cout << "\033[1;33m" << "[Warning]: " << message << "\033[0m" << endl;
-#define debug_error(message) cout << "\033[1;31m" << "[Error]: " << message << "\033[0m" << endl;
+#define debug_log(message) \
+   cout << "\033[1;32m" << "[Log]: " << message << "\033[0m" << endl;
+#define debug_warning(message) \
+   cout << "\033[1;33m" << "[Warning]: " << message << "\033[0m" << endl;
+#define debug_error(message) \
+   cout << "\033[1;31m" << "[Error]: " << message << "\033[0m" << endl;
 // End Debugging
 #else
 // No Debugging
-#define debug_assert(expr, err) // noghting
-#define debug_log(message)      // nothing
-#define debug_warning(message)      // nothing
-#define debug_error(message)      // nothing
+#define debug_assert(expr, err)  // noghting
+#define debug_log(message)       // nothing
+#define debug_warning(message)   // nothing
+#define debug_error(message)     // nothing
 // End No Debugging
 #endif
 
@@ -184,36 +193,42 @@ void fill(C &toFill, typename C::value_type const &constant) {
 
 #include <list>
 
-template <typename T> using List = std::list<T>;
+template <typename T>
+using List = std::list<T>;
 
 #include <deque>
 
-template <typename T> using Deque = std::deque<T>;
+template <typename T>
+using Deque = std::deque<T>;
 
 #include <set>
 
-template <typename T> using Set = std::set<T>;
+template <typename T>
+using Set = std::set<T>;
 
 #include <unordered_map>
 
-template <typename T, typename U> using Map = std::unordered_map<T, U>;
+template <typename T, typename U>
+using Map = std::unordered_map<T, U>;
 
 #include <bitset>
 
-template <UInt N> using Bitset = std::bitset<N>;
+template <UInt N>
+using Bitset = std::bitset<N>;
 
 namespace Senpai {
-template <typename T> constexpr u32 get_subtype_id() {
+template <typename T>
+constexpr u32 get_subtype_id() {
    static u32 id = 0u;
    return id++;
 }
-}; // namespace Senpai
+};  // namespace Senpai
 
 static constexpr f32 ε = 1e-5f;
 static constexpr f32 π = 3.14159265358979323846f;
 static constexpr f32 inf = std::numeric_limits<f32>::infinity();
 using std::abs;
 using std::cos;
-using std::sin;
-using std::round;
 using std::pow;
+using std::round;
+using std::sin;

@@ -1,10 +1,11 @@
-#include "./loadingScene.h++"
-#include "./mainMenu.h++"
-#include "./game.h++"
 #include <cstdlib>
 
+#include "./game.h++"
+#include "./loadingScene.h++"
+#include "./mainMenu.h++"
+
 int main() {
-   //std::system("ls -R");
+   // std::system("ls -R");
    debug_log("Starting the game");
 
    Senpai::App app;

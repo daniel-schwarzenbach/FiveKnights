@@ -1,6 +1,7 @@
 #include <SDL3/SDL.h>
-#include <sdl/SDLBackend.h++>
+
 #include <Senpai>
+#include <sdl/SDLBackend.h++>
 
 namespace Senpai {
 
@@ -11,10 +12,10 @@ bool App::run() {
    Inputs::init();
    Window::resize();
    bool isRunning = true;
-   Scene* scene = nullptr;
+   Scene *scene = nullptr;
    // mouse position
    auto onMouseDown = [&](Events::MouseDown const &event) -> bool {
-      cout << "Mouse Position: " << Inputs::get_mouse_position() << endl;
+      debug_log("Mouse Position: " << Inputs::get_mouse_position());
       return true;
    };
    // quit the game
@@ -60,7 +61,7 @@ bool App::run() {
    loadingScene.start();
    // set up thread for loading the scene
    Thread loadThread;
-   
+
    // main loop
    TimePoint next, last;
    f32 dt = 0;
@@ -97,12 +98,12 @@ bool App::run() {
       } else {
          // if the scene is loaded
          if (loadThread.is_running() && loadThread.is_finished()) {
-            debug_log("is joining thread")
-            if(loadThread.join()) {
+            debug_log("is joining thread") if (loadThread.join()) {
                debug_log("Scene loaded");
                scene = &currentScene;
                scene->start();
-            } else {
+            }
+            else {
                debug_warning("Scene failed to load");
                scene = &loadingScene;
                currentScene.clear();
@@ -120,7 +121,7 @@ bool App::run() {
          next = get_TimePoint();
          dt = get_time_diff(last, next);
       }
-   } // end main loop
+   }  // end main loop
 
    loadingScene.clear();
    currentScene.clear();
@@ -129,4 +130,4 @@ bool App::run() {
    Inputs::clear_all_callbacks();
    return true;
 }
-} // namespace Senpai
+}  // namespace Senpai

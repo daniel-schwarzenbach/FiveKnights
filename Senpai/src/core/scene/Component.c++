@@ -1,6 +1,5 @@
 #include <Senpai>
 
-
 namespace Senpai {
 
 bool RenderComponent::operator<(const RenderComponent &other) const {
@@ -11,4 +10,4 @@ bool UIComponent::operator<(const UIComponent &other) const {
    return z < other.z;
 }
 
-} // namespace Senpai
+}  // namespace Senpai

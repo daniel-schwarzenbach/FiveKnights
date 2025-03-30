@@ -17,13 +17,13 @@ struct ChessMove {
    V2 target;
 
    void apply(Vector<V2> &knights) {
-      if(knightId >= 0) knights[knightId] = target;
+      if (knightId >= 0) knights[knightId] = target;
    }
 };
 
 inline const static Vector<V2> possibleKingMoves =
-    Vector<V2>{V2{1, 0}, V2{0, 1}, V2{-1, 0}, V2{0, -1}, V2{0, 0}, V2{1, 1},
-               V2{1, -1}, V2{-1, 1}, V2{-1, -1}};
+    Vector<V2>{V2{1, 0}, V2{0, 1},  V2{-1, 0}, V2{0, -1}, V2{0, 0},
+               V2{1, 1}, V2{1, -1}, V2{-1, 1}, V2{-1, -1}};
 inline const static Vector<V2> possibleKnightMoves =
     Vector<V2>{V2{1, 2},   V2{2, 1},   V2{2, -1}, V2{1, -2},
                V2{-1, -2}, V2{-2, -1}, V2{-2, 1}, V2{-1, 2}};
@@ -44,12 +44,12 @@ struct MoveNode {
    // 200 possible moves
    Deque<Deque<UniquePtr<MoveNode>>> subNodes;
 
-   #ifndef NDEBUG
+#ifndef NDEBUG
    // debug the knights positions
    Vector<V2> knightsDebug;
    // debug the king position
    V2 kingDebug;
-   #endif
+#endif
 
    bool has_sublayer() { return !subNodes.empty(); }
 };
@@ -60,8 +60,7 @@ static int calculationDepth;
 // returns if the king sits in check
 static inline bool is_check(V2 king, Vector<V2> knights) {
    for (auto knight : knights) {
-      if (king == knight)
-         return true;
+      if (king == knight) return true;
       V2 relative = knight - king;
       // check if the knight is in a position to attack the king
       if ((abs(relative.x) == 2 && abs(relative.y) == 1) ||
@@ -75,8 +74,7 @@ static inline bool is_check(V2 king, Vector<V2> knights) {
 // returns the id of the knight that checks the king
 static inline uint which_knight_checks(V2 king, Vector<V2> knights) {
    for (uint i = 0; i < knights.size(); i++) {
-      if (king == knights[i])
-         return i;
+      if (king == knights[i]) return i;
       V2 relative = knights[i] - king;
       // check if the knight is in a position to attack the king
       if ((abs(relative.x) == 2 && abs(relative.y) == 1) ||
@@ -107,14 +105,13 @@ static inline Vector<V2> get_all_possible_king_moves(V2 king,
 
 // scorefunction = xˣ
 inline static f32 score(UInt possibleMoves) {
-   if (possibleMoves >= possibleKingMoves.size())
-      return 0;
+   if (possibleMoves >= possibleKingMoves.size()) return 0;
    f32 x = f32(possibleKingMoves.size()) - f32(possibleMoves);
    return std::pow(x, x);
 }
 
-static inline Vector<ChessMove>
-get_all_possible_knight_moves(Vector<V2> knights, V2 king) {
+static inline Vector<ChessMove> get_all_possible_knight_moves(
+    Vector<V2> knights, V2 king) {
    // start with an empty vector
    Vector<ChessMove> moves{};
    // iterate over all knights by intex
@@ -160,11 +157,11 @@ static inline MoveNode get_new_layer(ChessMove chessMove, Vector<V2> knights,
    node.score = score(node.kingMoves.size());
    // ensure the subNodes are empty
    node.subNodes.clear();
-   // debug the knights and king
-   #ifndef NDEBUG
+// debug the knights and king
+#ifndef NDEBUG
    node.knightsDebug = knights;
    node.kingDebug = king;
-   #endif
+#endif
    return node;
 }
 
@@ -172,22 +169,23 @@ static inline MoveNode get_new_layer(ChessMove chessMove, Vector<V2> knights,
 static inline void calculate_move_tree(MoveNode *Tree, int depth,
                                        Vector<V2> knights) {
    Tree->chessMove.apply(knights);
-   debug_assert(Tree->knightsDebug == knights, "Knights desync on calculate_move_tree(...)-begin()");
+   debug_assert(Tree->knightsDebug == knights,
+                "Knights desync on calculate_move_tree(...)-begin()");
    Tree->score = score(Tree->kingMoves.size());
    if (Tree->has_sublayer()) {
       for (auto &sublayer : Tree->subNodes) {
          for (auto &node : sublayer) {
             calculate_move_tree(node.get(), depth - 1, knights);
             Tree->score += node->score;
-            #ifndef NDEBUG
+#ifndef NDEBUG
             auto copy = knights;
             node->chessMove.apply(copy);
-            debug_assert(node->knightsDebug == copy, "Knights desync on calculate_move_tree(...)-sublayer");
-            #endif
+            debug_assert(node->knightsDebug == copy,
+                         "Knights desync on calculate_move_tree(...)-sublayer");
+#endif
          }
       }
    } else if (depth > 0) {
-
       for (int i = 0; i < Tree->kingMoves.size(); i++) {
          auto kingMove = Tree->kingMoves[i];
          // init with an empty deque
@@ -202,12 +200,13 @@ static inline void calculate_move_tree(MoveNode *Tree, int depth,
             // calculate the next layer
             calculate_move_tree(subsubNodes.back().get(), depth - 1, knights);
             Tree->score += subsubNodes.back()->score;
-            // debug the desync
-            #ifndef NDEBUG
+// debug the desync
+#ifndef NDEBUG
             auto copy = knights;
             knightMove.apply(copy);
-            debug_assert(subsubNodes.back()->knightsDebug == copy, "Knights desync on calculate_move_tree(...)-newLayer");
-            #endif
+            debug_assert(subsubNodes.back()->knightsDebug == copy,
+                         "Knights desync on calculate_move_tree(...)-newLayer");
+#endif
          }
       }
    }
@@ -215,12 +214,10 @@ static inline void calculate_move_tree(MoveNode *Tree, int depth,
 
 // sort the moves by score at the moveTree
 static inline void sort_moves() {
-   for(auto& nodes : moveTree->subNodes) {
+   for (auto &nodes : moveTree->subNodes) {
       std::sort(nodes.begin(), nodes.end(),
-                ([](UniquePtr<MoveNode> const &a,
-                    UniquePtr<MoveNode> const &b) -> bool {
-                   return a->score > b->score;
-                }));
+                ([](UniquePtr<MoveNode> const &a, UniquePtr<MoveNode> const &b)
+                     -> bool { return a->score > b->score; }));
    }
 }
 
@@ -234,7 +231,8 @@ static void init(uint depth, V2 king, Vector<V2> knightspos) {
    calculationDepth = depth;
    moveTree = make_unique<MoveNode>(
        get_new_layer(ChessMove{-1, V2{0, 0}}, knightspos, king));
-   debug_assert(moveTree->knightsDebug == knightsPositions, "Knights desync on init(...)");
+   debug_assert(moveTree->knightsDebug == knightsPositions,
+                "Knights desync on init(...)");
 }
 
 static inline ChessMove nextMove;
@@ -244,7 +242,8 @@ static inline f32 difficulty = 20.0f;
 void increase_difficulty() { difficulty *= 0.9f; }
 
 static ChessMove get_next_move(V2 kingPosition, ChessMove &result) {
-   debug_assert(moveTree->knightsDebug == knightsPositions, "KnightsDebug desync on get_next_move()");
+   debug_assert(moveTree->knightsDebug == knightsPositions,
+                "KnightsDebug desync on get_next_move()");
    if (!moveTree->has_sublayer()) {
       calculate_move_tree(moveTree.get(), calculationDepth, knightsPositions);
    }
@@ -254,9 +253,9 @@ static ChessMove get_next_move(V2 kingPosition, ChessMove &result) {
          // sort all options by score and return the best one
          auto &mNodes = moveTree->subNodes[i];
          // get a random move from gaussian distribution
-         int index =
-             (int)floor(min(abs(Senpai::rng::get_gaussian() * difficulty),
-                       static_cast<f32>(moveTree->subNodes[i].size() - 1)));
+         int index = (int)floor(
+             min(abs(Senpai::rng::get_gaussian() * difficulty),
+                 static_cast<f32>(moveTree->subNodes[i].size() - 1)));
          result = moveTree->subNodes[i][index]->chessMove;
          // do the move
          moveTree = move(moveTree->subNodes[i][index]);
@@ -268,11 +267,12 @@ static ChessMove get_next_move(V2 kingPosition, ChessMove &result) {
          nextMove = result;
          // unset the tree move
          moveTree->chessMove = {-1, V2{0, 0}};
-         if (moveTree->kingDebug != kingPosition) debug_error("KingDebug desync on get_next_move()");
+         if (moveTree->kingDebug != kingPosition)
+            debug_error("KingDebug desync on get_next_move()");
          return result;
       }
    }
-   
+
    debug_error("KingInput: " << kingPosition);
    debug_error("KingMoves: " << moveTree->kingMoves);
    debug_error("King: " << moveTree->kingDebug);
@@ -282,14 +282,12 @@ static ChessMove get_next_move(V2 kingPosition, ChessMove &result) {
 
 static inline Senpai::Thread thread;
 
-
 inline static bool compute() {
    if (thread.is_running()) {
       throw std::logic_error("Thread is already running");
    }
    thread.execute([=]() {
-      calculate_move_tree(moveTree.get(), calculationDepth,
-                             knightsPositions);
+      calculate_move_tree(moveTree.get(), calculationDepth, knightsPositions);
       sort_moves();
    });
    return true;
@@ -312,4 +310,4 @@ inline static void reset() {
    moveTree = nullptr;
 }
 
-}; // namespace chess_computer
+};  // namespace chess_computer

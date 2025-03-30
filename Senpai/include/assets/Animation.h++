@@ -11,11 +11,11 @@ namespace Senpai::Assets {
 ```
 */
 struct Animation final : public Asset {
- public:
+  public:
    Ptr<Texture> texturePtr;
    Vector<PixelArea> frameAreas;
    Animation(Ptr<Texture> texture = nullptr, Vec2<f32> size = {64, 64},
              uint frames = 1);
    ~Animation() = default;
 };
-}; // namespace Senpai::Assets
+};  // namespace Senpai::Assets

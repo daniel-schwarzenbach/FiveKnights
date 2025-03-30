@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "./Texture.h++"
-#include "./Font.h++"
-#include "./Audio.h++"
-#include "./TileSet.h++"
 #include "./Animation.h++"
+#include "./Audio.h++"
+#include "./Font.h++"
+#include "./Texture.h++"
+#include "./TileSet.h++"

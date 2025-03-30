@@ -1,31 +1,35 @@
 #pragma once
 
+#include <core/Inputs.h++>
+
+#include "../Event.h++"
 #include "./Asset.h++"
 #include "./ECSBase.h++"
-#include "../Event.h++"
-#include <core/Inputs.h++>
 
 namespace Senpai {
 
 // Script can be attached to an entity via the Components::ScriptAttacher
 struct Script {
- protected:
+  protected:
    Ptr<Scene> scenePtr = nullptr;
    Ptr<Entity> entityPtr = nullptr;
- public:
+
+  public:
    // prepare the script, called by the ScriptRunner on start()
    inline void prepare(Ptr<Scene> scenePtr, Ptr<Entity> entityPtr) {
       this->scenePtr = scenePtr;
       this->entityPtr = entityPtr;
    }
 
-   template <ComponentType ComponentT> Vector<Ptr<Entity>> view();
+   template <ComponentType ComponentT>
+   Vector<Ptr<Entity>> view();
 
    inline virtual ~Script() = default;
    // called when an entity holding this script is copied
    inline virtual UniquePtr<Script> clone() {
-      throw SenpaiException("Script::clone() must be implemented for each "
-                            "Script subtype for copyable Entities!");
+      throw SenpaiException(
+          "Script::clone() must be implemented for each "
+          "Script subtype for copyable Entities!");
       return nullptr;
    };
    // called when a collider component collides with another collider component
@@ -49,4 +53,4 @@ struct Script {
 template <typename T>
 concept ScriptType = std::is_base_of_v<Script, T>;
 
-} // namespace Senpai
+}  // namespace Senpai
