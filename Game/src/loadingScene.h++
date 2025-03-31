@@ -28,16 +28,19 @@ struct loading_animator final : public Script {
 };
 
 void set_up_loading_scene(Ptr<Scene> scenePtr) {
+   // system that runs the scripts
    scenePtr->add_system<Systems::ScriptRunner>();
+   // system that handles the UI elemnts
    scenePtr->add_system<Systems::UIRenderSystem>();
-
+   // load the font asset
    Assets::Font &font = scenePtr->add_asset<Assets::Font>(
        std::move(Assets::Font{"./assets/fonts/The Centurion .ttf", 200,
                               "HeroFont"}));
-   
-
+   // add the text entity
    Entity &loadingText = scenePtr->add_entity();
+   // add the transform component to the entity
    auto &tr = loadingText.add_component<Components::Transform>();
+   // add a button ui component to the entity
    auto &button = loadingText.add_component<Components::ButtonUI>(
        Components::ButtonUI{&font,
                             "Loading",
@@ -45,5 +48,6 @@ void set_up_loading_scene(Ptr<Scene> scenePtr) {
                             {0, 0, 0, 0},
                             {0, 0, 0, 0},
                             {0, 0}});
+   // add the animation script to the entity
    loadingText.add_script<loading_animator>();
 }

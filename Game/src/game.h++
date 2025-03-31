@@ -111,17 +111,21 @@ struct Movement {
    inline bool is_moving() { return currentTime < timeTotal; }
 };
 
+// script that animates the text to fade in
 struct FadeInTextScript final : public Script {
+   // the time it takes to fade in the text
    const f32 fadeInTime = 1.0f;
+   // the time that has passed since the text started to fade in
    f32 currentTime = 0;
-
+   // constructor
    FadeInTextScript(f32 time = 1.0f) : fadeInTime{time} {}
-
+   // start the fade in animation
    void on_enable() override {
       auto &bt = entityPtr->get_component<Components::ButtonUI>();
       bt.textColor.a = 0;
+      currentTime = 0;
    }
-
+   // update the text color to fade in
    void on_update(f32 dt) override {
       currentTime += dt;
       if (currentTime < fadeInTime) {
@@ -131,6 +135,7 @@ struct FadeInTextScript final : public Script {
    }
 };
 
+// Button script that goes to the main menu
 struct ToMainMenuScript final : public Script {
    Ptr<Assets::Audio> audioPtr;
    inline ToMainMenuScript(Ptr<Assets::Audio> audioPtr) : audioPtr{audioPtr} {}
@@ -141,6 +146,7 @@ struct ToMainMenuScript final : public Script {
    }
 };
 
+// Button script that restarts the game
 struct RestartScript final : public Script {
    Ptr<Assets::Audio> audioPtr;
    inline RestartScript(Ptr<Assets::Audio> audioPtr) : audioPtr{audioPtr} {}
@@ -151,6 +157,7 @@ struct RestartScript final : public Script {
    }
 };
 
+// Script that shows the score of the player
 struct ScoreTextScript final : public Script {
    void on_enable() override {
       auto &bt = entityPtr->get_component<Components::ButtonUI>();
@@ -644,6 +651,7 @@ Tuple<Entity *, KnightScript *> create_knight(
    return {&knight, &script};
 }
 
+// load function for the game scene
 void load_game(Ptr<Scene> scene) {
    //       INIT GAME
    game::init();

@@ -24,7 +24,7 @@ struct ECRegistry {
    Entity& add_entity_copy(Entity const& entity, bool isAlive = true);
    // remove an entity from the registry
    void remove_entity(Ptr<Entity> entity);
-
+   // retrun a vector of ptrs to all entities with a specific component
    template <ComponentType ComponentT>
    Vector<Ptr<Entity>>& view() {
       u32 componentId = component_type_id<ComponentT>();
@@ -33,9 +33,9 @@ struct ECRegistry {
       }
       return componentId_to_entityPtrs[componentId];
    }
-
+   // keep track of new component
    void register_component(Ptr<Component> componentPtr, Ptr<Entity> entityPtr);
-
+   // remove component from the registry, not from the entity!
    void unregister_component(Ptr<Component> componentPtr,
                              Ptr<Entity> entityPtr);
 };

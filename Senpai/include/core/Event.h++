@@ -11,11 +11,13 @@ struct Event {
 template <typename T>
 concept EventType = std::is_base_of_v<Event, T>;
 
+// function that will be called when the event is triggered
 struct Callback {
    inline virtual ~Callback() = default;
    virtual bool run(Ptr<Event>) = 0;
 };
 
+// generic wrapper for the callback function
 template <EventType EventT>
 struct EventCallback : Callback {
    Function<bool(EventT const&)> callbackFn;
@@ -35,6 +37,7 @@ constexpr u32 event_id() {
    return id;
 }
 
+// handles all the events and callbacks
 struct EventDispatcher {
    Vector<UniquePtr<Event>> events;
    Vector<u32> dispatchList;

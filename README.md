@@ -2,6 +2,22 @@
 
 A Five Nights at Fredies Inspired Chess Game and the Engine its running on
 
+Video Link: https://cloud.uni-konstanz.de/index.php/s/6kfoGoXGxdaXbqY
+
+Game Play Fotage: https://cloud.uni-konstanz.de/index.php/s/gJi4qawndimeS3E
+
+# About This Project
+
+Senpai Engine: [Senpai Documentation](docs\Senpai.md)
+
+Five Knights against King Fredrick Game: [Game Documentation](docs\Game.md)
+
+# How To Run:
+
+Linux/MacOS: ./build-unix.sh
+
+Windows: ./build-windows.bat
+
 # Requirements:
 
 - C++23 Compile
@@ -57,10 +73,27 @@ sudo apt install cmake=3.20.*
 
 neccecary for fetching SDL3
 
+### Windows
+
+https://desktop.github.com/download/
+
+### macOS
+
+````
+brew install git
+````
+
+### Linux (Ubuntu/Debian)
+
+````
+sudo apt update
+sudo apt install git
+````
+
+
+
 ## SDL3, SDL3_image, SDL3_Mixer, SDL3_ttf
 
 SDL3 will be fetched when executing Senpai/fetch-lib*
 
 build-* calls Senpai/fetch-lib* automatically
-
-# Classes
