@@ -117,7 +117,7 @@ GenericPtr Texture::get_sdl_texture() {
 TileSet::TileSet(String const &filename, u16 cols, u16 rows, f32 sizeX,
                  f32 sizeY, String const &name)
     : filename(filename), cols(cols), rows(rows), sizeX(sizeX), sizeY(sizeY) {
-   if(name == "") {
+   if (name == "") {
       this->name = "TileSet";
    } else {
       this->name = name;
@@ -167,7 +167,7 @@ PixelArea TileSet::operator[](u16 index) const {
            .size = {f32(sizeX), f32(sizeY)}};
 };
 
-Animation::Animation(Ptr<Texture> texture, Vec2<f32> size, uint frames, 
+Animation::Animation(Ptr<Texture> texture, Vec2<f32> size, uint frames,
                      String const &name)
     : texturePtr(texture) {
    if (name == "") {

@@ -242,8 +242,6 @@ static void init(uint depth, V2 king, Vector<V2> knightspos) {
 
 static inline ChessMove nextMove;
 
-
-
 static ChessMove get_next_move(V2 kingPosition, ChessMove &result) {
    debug_assert(moveTree->knightsDebug == knightsPositions,
                 "KnightsDebug desync on get_next_move()");

@@ -5,9 +5,9 @@ using namespace Senpai;
 
 // global variables
 namespace main_menu {
-   enum class State { MAIN, SETTINGS, HOW_TO_PLAY };
-   inline static State state = State::MAIN;
-}
+enum class State { MAIN, SETTINGS, HOW_TO_PLAY };
+inline static State state = State::MAIN;
+}  // namespace main_menu
 
 static Ptr<Assets::Audio> clickSound;
 

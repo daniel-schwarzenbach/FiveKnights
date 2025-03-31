@@ -33,9 +33,8 @@ void set_up_loading_scene(Ptr<Scene> scenePtr) {
    // system that handles the UI elemnts
    scenePtr->add_system<Systems::UIRenderSystem>();
    // load the font asset
-   Assets::Font &font = scenePtr->add_asset<Assets::Font>(
-       std::move(Assets::Font{"./assets/fonts/The Centurion .ttf", 200,
-                              "HeroFont"}));
+   Assets::Font &font = scenePtr->add_asset<Assets::Font>(std::move(
+       Assets::Font{"./assets/fonts/The Centurion .ttf", 200, "HeroFont"}));
    // add the text entity
    Entity &loadingText = scenePtr->add_entity();
    // add the transform component to the entity

@@ -7,7 +7,7 @@ namespace Senpai::Assets {
 
 /*
 ```cpp
-{Ptr<Texture> texture = nullptr, Vec2<f32> size = {64, 64}, uint frames = 1, 
+{Ptr<Texture> texture = nullptr, Vec2<f32> size = {64, 64}, uint frames = 1,
  String const& name = ""}
 ```
 */
