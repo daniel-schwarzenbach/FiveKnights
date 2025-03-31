@@ -23,18 +23,6 @@ Audio::Audio(const String &filename, String const &name) {
    });
 };
 
-// void Audio::set_pan(int channel, float pan) {
-//    if (pan > 1.0f)
-//       pan = 1.0f;
-//    if (pan < -1.0f)
-//       pan = -1.0f;
-//    if (pan > 0.0f) {
-//       Mix_SetPanning(channel, (u8)(255.0 * (1.0f - pan)), (u8)255);
-//    } else {
-//       Mix_SetPanning(channel, (u8)255, (u8)(255.0 * (1.0f + pan)));
-//    }
-// };
-
 void Audio::play(float volume, bool looping) {
    if (sdlAudio) {
       Mix_Chunk *audio = (Mix_Chunk *)sdlAudio.get();

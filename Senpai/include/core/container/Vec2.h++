@@ -2,6 +2,7 @@
 #include "../Base.h++"
 
 /*
+Simple mathematical 2D vector struct.
 ```cpp
    Vec2{x,y}
 ```
