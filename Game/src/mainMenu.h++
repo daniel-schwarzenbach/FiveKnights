@@ -3,19 +3,10 @@
 #include <fstream>
 using namespace Senpai;
 
-enum class MenuState { MAIN, SETTINGS, HOW_TO_PLAY };
-
-inline static MenuState menuState = MenuState::MAIN;
-
-f32 read_high_score(const std::string& filePath) {
-   std::ifstream file(filePath);
-   if (!file) {
-      std::cerr << "Failed to open file: " << filePath << std::endl;
-      return 0.0f;
-   }
-   f32 score;
-   file >> score;
-   return score;
+// global variables
+namespace main_menu {
+   enum class State { MAIN, SETTINGS, HOW_TO_PLAY };
+   inline static State state = State::MAIN;
 }
 
 static Ptr<Assets::Audio> clickSound;
@@ -26,9 +17,10 @@ struct menuHandlerScript final : public Script {
    Vector<Entity*> mainMenuEntities = {};
    Vector<Entity*> settingsEntities = {};
    Vector<Entity*> howToPlayEntities = {};
-   MenuState state = MenuState::MAIN;
+   main_menu::State state = main_menu::State::MAIN;
+
    void on_start() {
-      menuState = state = MenuState::MAIN;
+      main_menu::state = state = main_menu::State::MAIN;
       ambient->play(0.4f, true);
       music->play(0.4f, false);
       for (auto entity : view<Components::Info>()) {
@@ -53,37 +45,37 @@ struct menuHandlerScript final : public Script {
          sleep(0.3);
          return;
       }
-      if (state != MenuState::MAIN) {
+      if (state != main_menu::State::MAIN) {
          if (Inputs::get_key(Key::ESCAPE)) {
-            menuState = MenuState::MAIN;
+            main_menu::state = main_menu::State::MAIN;
             clickSound->play(1, false);
          }
       }
-      if (state != menuState) {
+      if (state != main_menu::state) {
          Vector<Entity*>* entities = nullptr;
          switch (state) {
-            case MenuState::MAIN:
+            case main_menu::State::MAIN:
                entities = &mainMenuEntities;
                break;
-            case MenuState::SETTINGS:
+            case main_menu::State::SETTINGS:
                entities = &settingsEntities;
                break;
-            case MenuState::HOW_TO_PLAY:
+            case main_menu::State::HOW_TO_PLAY:
                entities = &howToPlayEntities;
                break;
          }
          for (auto entity : *entities) {
             entity->disable();
          }
-         state = menuState;
+         state = main_menu::state;
          switch (state) {
-            case MenuState::MAIN:
+            case main_menu::State::MAIN:
                entities = &mainMenuEntities;
                break;
-            case MenuState::SETTINGS:
+            case main_menu::State::SETTINGS:
                entities = &settingsEntities;
                break;
-            case MenuState::HOW_TO_PLAY:
+            case main_menu::State::HOW_TO_PLAY:
                entities = &howToPlayEntities;
                break;
          }
@@ -122,7 +114,7 @@ struct HowToPlayScript final : public Script {
    void on_button_click() override {
       if (toggle >= 0) {
          toggle = -0.5;
-         menuState = MenuState::HOW_TO_PLAY;
+         main_menu::state = main_menu::State::HOW_TO_PLAY;
          clickSound->play(1, false);
       }
    }
@@ -138,7 +130,7 @@ struct settingsScript final : public Script {
    void on_button_click() override {
       if (toggle >= 0) {
          toggle = -0.5;
-         menuState = MenuState::SETTINGS;
+         main_menu::state = main_menu::State::SETTINGS;
          clickSound->play(1, false);
       }
    }
@@ -154,7 +146,7 @@ struct ReturnScript final : public Script {
    void on_button_click() override {
       if (toggle >= 0) {
          toggle = -0.5;
-         menuState = MenuState::MAIN;
+         main_menu::state = main_menu::State::MAIN;
          clickSound->play(1, false);
       }
    }

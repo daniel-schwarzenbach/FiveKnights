@@ -221,6 +221,10 @@ static inline void sort_moves() {
    }
 }
 
+// the lower the difficulty the less random the moves
+static inline f32 difficulty = 20.0f;
+void increase_difficulty() { difficulty *= 0.9f; }
+
 // this has to be called to initialize the chess computer
 static void init(uint depth, V2 king, Vector<V2> knightspos) {
    if (knightsPositions != knightspos) {
@@ -229,6 +233,7 @@ static void init(uint depth, V2 king, Vector<V2> knightspos) {
    }
    knightsPositions = knightspos;
    calculationDepth = depth;
+   f32 difficulty = 20.0f;
    moveTree = make_unique<MoveNode>(
        get_new_layer(ChessMove{-1, V2{0, 0}}, knightspos, king));
    debug_assert(moveTree->knightsDebug == knightsPositions,
@@ -237,9 +242,7 @@ static void init(uint depth, V2 king, Vector<V2> knightspos) {
 
 static inline ChessMove nextMove;
 
-// the lower the difficulty the less random the moves
-static inline f32 difficulty = 20.0f;
-void increase_difficulty() { difficulty *= 0.9f; }
+
 
 static ChessMove get_next_move(V2 kingPosition, ChessMove &result) {
    debug_assert(moveTree->knightsDebug == knightsPositions,

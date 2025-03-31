@@ -66,7 +66,7 @@ V2 kingPosition = kingStart;
 f32 batteryLeft = 120;
 constexpr f32 batteryMax = 120;
 // timer to increase the difficulty
-f32 difficultyTimer = 20;
+f32 difficultyTimer;
 // the time it takes to increase the difficulty
 constexpr f32 difficultyTime = 10;
 
@@ -116,6 +116,11 @@ struct FadeInTextScript final : public Script {
    f32 currentTime = 0;
 
    FadeInTextScript(f32 time = 1.0f) : fadeInTime{time} {}
+
+   void on_enable() override {
+      auto &bt = entityPtr->get_component<Components::ButtonUI>();
+      bt.textColor.a = 0;
+   }
 
    void on_update(f32 dt) override {
       currentTime += dt;
@@ -640,9 +645,11 @@ Tuple<Entity *, KnightScript *> create_knight(
 }
 
 void load_game(Ptr<Scene> scene) {
+   //       INIT GAME
    game::init();
    chess_computer::reset();
    Vector<V2> knightPositions = generate_knight_positions();
+
    //       ADD SYSTEMS
    scene->add_system<Systems::SpriteAnimator>();
    scene->add_system<Systems::UIButtonSystem>();

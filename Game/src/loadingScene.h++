@@ -29,15 +29,12 @@ struct loading_animator final : public Script {
 
 void set_up_loading_scene(Ptr<Scene> scenePtr) {
    scenePtr->add_system<Systems::ScriptRunner>();
-   // scenePtr->add_system<Systems::CameraRenderSystem>();
    scenePtr->add_system<Systems::UIRenderSystem>();
 
    Assets::Font &font = scenePtr->add_asset<Assets::Font>(
-       std::move(Assets::Font{String("./assets/fonts/The Centurion .ttf"), 200,
-                              String("HeroFont")}));
-   /* auto& texture =
-    * scenePtr->add_asset<Assets::Texture>(String("./assets/pics/Test.png"),
-    * String("MenuBackground")); */
+       std::move(Assets::Font{"./assets/fonts/The Centurion .ttf", 200,
+                              "HeroFont"}));
+   
 
    Entity &loadingText = scenePtr->add_entity();
    auto &tr = loadingText.add_component<Components::Transform>();
@@ -49,14 +46,4 @@ void set_up_loading_scene(Ptr<Scene> scenePtr) {
                             {0, 0, 0, 0},
                             {0, 0}});
    loadingText.add_script<loading_animator>();
-
-   // camera entity
-   Entity &camera = scenePtr->add_entity();
-   camera.add_component<Components::Transform>();
-   camera.add_component<Components::Camera>(Vec2<f32>{0, 0}, 1.6);
-   // background entity
-   /* Entity &bg = scenePtr->add_entity();
-   auto &bg_tr = bg.add_component<Components::Transform>();
-   auto &bg_sprite = bg.add_component<Components::Sprite>(&texture);
-   bg_sprite.z = -5; */
 }
