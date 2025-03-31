@@ -37,10 +37,13 @@ class Inputs {
    static inline void add_callback(Function<bool(EventT const &)> &&callback) {
       dispatcher.add_callback<EventT>(move(callback));
    }
-   // mousefunctions
+   // get the mouse position in Senpai coordinates
    static Vec2<f32> get_mouse_position();
+   // get the mouse wheel position
    static Vec2<f32> get_mouse_wheel();
+   // get the mouse button state, true if pressed
    static bool get_mouse_button(uint button);
+   // clear all callbacks of frma the even dispatcher
    static void clear_all_callbacks();
 };
 }  // namespace Senpai
