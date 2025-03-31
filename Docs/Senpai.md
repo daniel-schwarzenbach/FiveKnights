@@ -1,12 +1,14 @@
 # Senpai Game Engine
 
-Die von mir erstellte Spiele Engine Basiert auf diesem Buch: [CROSS-PLATFORM 2D GAME WITH SDL2](https://www.amazon.com/dp/B09SWTG4DC)
+The game engine I created is based on this book: [CROSS-PLATFORM 2D GAME WITH SDL2](https://www.amazon.com/dp/B09SWTG4DC)
 
-Der Quellcode des Buches ist hier verfügbar: https://github.com/Madsycode/book-fuse-engine
+The source code of the book is available here: https://github.com/Madsycode/book-fuse-engine
 
 Senpai ist aber keine einfache Kopie!
 
-Features wie Mehrere Scenen, Licht, Geometrie und Kameras sind nur einige der eigen erstellten Features und Optimierungen.
+However, Senpai is not just a simple copy!
+
+Features such as multiple scenes, lighting, geometry, and cameras are just a few of the custom features and optimizations.
 
 ## How to use it
 
@@ -37,9 +39,9 @@ int main() {
 
 ## How it works
 
-App loads scenes from the load functions
+The app loads scenes via load functions.
 
-Every Scene consists of Asset, Entities and Systems. An Entity meanwhile consist of multiple Components that get updated by the Systems.
+Every scene consists of assets, entities, and systems. An entity, in turn, consists of multiple components that are updated by the systems.
 
 ![Senpai Engine](./pics/ECSSystem.jpg)
 
@@ -49,8 +51,22 @@ The Entity Component Registry contains all components and keeps track of which e
 
 ## AssetsRegistry
 
-The Assets Registry makes the Assets more accescable, by id and name.
+The Assets Registry makes assets more accessible by id and name.
+
+## Reference Safety
+
+All assets, components, entities, and systems are stored in either lists or deques to ensure reference safety. If you take a reference or pointer to one of these objects, it will remain valid for the duration of the object's lifetime.
+
+![Senpai Engine](./pics/Refrence.jpg)
 
 ## Input Class
 
-static Class that provides easy access to events
+A static class that provides easy access to events and input.
+
+See: `Senpai/core/Inputs.h++`
+
+## EventDispatcher
+
+Contains callback functions and calls them when a specific event occurs.
+
+See: `Senpai/core/Event.h++`
