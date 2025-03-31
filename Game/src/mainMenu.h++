@@ -104,6 +104,7 @@ struct startGameScript final : public Script {
    }
 };
 
+// goes to how to play state
 struct HowToPlayScript final : public Script {
    f32 toggle = 0;
    void on_update(f32 dt) override {
@@ -120,6 +121,7 @@ struct HowToPlayScript final : public Script {
    }
 };
 
+// goes to settings state
 struct settingsScript final : public Script {
    f32 toggle = 0;
    void on_update(f32 dt) override {
@@ -136,6 +138,7 @@ struct settingsScript final : public Script {
    }
 };
 
+// retun to main menu state
 struct ReturnScript final : public Script {
    f32 toggle = 0;
    void on_update(f32 dt) override {
@@ -152,6 +155,7 @@ struct ReturnScript final : public Script {
    }
 };
 
+// quits the game
 struct exitScript final : public Script {
    f32 toggle = 0;
    void on_update(f32 dt) override {
@@ -177,6 +181,7 @@ Vec2<f32> get_button_pos() {
    return copy;
 }
 
+// loading function for the menu scene
 void set_up_menu_scene(Ptr<Scene> scenePtr) {
    // register all needet systems
    scenePtr->add_system<Systems::UIButtonSystem>();

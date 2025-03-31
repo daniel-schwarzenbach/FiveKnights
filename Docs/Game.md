@@ -1,5 +1,9 @@
 # Five Knight agains King Fredric
 
+# Game
+
+see: `Game/src/game.h++` 
+
 ## Chess Computer
 
 see: `Game/src/ChessComputer.h++` 
@@ -26,4 +30,10 @@ script that controls and animates the player.
 
 ## KnightsScript
 
-script that controls the knight and animates them.
+script that controls the Knights and animates them.
+
+# Main Menu
+
+## menuHandlerScript
+
+Acts as a state machine that enables and disable entities based on their tag and the State.
