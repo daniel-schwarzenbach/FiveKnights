@@ -225,7 +225,7 @@ void Scene::update(f32 dt) {
       for (auto &system : systems) {
          if (!system->canBePaused) {
             if (system->isParallel) {
-               threads.push_back(Thread());
+               threads.push_back(move(Thread()));
                threads.back().execute([&system, dt]() { system->update(dt); });
             } else {
                system->update(dt);
@@ -235,7 +235,7 @@ void Scene::update(f32 dt) {
    } else {
       for (auto &system : systems) {
          if (system->isParallel) {
-            threads.push_back(Thread());
+            threads.push_back(move(Thread()));
             threads.back().execute([&system, dt]() { system->update(dt); });
          } else {
             system->update(dt);

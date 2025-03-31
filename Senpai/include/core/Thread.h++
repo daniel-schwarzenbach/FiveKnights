@@ -14,9 +14,6 @@ struct Thread {
 
   public:
    inline Thread() = default;
-   inline ~Thread() {
-      this->join();
-   }
 
    template <typename Fn, typename... Args>
    void execute(Fn&& f, Args&&... args) {
