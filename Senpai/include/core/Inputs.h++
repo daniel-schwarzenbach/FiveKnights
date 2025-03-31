@@ -43,7 +43,7 @@ class Inputs {
    static Vec2<f32> get_mouse_wheel();
    // get the mouse button state, true if pressed
    static bool get_mouse_button(uint button);
-   // clear all callbacks of frma the even dispatcher
+   // clear all callbacks of from the even dispatcher
    static void clear_all_callbacks();
 };
 }  // namespace Senpai
