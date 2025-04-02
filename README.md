@@ -8,9 +8,9 @@ Game Play Fotage: https://cloud.uni-konstanz.de/index.php/s/gJi4qawndimeS3E
 
 # Documentation
 
-Senpai Engine: [Senpai Documentation](docs\Senpai.md)
+Senpai Engine: [Senpai Documentation](Docs/Senpai.md)
 
-Five Knights against King Fredrick Game: [Game Documentation](docs\Game.md)
+Five Knights against King Fredrick Game: [Game Documentation](Docs/Game.md)
 
 Used Programing Concepts: [Documentation](Docs/UsedProgamingConcepts.md)
 
