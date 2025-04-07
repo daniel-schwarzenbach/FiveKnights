@@ -223,8 +223,8 @@ void Scene::update(f32 dt) {
    Deque<Thread> threads;
    if (this->isPaused) {
       for (auto &system : systems) {
-         if (!system->canBePaused) {
-            if (system->isParallel) {
+         if (!system->will_be_paused()) {
+            if (system->is_parralel()) {
                threads.push_back(move(Thread()));
                threads.back().execute([&system, dt]() { system->update(dt); });
             } else {
@@ -234,7 +234,7 @@ void Scene::update(f32 dt) {
       }
    } else {
       for (auto &system : systems) {
-         if (system->isParallel) {
+         if (system->is_parralel()) {
             threads.push_back(move(Thread()));
             threads.back().execute([&system, dt]() { system->update(dt); });
          } else {

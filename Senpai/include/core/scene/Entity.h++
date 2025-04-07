@@ -115,5 +115,28 @@ class Entity {
           get_component<Components::ScriptsHolder>();
       return sh.add_script<ScriptT>(std::forward<Args>(args)...);
    }
+
+   template <ScriptType ScriptT>
+   inline ScriptT &get_script() {
+      if (!this->has_component<Components::ScriptsHolder>()) {
+         throw SenpaiException("No ScriptsHolder present!");
+      }
+      Components::ScriptsHolder &sh =
+          get_component<Components::ScriptsHolder>();
+      if (!sh.has_script<ScriptT>()) {
+         throw SenpaiException("Script not present!");
+      }
+      return sh.get_script<ScriptT>();
+   }
+
+   template <ScriptType ScriptT>
+   inline bool has_script() {
+      if (!this->has_component<Components::ScriptsHolder>()) {
+         return false;
+      }
+      Components::ScriptsHolder &sh =
+          get_component<Components::ScriptsHolder>();
+      return sh.has_script<ScriptT>();
+   }
 };
 }  // namespace Senpai

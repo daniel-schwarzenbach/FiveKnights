@@ -15,6 +15,13 @@ struct Script {
    Ptr<Entity> entityPtr = nullptr;
 
   public:
+   // execution hints
+
+   // if the system should be updated on pause
+   inline virtual  bool will_be_paused() { return false; }
+   // if the system can be updated in parallel
+   inline virtual  bool is_parralel() { return false; }
+
    // prepare the script, called by the ScriptRunner on start()
    inline void prepare(Ptr<Scene> scenePtr, Ptr<Entity> entityPtr) {
       this->scenePtr = scenePtr;
@@ -52,5 +59,12 @@ struct Script {
 
 template <typename T>
 concept ScriptType = std::is_base_of_v<Script, T>;
+
+// assing each script an type id
+template <ScriptType ScriptT>
+constexpr u32 script_type_id() {
+   static const u32 id = get_subtype_id<ScriptT>();
+   return id;
+}
 
 }  // namespace Senpai

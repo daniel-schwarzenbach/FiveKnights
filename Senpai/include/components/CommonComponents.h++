@@ -39,6 +39,7 @@ REGISTER_COMPONENT_TYPE(Info);
 
 struct ScriptsHolder final : public Component {
    Deque<UniquePtr<Script>> scripts = {};
+   Map<u32, u32> scriptTypeMap = {};
 
    ScriptsHolder(ScriptsHolder const& other);
    ScriptsHolder& operator=(ScriptsHolder const& other);
@@ -47,10 +48,28 @@ struct ScriptsHolder final : public Component {
    ScriptT& add_script(Args&&... args) {
       UniquePtr<Script> script =
           make_unique<ScriptT>(std::forward<Args>(args)...);
+      // register the script with the registry
+      u32 key = script_type_id<ScriptT>();
+      scriptTypeMap.try_emplace(key, scripts.size());
       script->prepare(nullptr, entityPtr);
       scripts.push_back(move(script));
       // set the script settings
       return *static_cast<Ptr<ScriptT>>(scripts.back().get());
+   }
+
+   template <ScriptType ScriptT>
+   ScriptT& has_script() {
+      return scriptTypeMap.find(script_type_id<ScriptT>()) !=
+             scriptTypeMap.end();
+   }
+
+   template <ScriptType ScriptT>
+   ScriptT& get_script() {
+      u32 index = scriptTypeMap[script_type_id<ScriptT>()];
+      if (index < scripts.size()) {
+         return *static_cast<Ptr<ScriptT>>(scripts[index].get());
+      }
+      throw SenpaiException("Script not found");
    }
 
    ScriptsHolder();

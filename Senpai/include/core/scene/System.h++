@@ -8,8 +8,11 @@ struct System {
    // end protected
   public:
    // execution hints
-   const bool canBePaused = false;
-   const bool isParallel = false;
+
+   // if the system should be updated on pause
+   inline virtual  bool will_be_paused() { return false; }
+   // if the system can be updated in parallel
+   inline virtual  bool is_parralel() { return false; }
 
    inline virtual ~System() = default;
    // assings a system to the correct registries
