@@ -8,10 +8,10 @@ int main() {
    // create an app
    Senpai::App app;
    // set the app settings
-   app.settings.fpsTarget = 30;
+   app.settings.fps = 30;
+   app.settings = read_from_file<Senpai::AppSettings>("./assets/data/app_settings.dat");
+   app.icon = "assets/pics/Icon.png";
    app.title = "Five Knights against King Fredric";
-   app.settings.width = 1920;
-   app.settings.height = 1080;
    // add the scenes to the app
    app.sceneLoaders.push_back(set_up_loading_scene);
    app.sceneLoaders.push_back(set_up_menu_scene);

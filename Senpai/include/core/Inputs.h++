@@ -30,7 +30,7 @@ class Inputs {
    // post an event to the dispatcher
    template <EventType EventT, typename... Args>
    static inline void post(Args &&...args) {
-      dispatcher.post<EventT>(forward<Args>(args)...);
+      dispatcher.post<EventT>(std::forward<Args>(args)...);
    }
    // add a callback to the dispatcher
    template <EventType EventT>

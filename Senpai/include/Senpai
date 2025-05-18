@@ -7,26 +7,24 @@
 
 namespace Senpai {
 struct App {
- private:
+  private:
+   f32 frameTime = 0.01f;
    bool isRunning = false;
+   SharedPtr<void> iconPtr = nullptr;
+   // applies settings to the sdl window
    bool apply_settings();
 
- public:
-   struct Settings {
-      u8 fpsTarget = 60;
-      bool vsync = true;
-      bool fullscreen = false;
-      u32 height = 720;
-      u32 width = 1280;
-   };
-   // Scenes are loaded and unloaded as needed, scenes[0] is the loading scene and  scenes[1] is the first scene
-   // be loaded by the App
+  public:
+   // Scenes are loaded and unloaded as needed, scenes[0] is the loading scene
+   // and  scenes[1] is the first scene be loaded by the App
    Vector<Function<void(Ptr<Scene>)>> sceneLoaders = {};
 
    String title = "SenpaiGame";
    String version = "α";
-   Settings settings = Settings{};
+   String icon = "";
+   AppSettings settings = AppSettings{0, 144, 1280, 720};
+   // runs the app by and loads the loading scene(sceneLoaders[0])
    bool run();
    bool is_running();
 };
-} // namespace Senpai
+}  // namespace Senpai

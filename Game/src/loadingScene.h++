@@ -1,6 +1,5 @@
 #pragma once
-#include <Senpai>
-using namespace Senpai;
+#include "base.h++"
 
 struct loading_animator final : public Script {
    f32 timetochange = 0.1f;
@@ -35,6 +34,9 @@ void set_up_loading_scene(Ptr<Scene> scenePtr) {
    // load the font asset
    Assets::Font &font = scenePtr->add_asset<Assets::Font>(std::move(
        Assets::Font{"./assets/fonts/The Centurion .ttf", 200, "HeroFont"}));
+   // load in the clicksound
+   auto& clicksound = scenePtr->add_asset<Assets::Audio>("./assets/audio/Click.mp3");
+   base::clicksound = &clicksound;
    // add the text entity
    Entity &loadingText = scenePtr->add_entity();
    // add the transform component to the entity

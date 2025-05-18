@@ -1,7 +1,5 @@
 #pragma once
-#include <Senpai>
-using namespace Senpai;
-
+#include "./base.h++"
 #include "./ChessComputer.h++"
 
 // generate the positions of the knights at the boarder
@@ -137,10 +135,8 @@ struct FadeInTextScript final : public Script {
 
 // Button script that goes to the main menu
 struct ToMainMenuScript final : public Script {
-   Ptr<Assets::Audio> audioPtr;
-   inline ToMainMenuScript(Ptr<Assets::Audio> audioPtr) : audioPtr{audioPtr} {}
    inline void on_button_click() override {
-      audioPtr->play(1, false);
+      base::clicksound->play(1, false);
       sleep(0.3);
       scenePtr->nextScene = 1;
    }
@@ -148,10 +144,8 @@ struct ToMainMenuScript final : public Script {
 
 // Button script that restarts the game
 struct RestartScript final : public Script {
-   Ptr<Assets::Audio> audioPtr;
-   inline RestartScript(Ptr<Assets::Audio> audioPtr) : audioPtr{audioPtr} {}
    inline void on_button_click() override {
-      audioPtr->play(1, false);
+      base::clicksound->play(1, false);
       sleep(0.3);
       scenePtr->nextScene = 2;
    }
@@ -168,6 +162,19 @@ struct ScoreTextScript final : public Script {
          debug_log("New Highscore!");
          write_to_file<f32>("./assets/data/highscore.dat", game::timer);
          bt.text += ", New Record";
+      }
+   }
+};
+
+// Script that shows when the player can move
+struct PlayerMoverUI final : public Script {
+   void on_update(f32 dt) override {
+      auto &bt = entityPtr->get_component<Components::ButtonUI>();
+      bt.text = "";
+      f32 time = min(game::nextKingMove, 5.0f);
+      while (time > 0) {
+         bt.text += ".";
+         time -= 1.0f;
       }
    }
 };
@@ -422,12 +429,14 @@ struct GameManager final : public Script {
    bool game_over_called = false;
    Ptr<Entity> playerPtr;
    Ptr<Entity> flashLightUIPtr;
+   Ptr<Entity> playerMoverUIPtr;
    Assets::Audio *ambientPtr;
    Vector<Entity *> gameOverEntities;
 
    void on_game_over() {
       debug_log("Game Over");
       flashLightUIPtr->disable();
+      playerMoverUIPtr->disable();
       chess_computer::reset();
       for (auto &gameOverEntity : gameOverEntities) {
          auto &info = gameOverEntity->get_component<Components::Info>();
@@ -541,7 +550,7 @@ struct PlayerMovement final : public Script {
       if (flashlightPtr->is_enabled()) {
          Vec2<f32> mouse = Inputs::get_mouse_position();
          if (!(lastMouse.similar_to(mouse))) {
-            f32 factor = std::pow(0.95f, 1.0f / dt);
+            f32 factor = 10.0f * dt;
             lastMouse = lin_interpolate(lastMouse, mouse, factor);
             f32 angle = get_angle(lastMouse) - 90.0f;
             auto &tr = flashlightPtr->get_component<Components::Transform>();
@@ -682,8 +691,6 @@ void load_game(Ptr<Scene> scene) {
        "./assets/pics/KingDeath.png", "KingDie", true);
    auto &kingDeathTexture = scene->add_asset<Assets::Texture>(
        "./assets/pics/KingGameOver.png", "KingDeath", true);
-   auto &clickSound =
-       scene->add_asset<Assets::Audio>("./assets/audio/Click.mp3", "Click");
 
    auto &kingRunAnim = scene->add_asset<Assets::Animation>(
        &kingRunTexture, Vec2<f32>{48, 64}, 20);
@@ -722,6 +729,17 @@ void load_game(Ptr<Scene> scene) {
        &font, "100 %", Color{255, 255, 255, 255}, Color{0, 0, 0, 0},
        Color{0, 0, 0, 0}, Vec2<f32>{0, 0});
 
+   // PlayerMoverUI
+   auto &playerMoverUI = scene->add_entity();
+   auto &tr_playerMoverUI =
+       playerMoverUI.add_component<Components::Transform>(Vec2<f32>{0, -400});
+   auto &bt_playerMoverUI =
+       playerMoverUI.add_component<Components::ButtonUI>(
+           &font, "", Color{255, 255, 255, 255}, Color{0, 0, 0, 0},
+           Color{0, 0, 0, 0}, Vec2<f32>{0, 0});
+   auto &scr_playerMoverUI =
+       playerMoverUI.add_script<PlayerMoverUI>();
+
    // GameManager Entity
    auto &manager = scene->add_entity();
    auto &tr_manager =
@@ -731,6 +749,7 @@ void load_game(Ptr<Scene> scene) {
    auto &gm_manager = manager.add_script<GameManager>();
    gm_manager.ambientPtr = &ambient;
    gm_manager.flashLightUIPtr = &flashlightUI;
+   gm_manager.playerMoverUIPtr = &playerMoverUI;
 
    // Player Entity
    auto &player = scene->add_entity();
@@ -807,7 +826,7 @@ void load_game(Ptr<Scene> scene) {
        Color{0, 0, 0, 60}, Vec2<f32>{600, 130});
    auto &info_mainMenu =
        mainMenu.add_component<Components::Info>("MainMenuButton", "GameOver");
-   auto &script_mainMenu = mainMenu.add_script<ToMainMenuScript>(&clickSound);
+   auto &script_mainMenu = mainMenu.add_script<ToMainMenuScript>();
    auto &fade_mainMenu = mainMenu.add_script<FadeInTextScript>(1.0f);
 
    // Restart Button
@@ -819,7 +838,7 @@ void load_game(Ptr<Scene> scene) {
        Color{0, 0, 0, 200}, Vec2<f32>{600, 130});
    auto &info_restart =
        restart.add_component<Components::Info>("RestartButton", "GameOver");
-   auto &script_restart = restart.add_script<RestartScript>(&clickSound);
+   auto &script_restart = restart.add_script<RestartScript>();
    auto &fade_restart = restart.add_script<FadeInTextScript>(1.0f);
 
    // Score text entity

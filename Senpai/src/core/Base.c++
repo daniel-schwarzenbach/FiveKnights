@@ -1,20 +1,19 @@
-#include <core/Base.h++>
+// #include <core/Base.h++>
 
-IS& operator>>(IS& is, Ptr<const char> str) {
-   char current;
-   uint i = 0;
-   bool once = false;
-   while (str[i] != '\0') {
-      is >> current;
-      if (current != str[i] && !once) {
-         cerr << "Couldn't read the string:" << str << " was " << current
-              << endl;
-         once = true;
-      }
-      i++;
-   }
-   return is;
-}
+// IS& operator>>(IS& is, const char* str) {
+//    char current;
+//    uint i = 0;
+//    bool once = false;
+//    while (str[i] != '\0') {
+//       is >> current;
+//       if (current != str[i] && !once) {
+//          debug_error( "Couldn't read the string:" << str << " was " << current);
+//          once = true;
+//       }
+//       i++;
+//    }
+//    return is;
+// }
 
 // IS& operator>>(IS& is, const char str[]) {
 //    char current;

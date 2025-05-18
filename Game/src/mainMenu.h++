@@ -7,6 +7,7 @@ using namespace Senpai;
 namespace main_menu {
 enum class State { MAIN, SETTINGS, HOW_TO_PLAY };
 inline static State state = State::MAIN;
+inline static App* gamePtr = nullptr;
 }  // namespace main_menu
 
 static Ptr<Assets::Audio> clickSound;
@@ -138,6 +139,27 @@ struct settingsScript final : public Script {
    }
 };
 
+// script for a settings apply button
+struct ApplyScript final : public Script {
+   AppSettings appSettings;
+   void on_start() override {
+      appSettings = read_from_file<AppSettings>("./assets/data/app_settings.dat");
+   }
+   f32 toggle = 0;
+   void on_update(f32 dt) override {
+      if (toggle < 0) {
+         toggle += dt;
+      }
+   }
+   void on_button_click() override {
+      if (toggle >= 0) {
+         clickSound->play(1, false);
+         Inputs::post<Events::SettingsChanged>(appSettings);
+         write_to_file<AppSettings>("./assets/data/app_settings.dat", appSettings);
+      }
+   }
+};
+
 // retun to main menu state
 struct ReturnScript final : public Script {
    f32 toggle = 0;
@@ -151,6 +173,36 @@ struct ReturnScript final : public Script {
          toggle = -0.5;
          main_menu::state = main_menu::State::MAIN;
          clickSound->play(1, false);
+      }
+   }
+};
+
+// setts the game to fullscreen
+struct FullScreenScript final : public Script {
+   Ptr<AppSettings> settingsPtr;
+   f32 toggle = 0;
+   void on_update(f32 dt) override {
+      if (toggle < 0) {
+         toggle += dt;
+      }
+      if (settingsPtr->fullscreen == 1) {
+         auto& button = entityPtr->get_component<Components::ButtonUI>();
+         button.text = "Fullscreen: On";
+      } else {
+         auto& button = entityPtr->get_component<Components::ButtonUI>();
+         button.text = "Fullscreen: Off";
+      }
+   }
+
+   void on_button_click() override {
+      if (toggle >= 0) {
+         toggle = -0.5;
+         clickSound->play(1, false);
+         if (settingsPtr->fullscreen == 1) {
+            settingsPtr->fullscreen = 0;
+         } else {
+            settingsPtr->fullscreen = 1;
+         }
       }
    }
 };
@@ -173,11 +225,13 @@ struct exitScript final : public Script {
    }
 };
 
+
+
 constexpr f32 offset = 200;
 Vec2<f32> buttonPos = {0, 100};
-Vec2<f32> get_button_pos() {
+Vec2<f32> get_button_pos(int i = 0) {
    auto copy = buttonPos;
-   buttonPos.y -= offset;
+   copy.y -= i * offset;
    return copy;
 }
 
@@ -230,7 +284,7 @@ void set_up_menu_scene(Ptr<Scene> scenePtr) {
 
    // start game button entity
    Entity& game = scenePtr->add_entity();
-   auto& game_tr = game.add_component<Components::Transform>(get_button_pos());
+   auto& game_tr = game.add_component<Components::Transform>(get_button_pos(0));
    auto& game_button = game.add_component<Components::ButtonUI>(
        &font, String("Start Game"), Color{255, 255, 255, 255},
        Color{0, 0, 0, 0}, Color{30, 30, 0, 30}, Vec2<f32>{1920, 150});
@@ -239,7 +293,7 @@ void set_up_menu_scene(Ptr<Scene> scenePtr) {
 
    // How to play button entity
    Entity& how = scenePtr->add_entity();
-   auto& how_tr = how.add_component<Components::Transform>(get_button_pos());
+   auto& how_tr = how.add_component<Components::Transform>(get_button_pos(1));
    auto& how_button = how.add_component<Components::ButtonUI>(
        &font, String("How to Play?"), Color{255, 255, 255, 255},
        Color{0, 0, 0, 0}, Color{30, 30, 0, 30}, Vec2<f32>{1920, 150});
@@ -249,7 +303,7 @@ void set_up_menu_scene(Ptr<Scene> scenePtr) {
    // settings button entity
    Entity& settings = scenePtr->add_entity();
    auto& settings_tr =
-       settings.add_component<Components::Transform>(get_button_pos());
+       settings.add_component<Components::Transform>(get_button_pos(2));
    auto& settings_button = settings.add_component<Components::ButtonUI>(
        &font, String("Settings"), Color{255, 255, 255, 255}, Color{0, 0, 0, 0},
        Color{30, 30, 0, 30}, Vec2<f32>{1920, 150});
@@ -258,7 +312,7 @@ void set_up_menu_scene(Ptr<Scene> scenePtr) {
 
    // Exit button entity
    Entity& exit = scenePtr->add_entity();
-   auto& exit_tr = exit.add_component<Components::Transform>(get_button_pos());
+   auto& exit_tr = exit.add_component<Components::Transform>(get_button_pos(3));
    auto& exit_button = exit.add_component<Components::ButtonUI>(
        &font, String("Exit"), Color{255, 255, 255, 255}, Color{0, 0, 0, 0},
        Color{30, 30, 0, 30}, Vec2<f32>{1920, 150});
@@ -303,12 +357,32 @@ void set_up_menu_scene(Ptr<Scene> scenePtr) {
    // return button
    Entity& returnSet = scenePtr->add_entity();
    auto& returnSet_tr =
-       returnSet.add_component<Components::Transform>(get_button_pos());
+       returnSet.add_component<Components::Transform>(get_button_pos(0));
    auto& returnSet_button = returnSet.add_component<Components::ButtonUI>(
        &font, String("Return"), Color{255, 255, 255, 255}, Color{0, 0, 0, 0},
        Color{30, 30, 0, 30}, Vec2<f32>{1920, 150});
    returnSet.add_script<ReturnScript>();
    returnSet.add_component<Components::Info>("Return", "Settings");
+
+   // Apply button
+   Entity& apply = scenePtr->add_entity();
+   auto& apply_tr = apply.add_component<Components::Transform>(get_button_pos(1));
+   auto& apply_button = apply.add_component<Components::ButtonUI>(
+       &font, String("Apply"), Color{255, 255, 255, 255}, Color{0, 0, 0, 0},
+       Color{30, 30, 0, 30}, Vec2<f32>{1920, 150});
+   auto& apply_script = apply.add_script<ApplyScript>();
+   apply.add_component<Components::Info>("Apply", "Settings");
+
+   // Fullscreen button
+   Entity& toggleFS = scenePtr->add_entity();
+   auto& toggleFS_tr =
+         toggleFS.add_component<Components::Transform>(get_button_pos(2));
+   auto& toggleFS_button = toggleFS.add_component<Components::ButtonUI>(
+         &font, String("Fullscreen"), Color{255, 255, 255, 255}, Color{0, 0, 0, 0},
+         Color{30, 30, 0, 30}, Vec2<f32>{1920, 150});
+   auto& toggleFS_script = toggleFS.add_script<FullScreenScript>();
+   toggleFS_script.settingsPtr = &apply_script.appSettings;
+   toggleFS.add_component<Components::Info>("Fullscreen", "Settings");
 
    //       - How to Play -
    buttonPos = {0, 400};
@@ -316,7 +390,7 @@ void set_up_menu_scene(Ptr<Scene> scenePtr) {
    // return button
    Entity& returnHow = scenePtr->add_entity();
    auto& returnHow_tr =
-       returnHow.add_component<Components::Transform>(get_button_pos());
+       returnHow.add_component<Components::Transform>(get_button_pos(0));
    auto& returnHow_button = returnHow.add_component<Components::ButtonUI>(
        &font, String("Return"), Color{255, 255, 255, 255}, Color{0, 0, 0, 0},
        Color{30, 30, 0, 30}, Vec2<f32>{1920, 150});

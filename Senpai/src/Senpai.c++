@@ -1,13 +1,35 @@
-#include <SDL3/SDL.h>
-
 #include <Senpai>
 #include <sdl/SDLBackend.h++>
+#include <SDL3_image/SDL_image.h>
 
 namespace Senpai {
+
+bool App::apply_settings() {
+   frameTime = 1.0f / settings.fps;
+   if (iconPtr == nullptr && icon != "") {
+      GenericPtr iconRaw = IMG_Load(icon.c_str());
+      iconPtr = SharedPtr<void>(iconRaw, [](void *iconPtr) {
+         debug_log("Icon destroyed");
+         SDL_DestroySurface((SDL_Surface *)iconPtr);
+         iconPtr = nullptr;
+      });
+      if (iconPtr == nullptr) {
+         debug_warning("Failed to load icon: " << icon);
+         icon = "";
+      }
+   }
+   SDL_SetWindowSize((SDL_Window *)Window::get(), settings.width, settings.height);
+   if (iconPtr != nullptr) {
+      SDL_SetWindowIcon((SDL_Window*)Window::get(), (SDL_Surface*)iconPtr.get());
+   }
+   SDL_SetWindowFullscreen((SDL_Window*)Window::get(), settings.fullscreen == 1);
+   return true;
+}
 
 bool App::run() {
    // initialize SDL
    SDL::init(title, settings.width, settings.height);
+   apply_settings();
    // init inputs
    Inputs::init();
    Window::resize();
@@ -16,6 +38,27 @@ bool App::run() {
    // mouse position
    auto onMouseDown = [&](Events::MouseDown const &event) -> bool {
       debug_log("Mouse Position: " << Inputs::get_mouse_position());
+      return true;
+   };
+   // change the settings
+   auto onSettingsChanged = [&](Events::SettingsChanged const &event) -> bool {
+      debug_log("Settings Changed");
+      auto wSize = Window::get_size();
+      this->settings.width = wSize.x;
+      this->settings.height = wSize.y;
+      if(event.settings.fullscreen > -1) {
+         settings.fullscreen = event.settings.fullscreen;
+      }
+      if(event.settings.fps > -1) {
+         settings.fps = event.settings.fps;
+      }
+      if(event.settings.width > -1) {
+         settings.width = event.settings.width;
+      }
+      if(event.settings.height > -1) {
+         settings.height = event.settings.height;
+      }
+      apply_settings();
       return true;
    };
    // quit the game
@@ -42,6 +85,7 @@ bool App::run() {
       return true;
    };
    // add the callbacks
+   Inputs::add_callback<Events::SettingsChanged>(onSettingsChanged);
    Inputs::add_callback<Events::Quit>(onQuit);
    Inputs::add_callback<Events::KeyDown>(onPause);
    Inputs::add_callback<Events::MouseDown>(onMouseDown);
@@ -65,7 +109,7 @@ bool App::run() {
    // main loop
    TimePoint next, last;
    f32 dt = 0;
-   const f32 frameTime = 1.0f / this->settings.fpsTarget;
+   frameTime = 1.0f / this->settings.fps;
    last = next = get_TimePoint();
    //
 
@@ -112,7 +156,7 @@ bool App::run() {
       next = get_TimePoint();
       dt = get_time_diff(last, next);
       // handle fps Target
-      if (settings.fpsTarget > 0 && dt < frameTime) {
+      if (settings.fps > 0 && dt < frameTime) {
          sleep(frameTime - dt - ε);
          next = get_TimePoint();
          dt = get_time_diff(last, next);

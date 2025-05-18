@@ -78,9 +78,7 @@ using std::cin;
 using std::cout;
 using std::endl;
 
-// IS& operator>>(IS& is, Ptr<const char>);
-IS &operator>>(IS &is, const char toRead[]);
-IS &operator>>(IS &is, const char *toRead);
+
 
 #include <string>
 using String = std::string;
@@ -232,3 +230,19 @@ using std::cos;
 using std::pow;
 using std::round;
 using std::sin;
+
+// read in a string
+inline IS& operator>>(IS& is, const char* str) {
+   char current;
+   uint i = 0;
+   bool once = false;
+   while (str[i] != '\0') {
+      is >> current;
+      if (current != str[i] && !once) {
+         debug_error( "Couldn't read the string:" << str << " was " << current);
+         once = true;
+      }
+      i++;
+   }
+   return is;
+}
