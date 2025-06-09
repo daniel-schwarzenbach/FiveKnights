@@ -268,16 +268,19 @@ static ChessMove get_next_move(V2 kingPosition, ChessMove &result) {
          nextMove = result;
          // unset the tree move
          moveTree->chessMove = {-1, V2{0, 0}};
+#ifndef NDEBUG
          if (moveTree->kingDebug != kingPosition)
             debug_error("KingDebug desync on get_next_move()");
+#endif
          return result;
       }
    }
-
+   #ifndef NDEBUG
    debug_error("KingInput: " << kingPosition);
    debug_error("KingMoves: " << moveTree->kingMoves);
    debug_error("King: " << moveTree->kingDebug);
    debug_error("Knights Positions: " << moveTree->knightsDebug);
+   #endif
    throw std::logic_error("KingPosition not found in moveTree, Desync!");
 }
 

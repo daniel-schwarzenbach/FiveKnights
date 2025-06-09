@@ -154,6 +154,7 @@ struct ApplyScript final : public Script {
    void on_button_click() override {
       if (toggle >= 0) {
          clickSound->play(1, false);
+         toggle = -0.5;
          Inputs::post<Events::SettingsChanged>(appSettings);
          write_to_file<AppSettings>("./assets/data/app_settings.dat", appSettings);
       }
