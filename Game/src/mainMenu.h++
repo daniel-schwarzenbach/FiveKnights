@@ -253,7 +253,7 @@ void set_up_menu_scene(Ptr<Scene> scenePtr) {
        String("./assets/fonts/Griffiths.otf"), 50, String("HeroFontSmall"));
    debug_log("Loading Texture1");
    auto& texture = scenePtr->add_asset<Assets::Texture>(
-       "./assets/pics/BackGround.png", "MenuBackground");
+       "./assets/pics/BackGround.jpg", "MenuBackground");
    debug_log("Loading Texture2");
    auto& howToPlayTexture = scenePtr->add_asset<Assets::Texture>(
        String("./assets/pics/HowToPlay.png"), String("HowToPlayTexture"));
