@@ -1,3 +1,3 @@
 #!/bin/bash
-cd ../build/Game/
+cd ./build/Game/
 ./FiveKnights

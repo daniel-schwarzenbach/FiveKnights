@@ -1,14 +1,10 @@
-# Five Knights against King Fredrick & the Senpai Game Engine
+# The Senpai App Engine & Five Knights against King Fredrick
 
 A Five Nights at Fredies Inspired Chess Game and the Engine its running on
 
-Video Link: https://cloud.uni-konstanz.de/index.php/s/6kfoGoXGxdaXbqY
-
-Game Play Fotage: https://cloud.uni-konstanz.de/index.php/s/gJi4qawndimeS3E
-
 # Documentation
 
-Senpai Engine: [Senpai Documentation](Docs/Senpai.md)
+Senpai-App-Engine: [Senpai Documentation](https://daniel.schwarzenbach.dev/blog/c++/senpai-app-engine/)
 
 Five Knights against King Fredrick Game: [Game Documentation](Docs/Game.md)
 
