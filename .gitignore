@@ -3,6 +3,7 @@ private/
 
 # Ignore the build folder
 build/
+build-release/
 
 # Ignore the SDL3 libraries
 Senpai/lib/
