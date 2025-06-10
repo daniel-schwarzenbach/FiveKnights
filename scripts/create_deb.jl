@@ -95,13 +95,13 @@ create_deb(
 "Five-Knights", "1.0", "amd64",
 "daniel.schwarzenbach@outlook.com",
 "Five Knights against King Fredric Game",
-program = "build/Game/FiveKnights",
+program = "build-release/Game/FiveKnights",
 libs = [
-   "build/Senpai/libSenpai.so", 
-   "build/Senpai/lib/SDL/libSDL3.so", 
-   "build/Senpai/lib/SDL_image/libSDL3_image.so",
-   "build/Senpai/lib/SDL_ttf/libSDL3_ttf.so",
-   "build/Senpai/lib/SDL_mixer/libSDL3_mixer.so"
+   "build-release/Senpai/libSenpai.so", 
+   "build-release/Senpai/lib/SDL/libSDL3.so", 
+   "build-release/Senpai/lib/SDL_image/libSDL3_image.so",
+   "build-release/Senpai/lib/SDL_ttf/libSDL3_ttf.so",
+   "build-release/Senpai/lib/SDL_mixer/libSDL3_mixer.so"
 ],
-assets = "build/Game/assets"
+assets = "Game/assets"
 )
